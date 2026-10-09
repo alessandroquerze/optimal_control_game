@@ -13,8 +13,10 @@
 .lesson-button:hover { background-color: rgb(48, 75, 98); }
 .lesson-button:focus, .back-button:focus { border-color: rgb(112, 205, 215); border-width: 2px; }
 .lesson-button:disabled, .back-button:disabled { opacity: 0.55; }
-.lesson-panel { display: none; width: 420px; max-width: 100%; flex-shrink: 1; padding: 22px; background-color: rgba(19, 25, 36, 0.95); border-radius: 8px; }
-.lesson-title { font-size: 24px; -unity-font-style: bold; white-space: normal; margin-bottom: 12px; }
-.back-button { min-height: 38px; margin-bottom: 20px; padding: 8px 12px; color: rgb(239, 247, 255); background-color: rgb(37, 57, 78); border-width: 1px; border-color: rgb(68, 95, 121); }
+.lesson-panel { display: none; width: 350px; max-width: 100%; max-height: 100%; flex-shrink: 1; padding: 12px; background-color: rgba(19, 25, 36, 0.97); border-radius: 8px; }
+.lesson-panel .description { font-size: 14px; margin-bottom: 8px; }
+.lesson-title { font-size: 16px; -unity-font-style: bold; white-space: normal; margin: 4px 0; }
+.back-button { min-height: 32px; margin-bottom: 9px; padding: 6px 12px; color: rgb(239, 247, 255); background-color: rgb(37, 57, 78); border-width: 1px; border-color: rgb(68, 95, 121); }
+#session-diagnostic { display: none; }
 .note { font-size: 13px; white-space: normal; color: rgb(169, 185, 205); margin-top: 12px; }
 .status { font-size: 14px; white-space: normal; color: rgb(255, 205, 146); margin-top: 10px; max-width: 800px; }

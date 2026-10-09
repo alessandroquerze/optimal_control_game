@@ -1,6 +1,13 @@
 {
     "name": "OptCon.Editor",
     "rootNamespace": "OptCon.Editor",
-    "references": ["OptCon.Content", "OptCon.Core", "OptCon.Simulation"],
-    "includePlatforms": ["Editor"]
+    "references": [
+        "OptCon.Core",
+        "OptCon.Content",
+        "OptCon.Simulation",
+        "OptCon.Application"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ]
 }

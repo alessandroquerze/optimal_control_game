@@ -1,5 +1,8 @@
 {
     "name": "OptCon.Content",
     "rootNamespace": "OptCon.Content",
-    "references": ["OptCon.Core"]
+    "references": [
+        "OptCon.Core",
+        "OptCon.Simulation"
+    ]
 }

@@ -1,0 +1,150 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e039087c2f4e1ab6f8639bc051389d, type: 3}
+  m_Name: DiscreteDynamics
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.FormulaDefinition
+  id: dynamics.discrete
+  schemaVersion: 1
+  contentVersion: 1
+  title: Dinamica discreta
+  description: "Transizioni indicizzate da t; il tempo fisico \xE8 opzionale."
+  expression: x_(t+1) = f_t(x_t, u_t)
+  sourceTranscription: x_(t+1)=f_t(x_t,u_t)
+  assumptions: "t=0,\u2026,T\u22121 per le transizioni; t=0,\u2026,T per gli stati.
+    \u03C4 e \u03B4 esistono soltanto quando il modello dichiara secondi."
+  terms:
+  - id: state.current
+    symbol: x_t
+    label: Stato corrente
+    meaning: "Stato al campione corrente; tutte le componenti e le loro unit\xE0."
+    rows: -1
+    columns: 1
+    componentUnits: []
+    value:
+      metricId: state.current
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: state.current
+      scope: 0
+  - id: input.applied
+    symbol: u_t
+    label: Controllo applicato
+    meaning: Input della transizione corrente, assente al terminale.
+    rows: -1
+    columns: 1
+    componentUnits: []
+    value:
+      metricId: input.applied
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: input.applied
+      scope: 0
+  - id: dynamics.model
+    symbol: f_t
+    label: Dinamica
+    meaning: Modello e parametri immutabili che hanno prodotto questa revisione.
+    rows: 0
+    columns: 0
+    componentUnits: []
+    value:
+      metricId: dynamics.model
+      kind: 3
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: dynamics.transition
+      scope: 0
+  - id: state.next
+    symbol: x_(t+1)
+    label: Stato successivo
+    meaning: "Risultato salvato della transizione; indice gi\xE0 risolto t+1."
+    rows: -1
+    columns: 1
+    componentUnits: []
+    value:
+      metricId: state.next
+      kind: 1
+      scope: 1
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: state.next
+      scope: 1
+  - id: time.index
+    symbol: t
+    label: Indice discreto
+    meaning: Numero del campione, non secondi.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - 1
+    value:
+      metricId: time.index
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: 
+      scope: 0
+  - id: time.physical
+    symbol: "\u03C4"
+    label: Tempo fisico
+    meaning: Tempo del campione salvato nella discretizzazione; assente nei modelli
+      index-only.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - s
+    value:
+      metricId: time.physical
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: 
+      scope: 0
+  - id: time.step
+    symbol: "\u03B4"
+    label: Passo fisico
+    meaning: "Passo matematico della discretizzazione, distinto dalla velocit\xE0
+      di playback."
+    rows: 1
+    columns: 1
+    componentUnits:
+    - s
+    value:
+      metricId: time.step
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: 
+      scope: 0
+  sources:
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 9
+    lastPhysicalPage: 10
+    firstSlide: 8
+    lastSlide: 9
+    section: Discrete-time control systems and notation
+    usage: 0
+    note: 

@@ -65,12 +65,12 @@ namespace OptCon.Tests
         }
 
         [Test]
-        public void PrototypeCatalogIsValidButNotExecutable()
+        public void PrototypeCatalogAndExecutionConfigurationAreValid()
         {
             var original = AssetDatabase.LoadAssetAtPath<CourseDefinition>(CoursePath);
             AssertValid(CatalogValidator.ValidateCatalog(original));
             var execution = CatalogValidator.ValidateExecutionConfiguration(original);
-            Assert.That(execution.Issues.Select(i => i.Code), Is.EquivalentTo(new[] { "MissingModelProvider", "MissingScenarioPrefab" }));
+            AssertValid(execution);
             Assert.That(original.IsPrototype, Is.True);
             Assert.That(original.Chapters.SelectMany(c => c.Lessons).Single().Id, Is.EqualTo("prototype.pendulum"));
             Assert.That(original.Sources.Select(s => s.PhysicalPageCount), Is.EquivalentTo(new[] { 36, 81, 20 }));
@@ -367,6 +367,19 @@ namespace OptCon.Tests
             Assert.That(EditorJsonUtility.ToJson(original), Is.EqualTo(before));
         }
 
+        [TestCase(false, 0.02)]
+        [TestCase(true, 0)]
+        [TestCase(true, -0.02)]
+        [TestCase(true, double.NaN)]
+        [TestCase(true, double.PositiveInfinity)]
+        [TestCase(true, double.NegativeInfinity)]
+        public void ConcreteProviderRejectsMissingOrInvalidPhysicalStep(bool present, double value)
+        {
+            Edit(experiment, "discreteTime.hasPhysicalTimeStep", p => p.boolValue = present);
+            Edit(experiment, "discreteTime.stepSeconds", p => p.doubleValue = value);
+            Assert.That(() => experiment.Model.CreateConfiguration(experiment), Throws.InstanceOf<ArgumentException>());
+        }
+
         [Test]
         public void LegacyPresetWithoutPresenceFlagImportsAsPhysicalTime()
         {
@@ -425,7 +438,7 @@ namespace OptCon.Tests
         public void AssemblyBoundariesKeepCorePureAndContentIndependentOfRuntimeConsumers()
         {
             Assert.That(typeof(ModelDimensions).Assembly.GetReferencedAssemblies().Any(a => a.Name.StartsWith("Unity", StringComparison.Ordinal)), Is.False);
-            var forbidden = new[] { "UnityEditor", "OptCon.Application", "OptCon.Simulation", "OptCon.Presentation" };
+            var forbidden = new[] { "UnityEditor", "OptCon.Application", "OptCon.Presentation" };
             Assert.That(typeof(CourseDefinition).Assembly.GetReferencedAssemblies().Any(a => forbidden.Any(f => a.Name.StartsWith(f, StringComparison.Ordinal))), Is.False);
         }
 

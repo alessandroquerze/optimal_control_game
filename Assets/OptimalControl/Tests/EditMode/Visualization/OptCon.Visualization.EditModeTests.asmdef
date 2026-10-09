@@ -1,0 +1,8 @@
+{
+    "name": "OptCon.Visualization.EditModeTests",
+    "rootNamespace": "OptCon.Tests",
+    "references": ["OptCon.Core", "OptCon.Simulation", "OptCon.Presentation"],
+    "includePlatforms": ["Editor"],
+    "autoReferenced": false,
+    "optionalUnityReferences": ["TestAssemblies"]
+}

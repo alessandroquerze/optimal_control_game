@@ -5,28 +5,33 @@ using UnityEngine.SceneManagement;
 
 namespace OptCon.Application
 {
-    /// <summary>Owns one additive content scene. F02 loads only the workspace, not a model or scenario.</summary>
+    /// <summary>Owns one additive content scene. Scene loading is not session readiness.</summary>
     [DisallowMultipleComponent]
     public sealed class LessonLoader : MonoBehaviour
     {
         public bool IsLoading { get; private set; }
         public Scene CurrentScene { get; private set; }
-        public event Action<Scene> SceneReady;
+        private bool completing;
 
-        public bool TryNavigate(string destinationPath, Action<bool, string> completed, out string error)
+        public bool CanNavigate(string destinationPath, out string error)
         {
             error = null;
             if (!isActiveAndEnabled) error = "Il servizio di navigazione non è attivo.";
-            else if (IsLoading) error = "Un caricamento è già in corso.";
+            else if (IsLoading || completing) error = "Un caricamento è già in corso.";
             else if (string.IsNullOrWhiteSpace(destinationPath) || !UnityEngine.Application.CanStreamedLevelBeLoaded(destinationPath))
                 error = $"Scena assente o disabilitata nei Build Settings: '{destinationPath}'.";
-            if (error != null) return false;
+            return error == null;
+        }
+
+        public bool TryNavigate(string destinationPath, Action<bool, string, Scene> completed, out string error)
+        {
+            if (!CanNavigate(destinationPath, out error)) return false;
             IsLoading = true;
             StartCoroutine(Navigate(destinationPath, completed));
             return true;
         }
 
-        private IEnumerator Navigate(string path, Action<bool, string> completed)
+        private IEnumerator Navigate(string path, Action<bool, string, Scene> completed)
         {
             Scene previous = CurrentScene;
             string previousPath = previous.IsValid() ? previous.path : null;
@@ -91,18 +96,19 @@ namespace OptCon.Application
             }
         }
 
-        private void Finish(bool success, string error, Action<bool, string> completed)
+        private void Finish(bool success, string error, Action<bool, string, Scene> completed)
         {
             IsLoading = false;
-            completed?.Invoke(success, error);
-            if (CurrentScene.IsValid() && CurrentScene.isLoaded) SceneReady?.Invoke(CurrentScene);
+            completing = true;
+            try { completed?.Invoke(success, error, CurrentScene); }
+            finally { completing = false; }
         }
 
         private void OnDestroy()
         {
             StopAllCoroutines();
             IsLoading = false;
-            SceneReady = null;
+            completing = false;
         }
     }
 }

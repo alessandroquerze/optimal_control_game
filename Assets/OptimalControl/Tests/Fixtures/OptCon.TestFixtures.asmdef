@@ -1,0 +1,6 @@
+{
+    "name": "OptCon.TestFixtures",
+    "references": ["OptCon.Core", "OptCon.Simulation"],
+    "includePlatforms": ["Editor"],
+    "autoReferenced": true
+}

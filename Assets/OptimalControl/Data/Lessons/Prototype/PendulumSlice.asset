@@ -10,44 +10,50 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2447a3f1440a48128f99dcbb8f745af5, type: 3}
-  m_Name: "PendulumSlice"
-  m_EditorClassIdentifier: "OptCon.Content::OptCon.Content.LessonDefinition"
-  id: "prototype.pendulum"
+  m_Name: PendulumSlice
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.LessonDefinition
+  id: prototype.pendulum
   schemaVersion: 1
-  contentVersion: "1"
-  title: "Una coppia cambia il futuro del pendolo"
-  description: "Laboratorio iniziale di C1.L1 con anticipazioni guidate di C1.L2 e C1.L3; catalogo separato dalle lezioni di produzione."
-  objective: "Distinguere x_t, u_t e x_(t+1), prevedere una transizione e riconoscere la stessa quantità nella formula e nella scena."
+  contentVersion: 1
+  title: Una coppia cambia il futuro del pendolo
+  description: Laboratorio iniziale di C1.L1 con anticipazioni guidate di C1.L2 e
+    C1.L3; catalogo separato dalle lezioni di produzione.
+  objective: "Distinguere x_t, u_t e x_(t+1), prevedere una transizione e riconoscere
+    la stessa quantit\xE0 nella formula e nella scena."
   prerequisiteLessonIds: []
   workspace:
-    assetPath: "Assets/OptimalControl/Scenes/LessonWorkspace.unity"
+    assetPath: Assets/OptimalControl/Scenes/LessonWorkspace.unity
   experiment: {fileID: 11400000, guid: 19214258a94242ef919efdc2282511ba, type: 2}
   formulas:
-    - {fileID: 11400000, guid: 327f576e442d479eaea09f7f087dfb1a, type: 2}
+  - {fileID: 11400000, guid: 327f576e442d479eaea09f7f087dfb1a, type: 2}
+  - {fileID: 11400000, guid: 1c6f0cf7619706840865029829233386, type: 2}
   sources:
-    - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
-      firstPhysicalPage: 2
-      lastPhysicalPage: 10
-      firstSlide: 1
-      lastSlide: 9
-      section: "Motivazione e notazione stato/input/output"
-      usage: 0
-      note: ""
-    - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
-      firstPhysicalPage: 33
-      lastPhysicalPage: 33
-      firstSlide: 32
-      lastSlide: 32
-      section: "Dinamica continua del pendolo"
-      usage: 0
-      note: ""
-    - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
-      firstPhysicalPage: 27
-      lastPhysicalPage: 27
-      firstSlide: 26
-      lastSlide: 26
-      section: "Forward Euler"
-      usage: 1
-      note: "La procedura Euler illustrata per il drone è applicata al pendolo: adattamento progettuale, non formula discreta del PDF del pendolo."
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 2
+    lastPhysicalPage: 10
+    firstSlide: 1
+    lastSlide: 9
+    section: Motivazione e notazione stato/input/output
+    usage: 0
+    note: 
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 33
+    lastPhysicalPage: 33
+    firstSlide: 32
+    lastSlide: 32
+    section: Dinamica continua del pendolo
+    usage: 0
+    note: 
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 27
+    lastPhysicalPage: 27
+    firstSlide: 26
+    lastSlide: 26
+    section: Forward Euler
+    usage: 1
+    note: "La procedura Euler illustrata per il drone \xE8 applicata al pendolo:
+      adattamento progettuale, non formula discreta del PDF del pendolo."
   steps: []
-  completionCriteria: "In F08: previsione → modifica della coppia → avanzamento → osservazione → spiegazione dei termini → verifica concettuale. L’asset F01 è editoriale e non attiva completamenti."
+  completionCriteria: "In F08: previsione \u2192 modifica della coppia \u2192 avanzamento
+    \u2192 osservazione \u2192 spiegazione dei termini \u2192 verifica concettuale.
+    L\u2019asset F01 \xE8 editoriale e non attiva completamenti."

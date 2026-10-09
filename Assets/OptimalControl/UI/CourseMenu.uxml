@@ -1,4 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:Template name="LessonHud" src="LessonHud.uxml" />
     <Style src="CourseMenu.uss" />
     <ui:VisualElement name="shell" class="shell">
         <ui:ScrollView name="menu-panel" class="menu-panel">
@@ -10,15 +11,16 @@
             <ui:VisualElement name="chapter-list" class="chapter-list" />
             <ui:Label text="L'apertura di un'anteprima non completa la lezione." class="note" />
         </ui:ScrollView>
-        <ui:VisualElement name="lesson-panel" class="lesson-panel">
+        <ui:ScrollView name="lesson-panel" class="lesson-panel">
             <ui:Button name="return-to-menu" text="← Torna al corso" class="back-button" />
-            <ui:Label text="ANTEPRIMA DELLA LEZIONE" class="eyebrow" />
             <ui:Label name="lesson-title" class="lesson-title" />
-            <ui:Label text="Obiettivo" class="section-title" />
-            <ui:Label name="lesson-objective" class="description" />
-            <ui:Label name="lesson-description" class="description" />
-            <ui:Label text="Questo workspace mostra il contesto della lezione. La simulazione e i controlli dell'esperimento non sono ancora disponibili." class="note" />
-        </ui:VisualElement>
+            <ui:Label name="session-diagnostic" class="note" />
+            <ui:Instance template="LessonHud" />
+            <ui:Foldout text="Obiettivo della lezione" value="false">
+                <ui:Label name="lesson-objective" class="description" />
+                <ui:Label name="lesson-description" class="description" />
+            </ui:Foldout>
+        </ui:ScrollView>
         <ui:Label name="navigation-status" class="status" />
     </ui:VisualElement>
 </ui:UXML>

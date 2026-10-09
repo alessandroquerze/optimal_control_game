@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using OptCon.Content;
+using OptCon.Simulation;
 using UnityEditor;
 using UnityEngine;
 
@@ -38,7 +39,7 @@ namespace OptCon.Editor
             issues.Add(new CatalogIssue(asset, code, field, message));
     }
 
-    /// <summary>Editor-only checks of authored data. No model creation, navigation, or lesson evaluation.</summary>
+    /// <summary>Editor catalog checks; execution validation also checks formula bindings against a provider result.</summary>
     public static class CatalogValidator
     {
         public static CatalogValidationResult ValidateCatalog(CourseDefinition course, string projectRoot = null, bool verifySourceFiles = true)
@@ -77,6 +78,7 @@ namespace OptCon.Editor
                         var actual = experiment.Model.Dimensions;
                         if (actual.State != expected.State || actual.Control != expected.Control || actual.Output != expected.Output)
                             result.Add(experiment, "ProviderDimensions", "model", "Provider dimensions differ from the declared experiment dimensions.");
+                        experiment.Model.CreateConfiguration(experiment);
                     }
                     catch (Exception exception) when (exception is ArgumentException || exception is InvalidOperationException)
                     {
@@ -85,6 +87,24 @@ namespace OptCon.Editor
                 }
                 if (experiment.ScenarioPrefab == null || !PrefabUtility.IsPartOfPrefabAsset(experiment.ScenarioPrefab))
                     result.Add(experiment, "MissingScenarioPrefab", "scenarioPrefab", "A scenario prefab asset is required for execution.");
+            }
+            // Validate bindings against an actual immutable provider result, using the same resolver as the HUD.
+            foreach (var lesson in course.Chapters.Where(c => c != null).SelectMany(c => c.Lessons).Where(l => l != null).Distinct())
+            {
+                var experiment = lesson.Experiment;
+                if (experiment == null || experiment.Model == null || !experiment.UsesDiscreteTime) continue;
+                try
+                {
+                    using (var session = experiment.Model.CreateSession(experiment))
+                        foreach (var formula in lesson.Formulas.Where(f => f != null))
+                            foreach (var term in formula.Terms.Where(t => t != null))
+                            {
+                                var binding = new RuntimeMetricResolver().Resolve(term, session.State.Result, 0);
+                                if (binding.Validity == MetricValidity.Invalid) result.Add(formula, "RuntimeBinding", "terms." + term.Id, binding.Diagnostic);
+                            }
+                }
+                catch (Exception exception) when (exception is ArgumentException || exception is InvalidOperationException || exception is RolloutException || exception is ArithmeticException)
+                { result.Add(experiment, "ProviderResult", "model", exception.Message); }
             }
             return result;
         }
@@ -325,12 +345,10 @@ namespace OptCon.Editor
                     Required(formula, "terms.symbol", term.Symbol);
                     Required(formula, "terms.label", term.Label);
                     Required(formula, "terms.meaning", term.Meaning);
-                    if (term.Value == null || term.Highlight == null) { Error(formula, "MissingBinding", "terms", "Value and highlight descriptors are required."); continue; }
-                    Required(formula, "terms.value.metricId", term.Value.MetricId);
-                    Required(formula, "terms.highlight.semanticRole", term.Highlight.SemanticRole);
+                    if (term.Value == null || string.IsNullOrWhiteSpace(term.Value.MetricId)) continue; // Explanatory terms can be unbound.
                     if (!Enum.IsDefined(typeof(FormulaValueKind), term.Value.Kind) || !Enum.IsDefined(typeof(FormulaScope), term.Value.Scope) ||
-                        !Enum.IsDefined(typeof(FormulaScope), term.Highlight.Scope)) Error(formula, "BindingKind", "terms", "Unknown value kind or temporal scope.");
-                    if (term.Value.Scope != term.Highlight.Scope) Error(formula, "BindingScope", "terms", "Value and highlight must refer to the same temporal target.");
+                        (term.Highlight != null && !Enum.IsDefined(typeof(FormulaScope), term.Highlight.Scope))) Error(formula, "BindingKind", "terms", "Unknown value kind or temporal scope.");
+                    if (term.Highlight != null && !string.IsNullOrWhiteSpace(term.Highlight.SemanticRole) && term.Value.Scope != term.Highlight.Scope) Error(formula, "BindingScope", "terms", "Value and highlight must refer to the same temporal target.");
                     if (term.Value.Component < -1) Error(formula, "BindingComponent", "terms", "Use -1 for a whole value or a zero-based component.");
                     if (term.Value.Kind == FormulaValueKind.ModelDescriptor)
                     {
@@ -339,10 +357,11 @@ namespace OptCon.Editor
                     }
                     else
                     {
-                        if (term.Rows < 1 || term.Columns < 1 || (term.Value.Kind == FormulaValueKind.Scalar && (term.Rows != 1 || term.Columns != 1)) ||
+                        bool inferredVector = term.Value.Kind == FormulaValueKind.Vector && term.Rows == -1 && term.Columns == 1 && term.ComponentUnits.Count == 0;
+                        if ((!inferredVector && term.Rows < 1) || term.Columns < 1 || (term.Value.Kind == FormulaValueKind.Scalar && (term.Rows != 1 || term.Columns != 1)) ||
                             (term.Value.Kind == FormulaValueKind.Vector && term.Columns != 1)) Error(formula, "TermShape", "terms", "Shape must agree with scalar/vector/matrix kind.");
                         long size = (long)term.Rows * term.Columns;
-                        Units(formula, "terms.componentUnits", term.ComponentUnits, size);
+                        if (!inferredVector) Units(formula, "terms.componentUnits", term.ComponentUnits, size);
                         try { _ = 0.35d.ToString(term.Value.NumericFormat, CultureInfo.InvariantCulture); }
                         catch (FormatException) { Error(formula, "NumericFormat", "terms.value.numericFormat", "Invalid numeric format."); }
                     }

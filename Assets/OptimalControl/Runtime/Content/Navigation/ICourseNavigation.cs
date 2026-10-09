@@ -8,6 +8,7 @@ namespace OptCon.Content
         CourseDefinition Course { get; }
         LessonDefinition ActiveLesson { get; }
         bool IsTransitioning { get; }
+        bool IsReady { get; }
         string StatusMessage { get; }
         event Action Changed;
         bool OpenLesson(string lessonId);

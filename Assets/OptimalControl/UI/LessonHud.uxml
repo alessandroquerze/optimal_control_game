@@ -1,0 +1,38 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="LessonHud.uss" />
+    <ui:VisualElement name="lesson-hud" class="lesson-hud">
+        <ui:Label name="timeline-status" class="hud-note" />
+        <ui:VisualElement class="transport">
+            <ui:Button name="step-back" text="← Step" />
+            <ui:Button name="play-pause" text="Play" />
+            <ui:Button name="step-next" text="Step →" />
+            <ui:Button name="reset" text="Reset" />
+        </ui:VisualElement>
+        <ui:SliderInt name="timeline-seek" label="t" low-value="0" high-value="100" show-input-field="true" />
+        <ui:Foldout text="Input e parametri" value="false" name="parameter-panel">
+            <ui:DropdownField name="input-scope" label="Modifica" />
+            <ui:VisualElement name="input-fields" />
+            <ui:Label name="input-unavailable" text="N/A · al terminale non esiste u_T." class="hud-note" />
+            <ui:VisualElement name="parameter-fields" />
+            <ui:Label name="parameter-status" class="hud-note" />
+            <ui:DoubleField name="playback-rate" label="Playback [campioni/s]" value="10" is-delayed="true" />
+            <ui:Label text="Il playback regola la presentazione: non modifica δ né il risultato matematico." class="hud-note" />
+        </ui:Foldout>
+        <ui:Label text="MATEMATICA LIVE · seleziona un termine" class="eyebrow" />
+        <ui:DropdownField name="formula-choice" />
+        <ui:Label name="formula-expression" class="formula-expression" />
+        <ui:VisualElement name="formula-terms" />
+        <ui:VisualElement class="term-detail">
+            <ui:Label name="term-detail-title" class="term-name" />
+            <ui:Label name="term-detail-meaning" class="hud-note" />
+            <ui:Label name="term-detail-value" class="term-value" />
+            <ui:Label name="term-detail-status" class="hud-note" />
+            <ui:Label name="term-detail-world" class="hud-note" />
+        </ui:VisualElement>
+        <ui:Foldout text="Ipotesi e convenzioni" value="false">
+            <ui:Label name="formula-description" class="hud-note" />
+            <ui:Label name="formula-assumptions" class="hud-note" />
+            <ui:Label text="Sfera blu: stato corrente. Cubo/ghost arancio: campione successivo. Linee: guide fra campioni, non interpolazione fisica. Tasti 1/2/3: layer corpo/fase/stato-tempo." class="hud-note" />
+        </ui:Foldout>
+    </ui:VisualElement>
+</ui:UXML>

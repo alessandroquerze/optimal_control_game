@@ -16,6 +16,27 @@ namespace OptCon.Simulation
     {
         public static TrajectoryHistory Rollout(IDiscreteDynamics model, NumericVector initialState,
             IReadOnlyList<NumericVector> controls, string experimentId, long revisionId = 0)
+            => Calculate(model, initialState, controls, experimentId, revisionId, null, 0);
+
+        /// <summary>Reuse a verified prefix for the same immutable model; recompute only the affected suffix.</summary>
+        public static TrajectoryHistory RecalculateFrom(TrajectoryHistory previous, IDiscreteDynamics model,
+            IReadOnlyList<NumericVector> controls, int firstChangedInput, long revisionId)
+        {
+            if (previous == null) throw new ArgumentNullException(nameof(previous));
+            if (model == null || !ReferenceEquals(model.Descriptor, previous.Model)) throw new ArgumentException("Prefix reuse requires the same immutable model descriptor.", nameof(model));
+            if (controls == null || controls.Count != previous.Horizon || firstChangedInput < 0 || firstChangedInput > previous.Horizon)
+                throw new ArgumentException("Prefix and new controls must have the same horizon and a valid boundary.");
+            for (int t = 0; t < firstChangedInput; t++)
+            {
+                NumericValidation.RequireDimension(controls[t], previous.Model.Dimensions.Control, nameof(controls));
+                for (int i = 0; i < controls[t].Count; i++)
+                    if (controls[t][i] != previous.Controls[t][i]) throw new ArgumentException("An earlier input changed; it cannot reuse this prefix.");
+            }
+            return Calculate(model, previous.States[0], controls, previous.ExperimentId, revisionId, previous, firstChangedInput);
+        }
+
+        private static TrajectoryHistory Calculate(IDiscreteDynamics model, NumericVector initialState,
+            IReadOnlyList<NumericVector> controls, string experimentId, long revisionId, TrajectoryHistory prefix, int start)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
             var descriptor = model.Descriptor ?? throw new ArgumentException("Model descriptor is required.", nameof(model));
@@ -35,7 +56,8 @@ namespace OptCon.Simulation
             }
             var states = new NumericVector[horizon + 1];
             states[0] = initialState;
-            for (int t = 0; t < horizon; t++)
+            for (int t = 1; t <= start; t++) states[t] = prefix.States[t];
+            for (int t = start; t < horizon; t++)
             {
                 try
                 {

@@ -27,7 +27,8 @@ namespace OptCon.Content
         [SerializeField] private string symbol;
         [SerializeField] private string label;
         [SerializeField, TextArea] private string meaning;
-        [SerializeField] private int rows = 1;
+        [SerializeField, Tooltip("Vector rows=-1 with no editorial units infers shape and units from the runtime metric. Otherwise shape/units are validated exactly.")]
+        private int rows = 1;
         [SerializeField] private int columns = 1;
         [SerializeField] private string[] componentUnits = Array.Empty<string>();
         [SerializeField] private ValueBinding value = new ValueBinding();

@@ -1,12 +1,12 @@
 # Optimal Control — roadmap operativa
 
-Data della revisione: 9 ottobre 2026. **31 fasi, da F00 a F30.** **F00–F03 completate e verificate il 9 ottobre 2026.** F04–F30 restano pianificate e non avviate. La revisione documentale iniziale è conservata; l'implementazione corrente comprende la foundation di F00, il catalogo editoriale di F01, la navigazione del corso di F02 e il core matematico/simulativo puro di F03.
+Data della revisione: 9 ottobre 2026. **31 fasi, da F00 a F30.** **F00–F06 completate e verificate il 9 ottobre 2026.** F07–F30 restano pianificate e non avviate. La revisione documentale iniziale è conservata; l'implementazione corrente comprende foundation, catalogo, navigazione, core matematico/simulativo puro, sessione runtime, primitive visuali, controlli della dinamica e Formula/HUD live con binding tipizzati.
 
 ## Specifica, fonti e risultato della revisione
 
 La specifica principale è costituita da [visione](OPTCON_PROJECT_VISION.md), [curriculum](OPTCON_CURRICULUM.md), [architettura](OPTCON_ARCHITECTURE.md) e questa roadmap. La roadmap sostituisce la precedente suddivisione D0 / Foundation F1 / Prototype P1 / Foundation F2 / Content production / Polish, mantenendone obiettivi e perimetro. Le precisazioni operative qui riportate risolvono i punti aperti senza modificare gli altri tre documenti.
 
-Il progetto usa Unity `6000.3.8f1`, URP `17.3.0`, Input System `1.18.0`, UI Toolkit disponibile tramite i moduli Unity e Test Framework `1.6.0`. F00 aggiunge `Bootstrap`, `LessonWorkspace` e `AppBootstrap` al template, conservando `SampleScene` e gli asset URP. F01 aggiunge definizioni e catalogo dati con validazione editor. F02 aggiunge il menu e il caricamento del workspace con titolo/obiettivo dagli asset. F03 aggiunge pendolo Euler, rollout e snapshot puri, verificabili tramite test e diagnostica editor. Collegamento al lifecycle runtime, visualizzazioni 3D, Formula/HUD e Lesson Logic restano nelle fasi successive.
+Il progetto usa Unity `6000.3.8f1`, URP `17.3.0`, Input System `1.18.0`, UI Toolkit disponibile tramite i moduli Unity e Test Framework `1.6.0`. F00 aggiunge `Bootstrap`, `LessonWorkspace` e `AppBootstrap` al template, conservando `SampleScene` e gli asset URP. F01 aggiunge definizioni e catalogo dati con validazione editor. F02 aggiunge il menu e il caricamento del workspace con titolo/obiettivo dagli asset. F03 aggiunge pendolo Euler, rollout e snapshot puri. F04 collega provider, sessione, comandi e clock al lifecycle runtime e risolve A03/A04; A01 resta verificato. F05 aggiunge corpo/ghost, piano di fase, traiettoria stato-tempo 3D, coppia, marker, assi, layer/highlight e router da tastiera. F06 risolve A02 tramite un resolver puro tipizzato e aggiunge formule/termini live, highlight, timeline e pannello input/parametri dalla stessa revisione immutabile. Costi/confronto e Lesson Logic restano a F07/F08.
 
 | Fonte | Percorso effettivo | Pagine fisiche | Riferimenti ricontrollati |
 | --- | --- | --- | --- |
@@ -35,9 +35,9 @@ Il DAG da rispettare è: `Core → nessuna dipendenza Unity`; `Simulation → Co
 
 ## Come eseguire una fase
 
-Nel seguito **A = `Assets/OptimalControl`**. I percorsi `A/...` sono relativi a questa root. «Creare» e «modificare» descrivono il lavoro della relativa fase; lo stato e i rapporti di verifica di F00–F03 distinguono il lavoro eseguito da quello ancora pianificato.
+Nel seguito **A = `Assets/OptimalControl`**. I percorsi `A/...` sono relativi a questa root. «Creare» e «modificare» descrivono il lavoro della relativa fase; lo stato e i rapporti di verifica di F00–F06 distinguono il lavoro eseguito da quello ancora pianificato.
 
-Una fase è conclusa quando i suoi criteri passano e il risultato è riproducibile partendo da Bootstrap o dalla verifica dichiarata per quella fase (editoriale per F01, numerica per il Core). Le dipendenze elencate sono dirette; i loro prerequisiti si intendono transitivi. L'ordine F00 → F30 è quello raccomandato. I test elencati sono da eseguire durante l'implementazione; per F00–F03 le verifiche Unity eseguite sono registrate sotto la fase.
+Una fase è conclusa quando i suoi criteri passano e il risultato è riproducibile partendo da Bootstrap o dalla verifica dichiarata per quella fase (editoriale per F01, numerica per il Core). Le dipendenze elencate sono dirette; i loro prerequisiti si intendono transitivi. L'ordine F00 → F30 è quello raccomandato. I test elencati sono da eseguire durante l'implementazione; per F00–F06 le verifiche Unity eseguite sono registrate sotto la fase.
 
 Per ogni fase di contenuto: mantenere ID stabili, fonte/pagina/slide, obiettivo, formule selezionabili, esperimento, spiegazione delle unità/spazi e verifica concettuale. Un candidato numerico viene chiamato «ottimo» soltanto con una giustificazione adeguata alla classe di problema. I test numerici hanno tolleranze assolute/relative dichiarate; i controlli grafici restano manuali quando non richiedono test automatici significativi.
 
@@ -382,7 +382,7 @@ Docs/OPTCON_IMPLEMENTATION_PLAN.md
 
 ## F03 — Mathematical Model e Simulation puri
 
-- **Stato:** **completata**, 9 ottobre 2026; tutti i criteri sotto verificati. F04 e fasi successive non avviate.
+- **Stato:** **completata**, 9 ottobre 2026; tutti i criteri sotto verificati. F04 e fasi successive non avviate nella consegna originale di F03.
 - **Obiettivo:** calcolare il pendolo discreto, il rollout e gli snapshot senza dipendere dalla presentazione Unity.
 - **Prerequisiti:** contratti/dimensioni e preset di F01; convenzioni t/T/δ e unità del slice fissate.
 - **Dipendenze:** F01.
@@ -492,6 +492,7 @@ Docs/OPTCON_IMPLEMENTATION_PLAN.md
 
 ## F04 — Host Unity, comandi e gestione del tempo
 
+- **Stato:** **completata**, 9 ottobre 2026; tutti i criteri sotto verificati. A03 e A04 risolti; A01 preservato, A02 non modificato. F05 non avviata nella consegna originale di F04.
 - **Obiettivo:** collegare il Core al lifecycle della lezione, con un unico proprietario di input, configurazione, timeline e revisioni.
 - **Prerequisiti:** caricamento lezione e rollout verificati; provider concreto del pendolo disponibile.
 - **Dipendenze:** F02, F03.
@@ -501,8 +502,39 @@ Docs/OPTCON_IMPLEMENTATION_PLAN.md
 - **Criteri di completamento:** velocità di playback distinta da δ; rewind tramite storia; modifica di un input ricalcola il futuro; reset ricopia il preset; una sola pubblicazione coerente per revisione; chiusura della lezione elimina subscription.
 - **Test:** EditMode su causalità del ricalcolo e reset; PlayMode su clock a diverse frequenze, terminale, riapertura sessione e asset mai modificati dagli override runtime.
 
+### Consegna e verifica di F04
+
+Il provider `PendulumModelDefinition` converte una volta l'authoring in configurazione pura. `SimulationSession` possiede configurazione richiesta, risultato valido, cursore e revisioni; implementa `ICommandSink` per play/pause/step avanti e indietro/seek/reset, input singolo o coda, stato iniziale, parametri, passo fisico e velocità di playback. `ExperimentHost` ne gestisce il lifetime; `PlaybackController.Update` passa soltanto secondi di presentazione. Il nuovo scenario generico contiene esclusivamente host e clock. Nessuna primitiva 3D, formula live, costo o Lesson Logic.
+
+**A03:** la transizione conserva ID e lesson destinazione; le fasi osservabili sono `Requested → SceneLoaded → Composing → Binding → Ready`, oppure `Failed`. Il bootstrap compone e collega i consumer mediante chiamate esplicite. `Ready` viene pubblicato dopo il binding, con la sessione disponibile; il dispatch rifiuta navigazioni rientranti. Due lesson nello stesso workspace ricompongono la sessione senza dipendere da un nuovo evento nativo di caricamento scena.
+
+**A04:** ogni `SimulationResult` contiene insieme `SimulationConfiguration` immutabile e `TrajectoryHistory` della stessa revisione. I consumer interpretano i campioni con `Result.Configuration`; configurazione richiesta e tentativo fallito sono espliciti e distinti. Un fallimento conserva l'intero ultimo risultato valido, inclusi parametri e passo fisico.
+
+| Criterio / verifica | Esito |
+| --- | --- |
+| Compilazione finale Unity | **PASS**, Unity `6000.3.8f1`, exit code 0, nessun errore C#, dopo rimozione dei verificatori temporanei |
+| Tutti gli EditMode | **115/115 PASS**, zero falliti/saltati: 60 catalogo, 26 pendolo, 13 rollout, 16 sessione |
+| Tutti i PlayMode | **15/15 PASS**, zero falliti/saltati, inclusi sei nuovi casi lifecycle/sessione |
+| Unico proprietario e revisioni coerenti | Sessione pura; una pubblicazione completa per modifica matematica; configurazione e storia associate alla stessa revisione |
+| Velocità distinta da δ / terminale | Clock verificato a 30/60/144 aggiornamenti per secondo, due rate di playback, Update nativo e arresto al terminale; δ del pendolo resta 0.02 s |
+| Rewind e causalità | Seek/rewind non chiamano Evaluate; la modifica di u₂ ricalcola solo le transizioni 2 e 3 nel caso T=4 e conserva il prefisso |
+| Reset / asset | Ripristino del preset catturato all'apertura, cursore a zero e pausa; override runtime non scrivono gli asset |
+| A03 | Ordine degli eventi, binding prima di Ready, rientranza da observer, due lesson nello stesso workspace, fallimento esplicito e chiusura/riapertura verificati |
+| A04 | Risultati A/B con masse e campioni propri immutati; fallimento numerico successivo conserva configurazione e storia dell'ultimo risultato valido |
+| A01 / regressione matematica F03 | Casi precedenti rieseguiti, legacy/round trip preservati, provider pendolo rifiuta passo assente/non valido, sessione index-only produce 2+3=5 con δ/τ assenti |
+| Regressione F00–F02 | Tre cicli nativi menu/workspace/menu riusciti, incluso uno senza domain reload; URP, camera, pavimento, luce e Volume conservati |
+| Verifica nativa/visiva F04 | Menu/workspace/comandi/ritorno/riapertura nell'Editor; Game View ispezionata con r2, t=2/100, δ=0.02 s, τ=0.04 s; zero errori runtime |
+| Identità dei sorgenti verificati | **179 file di Assets/OptimalControl, zero differenze SHA-256** tra copia Unity verificata e workspace |
+
+Rapporto completo, inventario di **34 file creati e 18 modificati**, API, compatibilità e procedura manuale: [F04_IMPLEMENTATION.md](REVIEWS/F04_IMPLEMENTATION.md). Nessun file preesistente eliminato. I report F00–F03 e A01 restano storici; il loro precedente stato di configurazione non eseguibile è superato dall'assegnazione del provider/scenario di F04.
+
+**Decisioni di perimetro:** indicatore runtime limitato a revisione/timestep/tempo; comandi di verifica nell'Inspector editor, senza anticipare i controlli dello studente F05/F06. La verifica nativa è automatizzata su copia isolata e accompagnata da ispezione manuale della cattura; l'Editor dell'utente resta aperto. Nessun nuovo pacchetto. Il prerequisito «provider concreto disponibile» è soddisfatto dalla creazione prevista nella stessa F04, come già chiarito nella consegna F03.
+
+Evidenze locali: `C:/Users/querz/AppData/Local/Temp/OptCon-F04-3ef1fc98d7284d97a1a460599d552509/`, XML EditMode/PlayMode, log, risultati sessione/smoke, `session-preview.png` e manifest dei sorgenti. A02 rimane da affrontare prima di Formula/HUD; F05–F30 non avviate nella consegna originale di F04.
+
 ## F05 — Visualization primitives e prima dinamica manipolabile
 
+- **Stato:** **completata**, 9 ottobre 2026; tutti i criteri sotto verificati. Nella consegna originale F05 A01/A03/A04 sono preservati e A02 resta per F06, allora non avviata.
 - **Obiettivo:** rendere visibili gli stati e il controllo usando componenti riutilizzabili, e permettere di manipolare la dinamica in Unity.
 - **Prerequisiti:** sessione/command sink funzionanti e storia immutabile disponibile.
 - **Dipendenze:** F04.
@@ -512,8 +544,41 @@ Docs/OPTCON_IMPLEMENTATION_PLAN.md
 - **Criteri di completamento:** ogni punto deriva dalla storia; terzo asse etichettato tempo; freccia di coppia distinguibile da una forza; nessuna formula dinamica nel renderer; layer nascosti non cambiano il modello.
 - **Test:** controllo manuale dei punti/assi/scale e dei controlli; PlayMode mirato che verifica proiezione di due campioni e aggiornamento dei marker dopo un comando. Nessun test sulle sole scelte cromatiche.
 
+### Consegna e verifica di F05
+
+Prima dell'implementazione sono stati controllati stato/evidenze di F04 e i suoi contratti: **179 file applicativi identici alla consegna verificata**, sessione/command sink funzionanti, storia e configurazione del risultato immutabili. Nessuna regressione concreta di A01/A03/A04 richiede di riaprire quelle correzioni.
+
+`PendulumScenario` compone componenti riutilizzabili di Presentation: proiezione dello stato, traiettoria, marker, posa angolare, coppia curva, assi, layer e registry semantico. Corpo, piano di fase e stato-tempo leggono la stessa pubblicazione della sessione; la lunghezza appartiene a `Result.Configuration`, mai ai default editoriali o a un tentativo fallito. I renderer non valutano la dinamica. I buffer float servono soltanto al rendering.
+
+Il corpo è planare, con angolo zero verso il basso e positivo antiorario; il grafico di fase usa `(θ,ω)`, quello 3D `(θ,ω,τ)`. Le scale sono dichiarate: corpo 1.5 unità/m, fase 4 e 1 nelle rispettive unità, stato-tempo 3 / 0.65 / 1.4. Il terzo asse indica tempo fisico in secondi, non posizione; una proiezione fisica rifiuta storie index-only, che possono usare un asse t esplicito. Linee come guide tra campioni, next/ghost assenti al terminale e simbolo di coppia curvo con dimensione fissa evitano significati matematici impliciti.
+
+`LessonInputRouter` usa un clone locale dell'action asset dedicato e gli stessi comandi puri di F04: P play/pausa, frecce step, R reset, A/D variazione dell'input sulla coda, Z azzeramento, 1/2/3 layer. Componente/unità/incremento/policy sono configurabili; la legenda deriva da questi dati. Il binding avviene nell'host prima di Ready e la chiusura scollega consumer e azioni prima di disporre la sessione.
+
+| Criterio / verifica | Esito |
+| --- | --- |
+| Compilazione finale Unity | **PASS**, Unity `6000.3.8f1`, exit 0, nessun errore/warning C#, dopo rimozione degli strumenti temporanei |
+| Tutti gli EditMode | **122/122 PASS**, zero falliti/saltati; 115 regressioni e sette nuovi casi di proiezione |
+| Tutti i PlayMode | **21/21 PASS**, zero falliti/saltati; 15 regressioni e sei nuovi casi F05 |
+| Ogni punto dalla storia | Tutti i 101 punti di entrambe le curve confrontati con i campioni della stessa revisione; marker t/t+1 aggiornati dopo comandi |
+| Coordinate deterministiche | Due campioni noti del pendolo e caso scalare 2+3=5 verificati; nessuna equazione Euler duplicata |
+| Assi / tempo opzionale | Unità/scale/componenti omesse esplicite; asse fisico rifiutato senza secondi, asse t valido senza inventare δ/τ |
+| Coppia / terminale | Freccia curva con segno verificato tramite eventi Keyboard nell'Input System, zero senza freccia, terminale senza u/next/ghost |
+| Layer | Visibilità non altera risultato/cursore; i target nascosti ricevono i campioni aggiornati |
+| Lifecycle/configurazione | Binding visuale/input prima di Ready, chiusura/riapertura, disable/enable e configurazione del risultato verificati; A03/A04 ancora validi |
+| Pendolo / A01 | Preset matematico ed equazioni invariati, δ=0.02 s e τ=0.4 s a t=20; suite A01 legacy/round trip e index-only passata |
+| Regressione nativa | **3/3 cicli menu/workspace/menu PASS**, incluso uno senza domain reload; root/camera/presenter unici, URP/floor/light/Volume conservati, zero script mancanti/errori runtime |
+| Verifica visiva | Game View `1440×979` ispezionata: tre viste, current/next, coppia, assi/unità/scale e controlli leggibili |
+| Identità dei file verificati | **240 file applicativi, zero differenze SHA-256** tra workspace e copia Unity verificata |
+
+Rapporto completo, inventario di **62 file creati e 8 modificati**, API/dipendenze, controlli e procedura manuale: [F05_IMPLEMENTATION.md](REVIEWS/F05_IMPLEMENTATION.md). Il preset cambia solo scenario e descrizione; camera/pavimento e pannello editoriale sono adattati al viewport. Core, Simulation, Content, formule/metriche, altre specifiche/review, PDF, asset URP, ProjectSettings e pacchetti non sono modificati; nessun file preesistente eliminato o `.meta` preesistente cambiato.
+
+**Modalità di verifica e limiti:** prove native su copia isolata, dispositivo Keyboard virtuale con eventi attraverso l'Input System nei PlayMode e ispezione manuale delle catture, senza usare l'Editor aperto dell'utente. Nessuna deviazione funzionale. Inquadratura/scale fisse e dichiarate: valori molto grandi possono uscire dal viewport, senza alterare i dati o introdurre saturazioni. Nessun Formula/HUD, resolver, costo, target, confronto o Lesson Logic anticipato; A02 resta aperto all'inizio di F06.
+
+Evidenze locali: `C:/Users/querz/AppData/Local/Temp/OptCon-F05-b35a9c53a4fe482396eddd580fb8f583/`, XML finali EditMode/PlayMode, log, `visualization-preview.png`, risultati della scena/smoke e manifest SHA-256. **F06–F30 non avviate nella consegna originale F05.**
+
 ## F06 — Formula System e HUD live
 
+- **Stato:** **completata**, 9 ottobre 2026; tutti i criteri sotto verificati. A02 risolto, A01/A03/A04 preservati. F07 non avviata.
 - **Obiettivo:** collegare formula, termini, numeri e target 3D alla stessa revisione/timestep.
 - **Prerequisiti:** binding editoriali, metriche e registry dei target; primo esperimento visibile.
 - **Dipendenze:** F01, F05.
@@ -522,6 +587,36 @@ Docs/OPTCON_IMPLEMENTATION_PLAN.md
 - **Risultato verificabile:** formula `x_(t+1)=f_t(x_t,u_t)` e specializzazione leggibili; numeri live, descrizioni/unità; selezionare x_t/u_t/f_t/x_(t+1) evidenzia il significato nella scena. Timeline e pulsanti controllano la sessione.
 - **Criteri di completamento:** `state.next` non subisce un secondo incremento temporale; valore/highlight risolvono lo stesso campione; f_t mostra modello/parametri; stato terminale «non applicabile» per input/next; formule in asset, non stringhe disperse nei MonoBehaviour. Unicode e lista di termini bastano al slice.
 - **Test:** EditMode del resolver su current/next/terminal, binding assente e unità eterogenee; PlayMode su selezione→highlight e UI/3D della stessa revisione; controllo manuale di font, focus e leggibilità.
+
+### Consegna e verifica di F06
+
+Prerequisiti verificati prima dell'integrazione: F00–F05 completate, **240 file applicativi identici alla consegna F05**, sessione/risultato immutabile, binding editoriali e registry disponibili. Non è stato necessario modificare Core o Simulation.
+
+`RuntimeMetricResolver` in Content è l'unica regola pura di lookup, tipo, forma, selezione e unità. Un vettore n=1 resta Vector; Scalar richiede una metrica scalare reale oppure una componente esplicita. Il binding u_t del prototipo usa ora component=0. `MetricResolution` conserva il risultato della revisione, validità/diagnostico e SampleIndex già risolto. Next non incrementa una seconda volta; δ/τ rimangono opzionali; input/next sono N/A al terminale. **A02 risolto**, con accesso tipizzato estendibile tramite provider senza trasformare gli scalari in vettori.
+
+`FormulaBindingResolver` delega al resolver puro; `FormulaPresenter` legge gli asset e il risultato. Il HUD laterale mostra formula, termini, valori/unità, spiegazioni, selezione e legami semantici. Timeline/input/parametri inviano gli stessi comandi F04. `AppBootstrap` collega il HUD prima di Ready e lo scollega alla chiusura. `HighlightRegistry` riceve ruolo, indice assoluto e revisione; il nuovo segmento evidenzia la transizione salvata per f_t. Modello/parametri vengono da `Result.Configuration`, preservando A04. Formula e 3D sono consumer della stessa pubblicazione.
+
+| Criterio / verifica | Esito |
+| --- | --- |
+| Compilazione finale senza verificatori temporanei | **PASS**, Unity 6000.3.8f1, exit 0, nessun errore/warning C# |
+| Tutti gli EditMode | **150/150 PASS**, zero falliti/saltati: 122 regressioni e 28 nuovi casi resolver/formule |
+| Tutti i PlayMode | **30/30 PASS**, zero falliti/saltati: 21 regressioni e nove nuovi casi HUD |
+| Current/input/next, tipi e unità | Scalar reale, Vector n=1/2/4, selezione esplicita, diagnostici per componente/tipo/forma/unità/scope invalidi; unità eterogenee preservate |
+| SampleIndex / terminale | next @t+1, senza secondo offset; a T input/next/ghost/transizione assenti, nessun valore fittizio |
+| Formula e f_t | Asset discreto generico e specializzazione Euler, termini selezionabili; f_t mostra descrittore e parametri appartenenti al risultato |
+| A01 / A04 | Pendolo δ=.02 s, τ=.4 s a t=20; index-only 2+3=5 senza δ/τ; A/B e fallimento mantengono configurazioni/campioni propri |
+| A03 / revisione condivisa | HUD collegato prima di Ready, stessa sessione/risultato della visualizzazione; rientranza e chiusura/riapertura verificate dalle suite precedenti |
+| Interazione UI e focus | Click Mouse/Input System su un termine, highlight corretto, seek/trasporto/input/parametri reali, guard dei campi e regressione tastiera F05 passati |
+| Rebinding a orizzonte ridotto | Passaggio da T=100 terminale a T=1 mantiene la nuova sessione a t=0; il rendering dello slider non invia comandi |
+| Verifica nativa e visiva | Pendolo/formula/dettaglio/terminale e index-only corrente/terminale: sei Game View 1440×979 ispezionate, zero errori runtime |
+| Regressione nativa | **3/3 cicli menu/workspace/menu PASS**, incluso uno senza domain reload; URP/floor/light/Volume e unicità dei servizi conservati |
+| Identità verificata | **274 file applicativi, zero differenze SHA-256** tra workspace e copia Unity verificata |
+
+Rapporto completo, inventario di **37 file creati e 14 modificati**, contratto A02, copertura dei test, catture e procedura manuale: [F06_IMPLEMENTATION.md](REVIEWS/F06_IMPLEMENTATION.md). Nessun file preesistente eliminato o `.meta` preesistente modificato. Preset matematico del pendolo, Core/Simulation, altre specifiche/review, PDF, URP, SampleScene, Packages e ProjectSettings invariati.
+
+**Modalità e decisioni di perimetro:** automazione nativa su copia isolata con ispezione manuale delle catture; Editor dell'utente preservato. Resolver nel layer superiore Content e template HUD condiviso, senza refactor delle API Core/Simulation. Il fixture index-only è editor/test-only; la conservazione A/B verifica il contratto e non introduce il confronto utente. Nessun costo, target F07, solver, layout matematico complesso o Lesson Logic anticipato. Nessun problema bloccante rimasto; precisione mostrata G6 e inquadratura F05 fissa sono limiti dichiarati.
+
+Evidenze: `C:/Users/querz/AppData/Local/Temp/OptCon-F06-cea2f2e7b0f842608fb60bb30be99819/`, XML/log finali, risultati runtime/smoke e manifest. Due catture sono conservate in `Docs/REVIEWS/F06_FORMULA_HUD.png` e `F06_INDEX_ONLY_HUD.png`. **F07–F30 non avviate.**
 
 ## F07 — Costo, target e confronto limitati al slice
 
@@ -789,6 +884,6 @@ Docs/OPTCON_IMPLEMENTATION_PLAN.md
 
 ## Prossimo passo e limite di questa consegna
 
-**F00–F03 sono completate; il prossimo intervento pianificato è F04, non avviato in questa consegna.** Il percorso fino a F08 valida la pipeline completa prima di produrre il corso; F09–F10 consolidano quanto emerge; F11–F27 producono i capitoli nell'ordine richiesto; F28 chiude le dipendenze applicative; F29–F30 completano polish e consegna.
+**F00–F06 sono completate; il prossimo intervento pianificato è F07, non avviato in questa consegna.** Il percorso fino a F08 valida la pipeline completa prima di produrre il corso; F09–F10 consolidano quanto emerge; F11–F27 producono i capitoli nell'ordine richiesto; F28 chiude le dipendenze applicative; F29–F30 completano polish e consegna.
 
-La consegna corrente comprende soltanto F03 e la diagnostica editor di verifica elencata nell'inventario. Aggiunge matematica/simulazione pure e test dedicati, estende i riferimenti del solo assembly editor e aggiorna questo piano. Conserva bootstrap, navigazione, scene, UI runtime, definizioni/catalogo F01, altre specifiche, PDF, SampleScene, asset URP, ProjectSettings e pacchetti. Il lavoro termina con F03.
+La consegna corrente comprende esclusivamente F06: contratto tipizzato delle metriche, Formula/HUD live, termini/spiegazioni, selezione semantica, timeline e input/parametri. Risolve A02 e conserva A01/A03/A04; nessuna modifica a Core/Simulation, altre specifiche e review precedenti, PDF, SampleScene, asset URP, ProjectSettings e pacchetti. Costi/confronto restano F07, Lesson Logic F08. Il lavoro termina con F06.

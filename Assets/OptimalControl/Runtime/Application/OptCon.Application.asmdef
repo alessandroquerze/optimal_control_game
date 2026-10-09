@@ -1,7 +1,13 @@
 {
     "name": "OptCon.Application",
     "rootNamespace": "OptCon.Application",
-    "references": ["OptCon.Content", "OptCon.Presentation"],
+    "references": [
+        "OptCon.Content",
+        "OptCon.Presentation",
+        "OptCon.Core",
+        "OptCon.Simulation",
+        "Unity.InputSystem"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

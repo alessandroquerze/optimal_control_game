@@ -10,85 +10,89 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c4a65509c5394032a246076299067e3a, type: 3}
-  m_Name: "PendulumPrototype"
-  m_EditorClassIdentifier: "OptCon.Content::OptCon.Content.ExperimentDefinition"
-  id: "prototype.pendulum.experiment"
+  m_Name: PendulumPrototype
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.ExperimentDefinition
+  id: prototype.pendulum.experiment
   schemaVersion: 1
-  contentVersion: "1"
-  title: "Pendolo discreto — preset"
-  description: "Configurazione editoriale. Provider matematico e scenario non ancora assegnati; non eseguibile in F01."
-  model: {fileID: 0}
-  scenarioPrefab: {fileID: 0}
+  contentVersion: 1
+  title: "Pendolo discreto \u2014 preset"
+  description: Preset del pendolo Euler con sessione runtime, visualizzazioni dei
+    campioni e controlli da tastiera. Formula/HUD e percorso guidato restano nelle
+    fasi successive.
+  model: {fileID: 11400000, guid: d530c3ca2a285504a8a0e09f5bbd5c7b, type: 2}
+  scenarioPrefab: {fileID: 1050434337462004145, guid: c2b6424b63be3b74c990525f34d81f24, type: 3}
   stateDimension: 2
   controlDimension: 1
   outputDimension: 1
   stateUnits:
-    - "rad"
-    - "rad/s"
+  - rad
+  - rad/s
   controlUnits:
-    - "N·m"
+  - "N\xB7m"
   outputUnits:
-    - "rad"
+  - rad
   usesDiscreteTime: 1
   discreteTime:
     horizon: 100
+    hasPhysicalTimeStep: 1
     stepSeconds: 0.02
     initialState:
-      - 0.35
-      - 0
+    - 0.35
+    - 0
     defaultControl:
-      - 0
+    - 0
     referenceState:
-      - 0
-      - 0
+    - 0
+    - 0
   parameters:
-    - id: "mass"
-      label: "Massa"
-      description: "Massa positiva del pendolo."
-      valueKind: 0
-      unit: "kg"
-      defaultValue: 1
-      minimum: 0.1
-      maximum: 10
-      step: 0.1
-      modelTarget: "model.mass"
-      recalculation: 0
-    - id: "length"
-      label: "Lunghezza"
-      description: "Lunghezza positiva del pendolo."
-      valueKind: 0
-      unit: "m"
-      defaultValue: 1
-      minimum: 0.1
-      maximum: 10
-      step: 0.1
-      modelTarget: "model.length"
-      recalculation: 0
-    - id: "gravity"
-      label: "Accelerazione gravitazionale"
-      description: "Valore della gravità del modello; non della fisica Unity."
-      valueKind: 0
-      unit: "m/s²"
-      defaultValue: 9.81
-      minimum: 0
-      maximum: 20
-      step: 0.01
-      modelTarget: "model.gravity"
-      recalculation: 0
+  - id: mass
+    label: Massa
+    description: Massa positiva del pendolo.
+    valueKind: 0
+    unit: kg
+    defaultValue: 1
+    minimum: 0.1
+    maximum: 10
+    step: 0.1
+    modelTarget: model.mass
+    recalculation: 0
+  - id: length
+    label: Lunghezza
+    description: Lunghezza positiva del pendolo.
+    valueKind: 0
+    unit: m
+    defaultValue: 1
+    minimum: 0.1
+    maximum: 10
+    step: 0.1
+    modelTarget: model.length
+    recalculation: 0
+  - id: gravity
+    label: Accelerazione gravitazionale
+    description: "Valore della gravit\xE0 del modello; non della fisica Unity."
+    valueKind: 0
+    unit: "m/s\xB2"
+    defaultValue: 9.81
+    minimum: 0
+    maximum: 20
+    step: 0.01
+    modelTarget: model.gravity
+    recalculation: 0
   sources:
-    - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
-      firstPhysicalPage: 33
-      lastPhysicalPage: 33
-      firstSlide: 32
-      lastSlide: 32
-      section: "Dinamica continua del pendolo"
-      usage: 0
-      note: ""
-    - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
-      firstPhysicalPage: 27
-      lastPhysicalPage: 27
-      firstSlide: 26
-      lastSlide: 26
-      section: "Forward Euler"
-      usage: 1
-      note: "La procedura Euler illustrata per il drone è applicata al pendolo: adattamento progettuale, non formula discreta del PDF del pendolo."
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 33
+    lastPhysicalPage: 33
+    firstSlide: 32
+    lastSlide: 32
+    section: Dinamica continua del pendolo
+    usage: 0
+    note: 
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 27
+    lastPhysicalPage: 27
+    firstSlide: 26
+    lastSlide: 26
+    section: Forward Euler
+    usage: 1
+    note: "La procedura Euler illustrata per il drone \xE8 applicata al pendolo:
+      adattamento progettuale, non formula discreta del PDF del pendolo."

@@ -1,4 +1,4 @@
-﻿#if UNITY_EDITOR
+#if UNITY_EDITOR
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,6 +8,7 @@ using OptCon.Application;
 using OptCon.Content;
 using OptCon.Core;
 using OptCon.Presentation;
+using OptCon.Simulation;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -232,6 +233,205 @@ namespace OptCon.Tests
             }
             finally { gameView.position = previousPosition; }
         }
+
+        [UnityTest]
+        public IEnumerator ReadyFollowsCompositionAndBindingAndRejectsReentrantObservers()
+        {
+            var manager = (CourseManager)bootstrap.Navigation;
+            var lesson = manager.Course.Chapters[0].Lessons[0];
+            var updates = new List<NavigationUpdate>();
+            var attempts = new List<bool>();
+            void Observe(NavigationUpdate update)
+            {
+                updates.Add(update);
+                Assert.That(update.Transition.Destination, Is.SameAs(lesson));
+                Assert.That(update.Transition.LessonId, Is.EqualTo(lesson.Id));
+                attempts.Add(manager.ReturnToMenu());
+                attempts.Add(manager.OpenLesson(lesson.Id));
+                if (update.Phase == NavigationPhase.SceneLoaded)
+                {
+                    Assert.That(update.Scene.isLoaded, Is.True);
+                    Assert.That(update.Session, Is.Null);
+                    Assert.That(manager.IsReady, Is.False);
+                }
+                if (update.Phase == NavigationPhase.Ready)
+                {
+                    Assert.That(manager.IsReady, Is.True);
+                    Assert.That(manager.IsTransitioning, Is.False);
+                    Assert.That(update.Session, Is.SameAs(bootstrap.ActiveHost.Session));
+                    Assert.That(Object.FindFirstObjectByType<SessionDiagnosticsPresenter>().BoundSession, Is.SameAs(update.Session));
+                    Assert.That(Root().Q<Label>("lesson-title").text, Is.EqualTo(lesson.Title));
+                    Assert.That(Root().Q<Label>("session-diagnostic").text, Does.Contain("r0"));
+                }
+                else Assert.That(manager.IsReady, Is.False);
+            }
+            void ObserveChanged() { if (manager.IsReady) attempts.Add(manager.ReturnToMenu()); }
+            manager.LifecycleChanged += Observe; manager.Changed += ObserveChanged;
+            Assert.That(manager.OpenLesson(lesson.Id), Is.True);
+            yield return WaitForNavigation();
+            manager.LifecycleChanged -= Observe; manager.Changed -= ObserveChanged;
+            Assert.That(updates.Select(u => u.Phase), Is.EqualTo(new[] { NavigationPhase.Requested, NavigationPhase.SceneLoaded, NavigationPhase.Composing, NavigationPhase.Binding, NavigationPhase.Ready }));
+            Assert.That(updates.Select(u => u.Transition).Distinct().Count(), Is.EqualTo(1));
+            Assert.That(attempts, Is.All.False);
+            Assert.That(manager.ReturnToMenu(), Is.True, "Navigation must become available after dispatch.");
+            yield return WaitForNavigation();
+        }
+
+        [UnityTest]
+        public IEnumerator TwoLessonsSharingWorkspaceHaveDistinctDestinationsAndSessions()
+        {
+            var course = ExtendedCourse(out var second);
+            yield return Restart(course);
+            var manager = (CourseManager)bootstrap.Navigation;
+            Assert.That(manager.OpenLesson(course.Chapters[0].Lessons[1].Id), Is.True);
+            yield return WaitForNavigation();
+            var old = manager.ActiveSession;
+            var oldState = old.State;
+            long previousTransition = manager.State.Transition.Id;
+            var scene = SceneManager.GetActiveScene();
+            int staleCalls = 0; old.Changed += _ => staleCalls++;
+            Assert.That(manager.OpenLesson(second.Id), Is.True);
+            // Same-scene composition is synchronous: no consumer waits for a frame.
+            Assert.That(manager.IsReady, Is.True);
+            Assert.That(manager.State.Transition.Id, Is.GreaterThan(previousTransition));
+            Assert.That(manager.State.Transition.Destination, Is.SameAs(second));
+            Assert.That(manager.ActiveLesson, Is.SameAs(second));
+            Assert.That(SceneManager.GetActiveScene().handle, Is.EqualTo(scene.handle));
+            Assert.That(manager.ActiveSession, Is.Not.SameAs(old));
+            Assert.That(old.State.IsClosed, Is.True);
+            Assert.That(Object.FindFirstObjectByType<SessionDiagnosticsPresenter>().BoundSession, Is.SameAs(manager.ActiveSession));
+            Assert.That(Root().Q<Label>("lesson-title").text, Is.EqualTo(second.Title));
+            Assert.That(old.Execute(SimulationCommand.Reset()), Is.False);
+            manager.ActiveSession.Execute(SimulationCommand.SetInput(0, new NumericVector(3)));
+            Assert.That(staleCalls, Is.Zero);
+            Assert.That(oldState.Result.History.Controls[0][0], Is.Zero);
+            yield return null;
+            Assert.That(Object.FindObjectsByType<ExperimentHost>(FindObjectsSortMode.None).Length, Is.EqualTo(1));
+        }
+
+        [UnityTest]
+        public IEnumerator CloseReopenDisposesSessionsAndDiagnosticSubscriptions()
+        {
+            var manager = (CourseManager)bootstrap.Navigation;
+            string id = manager.Course.Chapters[0].Lessons[0].Id;
+            var closed = new List<SimulationSession>();
+            int staleCalls = 0;
+            for (int cycle = 0; cycle < 2; cycle++)
+            {
+                Assert.That(manager.OpenLesson(id), Is.True);
+                yield return WaitForNavigation();
+                var session = manager.ActiveSession;
+                Assert.That(closed.Contains(session), Is.False);
+                var diagnostic = Object.FindFirstObjectByType<SessionDiagnosticsPresenter>();
+                diagnostic.Bind(session); diagnostic.Bind(session);
+                diagnostic.enabled = false; diagnostic.enabled = true;
+                session.Execute(SimulationCommand.SetInput(0, new NumericVector(2)));
+                Assert.That(Root().Q<Label>("session-diagnostic").text, Does.Contain("r1"));
+                session.Changed += _ => staleCalls++;
+                Assert.That(manager.ReturnToMenu(), Is.True);
+                yield return WaitForNavigation();
+                Assert.That(session.State.IsClosed, Is.True);
+                Assert.That(manager.ActiveSession, Is.Null);
+                Assert.That(bootstrap.ActiveHost, Is.Null);
+                Assert.That(Object.FindObjectsByType<ExperimentHost>(FindObjectsSortMode.None), Is.Empty);
+                Assert.That(session.Execute(SimulationCommand.Play()), Is.False);
+                closed.Add(session);
+            }
+            Assert.That(staleCalls, Is.Zero);
+        }
+
+        [UnityTest]
+        public IEnumerator PlaybackAdapterUsesPresentationSecondsAtDifferentFrequenciesAndStopsAtTerminal()
+        {
+            var manager = (CourseManager)bootstrap.Navigation;
+            Assert.That(manager.OpenLesson(manager.Course.Chapters[0].Lessons[0].Id), Is.True);
+            yield return WaitForNavigation();
+            var session = manager.ActiveSession;
+            var clock = bootstrap.ActiveHost.GetComponent<PlaybackController>();
+            clock.enabled = false;
+            foreach (int frequency in new[] { 30, 60, 144 })
+            {
+                session.Execute(SimulationCommand.Reset());
+                session.Execute(SimulationCommand.SetPlaybackRate(10));
+                var result = session.State.Result;
+                session.Execute(SimulationCommand.Play());
+                for (int frame = 0; frame < frequency; frame++) clock.Tick(1d / frequency);
+                Assert.That(session.State.Sample.Timestep, Is.EqualTo(10));
+                Assert.That(session.State.Sample.DiscretizationStepSeconds, Is.EqualTo(0.02));
+                Assert.That(session.State.Sample.PhysicalTimeSeconds, Is.EqualTo(0.2));
+                session.Execute(SimulationCommand.SetPlaybackRate(20));
+                for (int frame = 0; frame < frequency; frame++) clock.Tick(1d / frequency);
+                Assert.That(session.State.Sample.Timestep, Is.EqualTo(30));
+                Assert.That(session.State.Result, Is.SameAs(result));
+                session.Execute(SimulationCommand.Pause()); clock.Tick(1);
+                Assert.That(session.State.Sample.Timestep, Is.EqualTo(30));
+            }
+            session.Execute(SimulationCommand.Play()); clock.Tick(100);
+            Assert.That(session.State.Sample.IsTerminal, Is.True);
+            Assert.That(session.State.IsPlaying, Is.False);
+            Assert.That(session.State.Sample.AppliedControl, Is.Null);
+            session.Execute(SimulationCommand.Reset());
+            session.Execute(SimulationCommand.SetPlaybackRate(100));
+            clock.enabled = true; session.Execute(SimulationCommand.Play());
+            float deadline = Time.realtimeSinceStartup + 5;
+            while (session.State.Sample.Timestep == 0)
+            {
+                Assert.That(Time.realtimeSinceStartup, Is.LessThan(deadline));
+                yield return null;
+            }
+            session.Execute(SimulationCommand.Pause());
+        }
+
+        [UnityTest]
+        public IEnumerator RuntimeOverridesAndResetNeverWriteAuthoredAssets()
+        {
+            var manager = (CourseManager)bootstrap.Navigation;
+            var lesson = manager.Course.Chapters[0].Lessons[0];
+            var experiment = lesson.Experiment;
+            string before = EditorJsonUtility.ToJson(experiment);
+            string modelBefore = EditorJsonUtility.ToJson(experiment.Model);
+            Assert.That(manager.OpenLesson(lesson.Id), Is.True);
+            yield return WaitForNavigation();
+            var session = manager.ActiveSession;
+            var preset = session.State.Result.Configuration;
+            Assert.That(session.Execute(SimulationCommand.SetInput(2, new NumericVector(3), InputEditScope.Tail)), Is.True);
+            Assert.That(session.Execute(SimulationCommand.SetParameter("model.mass", 2)), Is.True);
+            Assert.That(session.Execute(SimulationCommand.SetInitialState(new NumericVector(0, 1))), Is.True);
+            Assert.That(session.Execute(SimulationCommand.Reset()), Is.True);
+            Assert.That(session.State.Result.Configuration, Is.SameAs(preset));
+            Assert.That(session.State.Sample.CurrentState.ToArray(), Is.EqualTo(new[] { 0.35, 0d }));
+            Assert.That(((PendulumConfiguration)preset.Model).Physics.Mass, Is.EqualTo(1));
+            Assert.That(EditorJsonUtility.ToJson(experiment), Is.EqualTo(before));
+            Assert.That(EditorJsonUtility.ToJson(experiment.Model), Is.EqualTo(modelBefore));
+        }
+
+        [UnityTest]
+        public IEnumerator CompositionFailureNeverPublishesReadyAndLeavesReturnToMenuAvailable()
+        {
+            var course = ExtendedCourse(out var unavailable);
+            var experiment = Object.Instantiate(unavailable.Experiment);
+            owned.Add(experiment);
+            Edit(experiment, "discreteTime.hasPhysicalTimeStep", p => p.boolValue = false);
+            Edit(unavailable, "experiment", p => p.objectReferenceValue = experiment);
+            yield return Restart(course);
+            var manager = (CourseManager)bootstrap.Navigation;
+            var phases = new List<NavigationPhase>();
+            manager.LifecycleChanged += u => phases.Add(u.Phase);
+            Assert.That(manager.OpenLesson(unavailable.Id), Is.True);
+            yield return WaitForNavigation();
+            Assert.That(phases.Last(), Is.EqualTo(NavigationPhase.Failed));
+            Assert.That(phases, Has.No.Member(NavigationPhase.Ready));
+            Assert.That(manager.IsReady, Is.False);
+            Assert.That(manager.ActiveSession, Is.Null);
+            Assert.That(bootstrap.ActiveHost, Is.Null);
+            Assert.That(manager.StatusMessage, Does.Contain("physical step"));
+            Assert.That(Root().Q<Button>("return-to-menu").enabledSelf, Is.True);
+            Assert.That(manager.ReturnToMenu(), Is.True);
+            yield return WaitForNavigation();
+            Assert.That(manager.IsReady, Is.True);
+            AssertContentScene(MenuPath);
+        }
+
         [Test]
         public void MathematicalCoreAndPresentationRespectAssemblyBoundaries()
         {
@@ -321,6 +521,7 @@ namespace OptCon.Tests
             public CourseDefinition Course { get; }
             public LessonDefinition ActiveLesson => Course.Chapters[0].Lessons[0];
             public bool IsTransitioning => false;
+            public bool IsReady => true;
             public string StatusMessage => string.Empty;
             public int ListenerCount { get; private set; }
             public int ReturnRequests { get; private set; }

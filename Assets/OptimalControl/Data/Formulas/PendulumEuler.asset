@@ -1,0 +1,250 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e039087c2f4e1ab6f8639bc051389d, type: 3}
+  m_Name: PendulumEuler
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.FormulaDefinition
+  id: dynamics.pendulum.explicit-euler
+  schemaVersion: 1
+  contentVersion: 1
+  title: "Pendolo \xB7 Euler esplicito"
+  description: 'Discretizzazione del pendolo continuo: entrambe le componenti usano
+    x_t.'
+  expression: "\u03B8_(t+1) = \u03B8_t + \u03B4 \u03C9_t\n\u03C9_(t+1) = \u03C9_t
+    + \u03B4 [\u2212(g/l) sin \u03B8_t + u_t/(m l\xB2)]"
+  sourceTranscription: "\u03B8\u0307=\u03C9; \u03C9\u0307=\u2212(g/l)sin\u03B8+u/(m
+    l\xB2); x_next=x+\u03B4 f_CT(x,u)"
+  assumptions: "Adattamento di I p.27 al pendolo di I p.33; angoli in rad, coppia
+    in N\xB7m. t \xE8 un indice, \u03C4 un tempo fisico; il playback non altera \u03B4."
+  terms:
+  - id: state.current
+    symbol: "\u03B8_t"
+    label: Angolo corrente
+    meaning: Componente 0 dello stato salvato, senza avvolgimento automatico.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - rad
+    value:
+      metricId: state.current
+      kind: 0
+      scope: 0
+      component: 0
+      numericFormat: G6
+    highlight:
+      semanticRole: state.current
+      scope: 0
+  - id: omega.current
+    symbol: "\u03C9_t"
+    label: "Velocit\xE0 angolare"
+    meaning: Componente 1 dello stesso stato, non una posizione.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - rad/s
+    value:
+      metricId: state.current
+      kind: 0
+      scope: 0
+      component: 1
+      numericFormat: G6
+    highlight:
+      semanticRole: state.current
+      scope: 0
+  - id: input.applied
+    symbol: u_t
+    label: Coppia
+    meaning: "Componente 0 dell\u2019input vettoriale. Non \xE8 una forza lineare."
+    rows: 1
+    columns: 1
+    componentUnits:
+    - "N\xB7m"
+    value:
+      metricId: input.applied
+      kind: 0
+      scope: 0
+      component: 0
+      numericFormat: G6
+    highlight:
+      semanticRole: input.applied
+      scope: 0
+  - id: theta.next
+    symbol: "\u03B8_(t+1)"
+    label: Angolo successivo
+    meaning: "Componente 0 del campione successivo gi\xE0 salvato."
+    rows: 1
+    columns: 1
+    componentUnits:
+    - rad
+    value:
+      metricId: state.next
+      kind: 0
+      scope: 1
+      component: 0
+      numericFormat: G6
+    highlight:
+      semanticRole: state.next
+      scope: 1
+  - id: omega.next
+    symbol: "\u03C9_(t+1)"
+    label: "Velocit\xE0 successiva"
+    meaning: Componente 1 dello stesso campione successivo.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - rad/s
+    value:
+      metricId: state.next
+      kind: 0
+      scope: 1
+      component: 1
+      numericFormat: G6
+    highlight:
+      semanticRole: state.next
+      scope: 1
+  - id: time.index
+    symbol: t
+    label: Indice discreto
+    meaning: Numero del campione, non secondi.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - 1
+    value:
+      metricId: time.index
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: 
+      scope: 0
+  - id: time.physical
+    symbol: "\u03C4"
+    label: Tempo fisico
+    meaning: Tempo del campione salvato nella discretizzazione; assente nei modelli
+      index-only.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - s
+    value:
+      metricId: time.physical
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: 
+      scope: 0
+  - id: time.step
+    symbol: "\u03B4"
+    label: Passo fisico
+    meaning: "Passo matematico della discretizzazione, distinto dalla velocit\xE0
+      di playback."
+    rows: 1
+    columns: 1
+    componentUnits:
+    - s
+    value:
+      metricId: time.step
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: 
+      scope: 0
+  - id: parameter.model.mass
+    symbol: m
+    label: Massa
+    meaning: Massa appartenente alla configurazione di questa revisione.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - kg
+    value:
+      metricId: parameter.model.mass
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: 
+      scope: 0
+  - id: parameter.model.length
+    symbol: l
+    label: Lunghezza
+    meaning: Lunghezza appartenente alla configurazione di questa revisione.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - m
+    value:
+      metricId: parameter.model.length
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: 
+      scope: 0
+  - id: parameter.model.gravity
+    symbol: g
+    label: "Gravit\xE0"
+    meaning: "Accelerazione di gravit\xE0 della configurazione di questa revisione."
+    rows: 1
+    columns: 1
+    componentUnits:
+    - "m/s\xB2"
+    value:
+      metricId: parameter.model.gravity
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: 
+      scope: 0
+  - id: dynamics.model
+    symbol: f_t
+    label: Modello Euler
+    meaning: Entrambe le equazioni usano lo stato precedente; adattamento dichiarato
+      del pendolo continuo.
+    rows: 0
+    columns: 0
+    componentUnits: []
+    value:
+      metricId: dynamics.model
+      kind: 3
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: dynamics.transition
+      scope: 0
+  sources:
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 27
+    lastPhysicalPage: 27
+    firstSlide: 26
+    lastSlide: 26
+    section: Euler explicito
+    usage: 1
+    note: 'Adattamento dichiarato: Euler applicato al modello continuo del pendolo.'
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 33
+    lastPhysicalPage: 33
+    firstSlide: 32
+    lastSlide: 32
+    section: Pendolo continuo
+    usage: 1
+    note: 'Adattamento dichiarato: Euler applicato al modello continuo del pendolo.'
