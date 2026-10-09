@@ -22,13 +22,16 @@ namespace OptCon.Editor
         {
             if (experiment == null) throw new ArgumentException("Select a pendulum ExperimentDefinition asset in the Project.", nameof(experiment));
             if (!experiment.UsesDiscreteTime) throw new ArgumentException("The pendulum diagnostic requires discrete time.", nameof(experiment));
+            double? physicalStep = experiment.DiscreteTime?.StepSeconds;
+            if (!physicalStep.HasValue)
+                throw new ArgumentException("The Euler pendulum requires a physical step in seconds.", nameof(experiment));
             double Parameter(string target)
             {
                 var values = experiment.Parameters.Where(p => p != null && p.ModelTarget == target).ToArray();
                 if (values.Length != 1) throw new ArgumentException($"Expected one parameter targeting '{target}'.", nameof(experiment));
                 return values[0].DefaultValue;
             }
-            var model = new PendulumDynamics(new PendulumParameters(Parameter("model.mass"), Parameter("model.length"), Parameter("model.gravity")), experiment.DiscreteTime.StepSeconds);
+            var model = new PendulumDynamics(new PendulumParameters(Parameter("model.mass"), Parameter("model.length"), Parameter("model.gravity")), physicalStep.Value);
             var descriptor = model.Descriptor;
             if (experiment.StateDimension != descriptor.Dimensions.State || experiment.ControlDimension != descriptor.Dimensions.Control || experiment.OutputDimension != descriptor.Dimensions.Output
                 || !experiment.StateUnits.SequenceEqual(descriptor.StateUnits) || !experiment.ControlUnits.SequenceEqual(descriptor.ControlUnits) || !experiment.OutputUnits.SequenceEqual(descriptor.OutputUnits))

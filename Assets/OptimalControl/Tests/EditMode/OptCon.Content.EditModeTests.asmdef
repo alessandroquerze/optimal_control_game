@@ -1,7 +1,7 @@
 {
     "name": "OptCon.Content.EditModeTests",
     "rootNamespace": "OptCon.Tests",
-    "references": ["OptCon.Core", "OptCon.Content", "OptCon.Editor"],
+    "references": ["OptCon.Core", "OptCon.Content", "OptCon.Editor", "OptCon.Simulation"],
     "includePlatforms": ["Editor"],
     "autoReferenced": false,
     "optionalUnityReferences": ["TestAssemblies"]

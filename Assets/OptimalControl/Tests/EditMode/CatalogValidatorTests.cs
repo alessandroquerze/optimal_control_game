@@ -6,6 +6,7 @@ using NUnit.Framework;
 using OptCon.Content;
 using OptCon.Core;
 using OptCon.Editor;
+using OptCon.Simulation;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -241,7 +242,7 @@ namespace OptCon.Tests
         }
 
         [Test]
-        public void AnExperimentWithoutPhysicalTimeDoesNotNeedAnArtificialTimeline()
+        public void AStaticExperimentDoesNotNeedAnArtificialTimeline()
         {
             Edit(experiment, "usesDiscreteTime", p => p.boolValue = false);
             Edit(experiment, "stateDimension", p => p.intValue = 0);
@@ -256,8 +257,139 @@ namespace OptCon.Tests
         }
 
         [Test]
-        public void NativeAssetRoundTripPreservesGraphUnicodeDoubleDefaultsAndStableIds()
+        public void IndexOnlyDiscreteCatalogProducesFiveWithoutPhysicalStepOrTime()
         {
+            ConfigureIndexOnlyScalarExperiment();
+            AssertValid(CatalogValidator.ValidateCatalog(course));
+            var preset = experiment.DiscreteTime;
+            Assert.That(experiment.UsesDiscreteTime, Is.True);
+            Assert.That(preset.HasPhysicalTimeStep, Is.False);
+            Assert.That(preset.StepSeconds, Is.Null);
+            var controls = Enumerable.Repeat(new NumericVector(preset.CopyDefaultControl()), preset.Horizon).ToArray();
+            var history = RolloutEngine.Rollout(new AdditionDynamics(preset.StepSeconds),
+                new NumericVector(preset.CopyInitialState()), controls, experiment.Id);
+            Assert.That(history.Horizon, Is.EqualTo(1));
+            Assert.That(history.States[1][0], Is.EqualTo(5));
+            for (int t = 0; t <= history.Horizon; t++)
+            {
+                Assert.That(history.GetSnapshot(t).DiscretizationStepSeconds, Is.Null);
+                Assert.That(history.GetSnapshot(t).PhysicalTimeSeconds, Is.Null);
+            }
+        }
+
+        [TestCase(0)]
+        [TestCase(-0.02)]
+        [TestCase(double.NaN)]
+        [TestCase(double.PositiveInfinity)]
+        [TestCase(double.NegativeInfinity)]
+        public void AnAbsentPhysicalStepDoesNotExposeOrValidateItsInactivePayload(double inactiveValue)
+        {
+            ConfigureIndexOnlyScalarExperiment();
+            Edit(experiment, "discreteTime.stepSeconds", p => p.doubleValue = inactiveValue);
+            AssertValid(CatalogValidator.ValidateCatalog(course, verifySourceFiles: false));
+            Assert.That(experiment.DiscreteTime.StepSeconds, Is.Null);
+        }
+
+        [TestCase(0)]
+        [TestCase(-1)]
+        public void IndexOnlyDynamicsStillRequirePositiveHorizon(int horizon)
+        {
+            ConfigureIndexOnlyScalarExperiment();
+            Edit(experiment, "discreteTime.horizon", p => p.intValue = horizon);
+            HasIssue("TimePreset");
+        }
+
+        [TestCase("initialState")]
+        [TestCase("defaultControl")]
+        public void IndexOnlyDynamicsStillValidateVectorDimensions(string field)
+        {
+            ConfigureIndexOnlyScalarExperiment();
+            Edit(experiment, "discreteTime." + field, p => p.arraySize = 0);
+            HasIssue("PresetVector");
+        }
+
+        [TestCase("initialState", double.NaN)]
+        [TestCase("defaultControl", double.PositiveInfinity)]
+        public void IndexOnlyDynamicsStillRejectNonFiniteVectors(string field, double value)
+        {
+            ConfigureIndexOnlyScalarExperiment();
+            Edit(experiment, "discreteTime." + field + ".Array.data[0]", p => p.doubleValue = value);
+            HasIssue("PresetVector");
+        }
+
+        [Test]
+        public void IndexOnlyDynamicsStillRequirePositiveStateDimension()
+        {
+            ConfigureIndexOnlyScalarExperiment();
+            Edit(experiment, "stateDimension", p => p.intValue = 0);
+            HasIssue("ModelDimensions");
+        }
+
+        [TestCase(0)]
+        [TestCase(-0.02)]
+        [TestCase(double.NaN)]
+        [TestCase(double.PositiveInfinity)]
+        [TestCase(double.NegativeInfinity)]
+        public void ADeclaredPhysicalStepMustBePositiveAndFinite(double value)
+        {
+            Edit(experiment, "discreteTime.hasPhysicalTimeStep", p => p.boolValue = true);
+            Edit(experiment, "discreteTime.stepSeconds", p => p.doubleValue = value);
+            HasIssue("TimePreset");
+        }
+
+        [TestCase(false, 0.02)]
+        [TestCase(true, 0)]
+        [TestCase(true, -0.02)]
+        [TestCase(true, double.NaN)]
+        [TestCase(true, double.PositiveInfinity)]
+        [TestCase(true, double.NegativeInfinity)]
+        public void EulerPendulumRejectsMissingOrInvalidPhysicalStep(bool present, double value)
+        {
+            Edit(experiment, "discreteTime.hasPhysicalTimeStep", p => p.boolValue = present);
+            Edit(experiment, "discreteTime.stepSeconds", p => p.doubleValue = value);
+            Assert.That(() => PendulumRolloutDiagnostic.Generate(experiment), Throws.InstanceOf<ArgumentException>());
+        }
+
+        [Test]
+        public void ExistingPendulumPresetPreservesPhysicalMeaningAndEveryRolloutSample()
+        {
+            var original = AssetDatabase.LoadAssetAtPath<CourseDefinition>(CoursePath).Chapters[0].Lessons[0].Experiment;
+            string before = EditorJsonUtility.ToJson(original);
+            Assert.That(original.DiscreteTime.HasPhysicalTimeStep, Is.True);
+            Assert.That(original.DiscreteTime.StepSeconds, Is.EqualTo(0.02));
+            var actual = PendulumRolloutDiagnostic.Generate(original);
+            var expected = RolloutEngine.Rollout(new PendulumDynamics(new PendulumParameters(1, 1, 9.81), 0.02),
+                new NumericVector(0.35, 0), Enumerable.Repeat(new NumericVector(0), 100).ToArray(), original.Id);
+            Assert.That(actual.Horizon, Is.EqualTo(100));
+            Assert.That(actual.GetSnapshot(100).PhysicalTimeSeconds, Is.EqualTo(2));
+            for (int t = 0; t <= actual.Horizon; t++)
+                Assert.That(actual.States[t].ToArray(), Is.EqualTo(expected.States[t].ToArray()), "Preserved pendulum sample " + t);
+            Assert.That(EditorJsonUtility.ToJson(original), Is.EqualTo(before));
+        }
+
+        [Test]
+        public void LegacyPresetWithoutPresenceFlagImportsAsPhysicalTime()
+        {
+            fixtureFolder = "Assets/__OptConF01Tests_" + Guid.NewGuid().ToString("N");
+            AssetDatabase.CreateFolder("Assets", Path.GetFileName(fixtureFolder));
+            string originalPath = AssetDatabase.GetAssetPath(AssetDatabase.LoadAssetAtPath<CourseDefinition>(CoursePath).Chapters[0].Lessons[0].Experiment);
+            string legacyYaml = System.Text.RegularExpressions.Regex.Replace(File.ReadAllText(originalPath),
+                @"(?m)^\s*hasPhysicalTimeStep:.*\r?\n", string.Empty);
+            string fixturePath = fixtureFolder + "/LegacyPreset.asset";
+            File.WriteAllText(fixturePath, legacyYaml);
+            AssetDatabase.ImportAsset(fixturePath, ImportAssetOptions.ForceSynchronousImport);
+            var legacy = AssetDatabase.LoadAssetAtPath<ExperimentDefinition>(fixturePath);
+            Assert.That(legacy, Is.Not.Null);
+            Assert.That(legacy.DiscreteTime.HasPhysicalTimeStep, Is.True);
+            Assert.That(legacy.DiscreteTime.StepSeconds, Is.EqualTo(0.02));
+            Assert.That(PendulumRolloutDiagnostic.Generate(legacy).GetSnapshot(100).PhysicalTimeSeconds, Is.EqualTo(2));
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void NativeAssetRoundTripPreservesGraphUnicodeDoubleDefaultsAndStableIds(bool physicalTime)
+        {
+            if (!physicalTime) ConfigureIndexOnlyScalarExperiment();
             fixtureFolder = "Assets/__OptConF01Tests_" + Guid.NewGuid().ToString("N");
             AssetDatabase.CreateFolder("Assets", Path.GetFileName(fixtureFolder));
             string savedCoursePath = null;
@@ -279,11 +411,12 @@ namespace OptCon.Tests
             var reloaded = AssetDatabase.LoadAssetAtPath<CourseDefinition>(movedPath);
             Assert.That(reloaded.Id, Is.EqualTo(stableId));
             var reloadedLesson = reloaded.Chapters[0].Lessons[0];
-            Assert.That(reloadedLesson.Experiment.DiscreteTime.StepSeconds, Is.EqualTo(0.02));
-            Assert.That(reloadedLesson.Experiment.DiscreteTime.InitialState[0], Is.EqualTo(0.35));
+            Assert.That(reloadedLesson.Experiment.DiscreteTime.HasPhysicalTimeStep, Is.EqualTo(physicalTime));
+            Assert.That(reloadedLesson.Experiment.DiscreteTime.StepSeconds, Is.EqualTo(physicalTime ? (double?)0.02 : null));
+            Assert.That(reloadedLesson.Experiment.DiscreteTime.InitialState[0], Is.EqualTo(physicalTime ? 0.35 : 2));
             Assert.That(reloadedLesson.Formulas[0].Terms[0].Symbol, Is.EqualTo("x_t"));
-            Assert.That(reloadedLesson.Formulas[0].Terms[0].Meaning, Does.Contain("θ"));
-            Assert.That(reloadedLesson.Experiment.StateUnits, Is.EqualTo(new[] { "rad", "rad/s" }));
+            Assert.That(reloadedLesson.Formulas[0].Terms[0].Meaning, Does.Contain(physicalTime ? "θ" : "scalare"));
+            Assert.That(reloadedLesson.Experiment.StateUnits, Is.EqualTo(physicalTime ? new[] { "rad", "rad/s" } : new[] { "1" }));
             Assert.That(reloadedLesson.Sources[0].Document, Is.SameAs(reloaded.Sources[0]));
             AssertValid(CatalogValidator.ValidateCatalog(reloaded));
         }
@@ -301,6 +434,38 @@ namespace OptCon.Tests
             var copy = Object.Instantiate(asset);
             owned.Add(copy);
             return copy;
+        }
+
+        private void ConfigureIndexOnlyScalarExperiment()
+        {
+            Edit(experiment, "discreteTime.hasPhysicalTimeStep", p => p.boolValue = false);
+            Edit(experiment, "discreteTime.stepSeconds", p => p.doubleValue = 0);
+            Edit(experiment, "discreteTime.horizon", p => p.intValue = 1);
+            Edit(experiment, "stateDimension", p => p.intValue = 1);
+            Edit(experiment, "outputDimension", p => p.intValue = 0);
+            Strings(experiment, "stateUnits", "1");
+            Strings(experiment, "controlUnits", "1");
+            Strings(experiment, "outputUnits");
+            Edit(experiment, "discreteTime.initialState", p => { p.arraySize = 1; p.GetArrayElementAtIndex(0).doubleValue = 2; });
+            Edit(experiment, "discreteTime.defaultControl.Array.data[0]", p => p.doubleValue = 3);
+            Edit(experiment, "discreteTime.referenceState", p => p.arraySize = 0);
+            Edit(experiment, "parameters", p => p.arraySize = 0);
+            Edit(formula, "assumptions", p => p.stringValue = "Dinamica scalare discreta senza tempo fisico: x_next = x + u.");
+            foreach (int term in new[] { 0, 1, 3 })
+            {
+                Edit(formula, "terms.Array.data[" + term + "].rows", p => p.intValue = 1);
+                Strings(formula, "terms.Array.data[" + term + "].componentUnits", "1");
+                Edit(formula, "terms.Array.data[" + term + "].meaning", p => p.stringValue = "Valore scalare adimensionale.");
+            }
+        }
+
+        // Fixture only: integration of authored optional time with the existing pure rollout API.
+        private sealed class AdditionDynamics : IDiscreteDynamics
+        {
+            public ModelDescriptor Descriptor { get; }
+            public AdditionDynamics(double? physicalStep) => Descriptor = new ModelDescriptor("fixture.addition", "1",
+                new ModelDimensions(1, 1, 0), new[] { "1" }, new[] { "1" }, Array.Empty<string>(), physicalStep);
+            public NumericVector Evaluate(int t, NumericVector x, NumericVector u) => new NumericVector(x[0] + u[0]);
         }
 
         private void RewireSources(ContentDefinition owner)

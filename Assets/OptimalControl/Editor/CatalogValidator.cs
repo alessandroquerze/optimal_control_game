@@ -274,8 +274,11 @@ namespace OptCon.Editor
                     if (preset == null) Error(experiment, "MissingPreset", "discreteTime", "Discrete dynamics require an initial preset.");
                     else
                     {
-                        if (preset.Horizon < 1 || !Finite(preset.StepSeconds) || preset.StepSeconds <= 0)
-                            Error(experiment, "TimePreset", "discreteTime", "Use a positive transition count and finite positive step in seconds.");
+                        if (preset.Horizon < 1)
+                            Error(experiment, "TimePreset", "discreteTime.horizon", "Use a positive transition count.");
+                        double? physicalStep = preset.StepSeconds;
+                        if (physicalStep.HasValue && (!Finite(physicalStep.Value) || physicalStep.Value <= 0))
+                            Error(experiment, "TimePreset", "discreteTime.stepSeconds", "A declared physical step must be finite and strictly positive in seconds.");
                         Vector(experiment, "discreteTime.initialState", preset.InitialState, experiment.StateDimension);
                         Vector(experiment, "discreteTime.defaultControl", preset.DefaultControl, experiment.ControlDimension);
                         if (preset.ReferenceState.Count > 0) Vector(experiment, "discreteTime.referenceState", preset.ReferenceState, experiment.StateDimension);

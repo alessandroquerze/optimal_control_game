@@ -17,7 +17,8 @@ namespace OptCon.Content
         [SerializeField] private string[] stateUnits = Array.Empty<string>();
         [SerializeField] private string[] controlUnits = Array.Empty<string>();
         [SerializeField] private string[] outputUnits = Array.Empty<string>();
-        [SerializeField] private bool usesDiscreteTime;
+        [SerializeField, Tooltip("Has discrete transitions indexed by t; does not imply a physical duration in seconds.")]
+        private bool usesDiscreteTime;
         [SerializeField] private DiscreteTimePreset discreteTime = new DiscreteTimePreset();
         [SerializeField] private LessonParameterDefinition[] parameters = Array.Empty<LessonParameterDefinition>();
         [SerializeField] private SourceReference[] sources = Array.Empty<SourceReference>();
@@ -37,18 +38,22 @@ namespace OptCon.Content
         public IReadOnlyList<SourceReference> Sources => ContentCollections.View(sources);
     }
 
-    /// <summary>Authored initial configuration, never a live state or a calculated trajectory.</summary>
+    /// <summary>Authored discrete transitions with optional physical time; never a playback rate or live state.</summary>
     [Serializable]
     public sealed class DiscreteTimePreset
     {
         [SerializeField] private int horizon;
+        // Legacy presets omitted this field and always interpreted stepSeconds as physical time.
+        [SerializeField, Tooltip("Whether the discrete transition has a physical step in seconds. Disable for index-only dynamics.")]
+        private bool hasPhysicalTimeStep = true;
         [SerializeField] private double stepSeconds;
         [SerializeField] private double[] initialState = Array.Empty<double>();
         [SerializeField] private double[] defaultControl = Array.Empty<double>();
         [SerializeField] private double[] referenceState = Array.Empty<double>();
 
         public int Horizon => horizon;
-        public double StepSeconds => stepSeconds;
+        public bool HasPhysicalTimeStep => hasPhysicalTimeStep;
+        public double? StepSeconds => hasPhysicalTimeStep ? stepSeconds : (double?)null;
         public IReadOnlyList<double> InitialState => ContentCollections.View(initialState);
         public IReadOnlyList<double> DefaultControl => ContentCollections.View(defaultControl);
         public IReadOnlyList<double> ReferenceState => ContentCollections.View(referenceState);
