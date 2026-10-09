@@ -1,0 +1,6 @@
+{
+    "name": "OptCon.Core",
+    "rootNamespace": "OptCon.Core",
+    "references": [],
+    "noEngineReferences": true
+}

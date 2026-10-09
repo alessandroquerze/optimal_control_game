@@ -1,0 +1,23 @@
+# Unity generated folders
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+
+# IDE
+.vs/
+.idea/
+.vscode/
+
+# Visual Studio / Rider generated files
+*.csproj
+*.sln
+*.user
+*.suo
+*.tmp
+
+# Builds
+[Bb]uild/
+[Bb]uilds/

@@ -1,0 +1,6 @@
+{
+    "name": "OptCon.Simulation",
+    "rootNamespace": "OptCon.Simulation",
+    "references": ["OptCon.Core"],
+    "noEngineReferences": true
+}

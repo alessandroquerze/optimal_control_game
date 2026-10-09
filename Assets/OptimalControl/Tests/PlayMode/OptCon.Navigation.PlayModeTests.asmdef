@@ -1,0 +1,7 @@
+{
+    "name": "OptCon.Navigation.PlayModeTests",
+    "rootNamespace": "OptCon.Tests",
+    "references": ["OptCon.Application", "OptCon.Content", "OptCon.Presentation", "OptCon.Core", "Unity.InputSystem"],
+    "autoReferenced": false,
+    "optionalUnityReferences": ["TestAssemblies"]
+}

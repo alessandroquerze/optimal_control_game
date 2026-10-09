@@ -1,0 +1,5 @@
+{
+    "name": "OptCon.Presentation",
+    "rootNamespace": "OptCon.Presentation",
+    "references": ["OptCon.Content"]
+}

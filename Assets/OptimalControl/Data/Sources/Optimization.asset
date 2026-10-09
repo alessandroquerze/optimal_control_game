@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d0fbe0f5b584fd2bee30f15813ad847, type: 3}
+  m_Name: "Optimization"
+  m_EditorClassIdentifier: "OptCon.Content::OptCon.Content.SourceDocumentDefinition"
+  id: "O"
+  schemaVersion: 1
+  contentVersion: "1"
+  title: "Nonlinear Optimization"
+  description: "Fonte primaria del corso di Giuseppe Notarstefano."
+  author: "Giuseppe Notarstefano"
+  documentDate: "2026-09-14"
+  projectRelativePath: "Docs/OPTCON-RL_optimization_2026_09_14.pdf"
+  sha256: "6c1dba877ca102f055845618f73205b71450b819e0cc09e149e1150017e458ea"
+  physicalPageCount: 81
+  numberingNotes: "Copertina, separatori e versioni progressive; slide fino a 73. Versioni: pp. 38–40, 44–45, 59–62, 64–65. Nessun offset fisso pagina/slide."

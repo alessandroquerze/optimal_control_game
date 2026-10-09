@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d0fbe0f5b584fd2bee30f15813ad847, type: 3}
+  m_Name: "OptimalityConditions"
+  m_EditorClassIdentifier: "OptCon.Content::OptCon.Content.SourceDocumentDefinition"
+  id: "K"
+  schemaVersion: 1
+  contentVersion: "1"
+  title: "Optimality Conditions for Optimal Control"
+  description: "Fonte primaria del corso di Giuseppe Notarstefano."
+  author: "Giuseppe Notarstefano"
+  documentDate: "2026-10-08"
+  projectRelativePath: "Docs/OPTCON-RL_optimality_conditions_KKT_2026_10_08.pdf"
+  sha256: "937db0d7a574f549eb1181f22207ccfa886ae6d79206720718692bfd6015bd97"
+  physicalPageCount: 20
+  numberingNotes: "Copertina e versione aggiuntiva della slide 7 alle pp. 8–9; slide fino a 18. Nessun offset fisso pagina/slide."

@@ -1,0 +1,24 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="CourseMenu.uss" />
+    <ui:VisualElement name="shell" class="shell">
+        <ui:ScrollView name="menu-panel" class="menu-panel">
+            <ui:Label text="OPTIMAL CONTROL · LABORATORIO INTERATTIVO" class="eyebrow" />
+            <ui:Label name="catalog-kind" class="badge" />
+            <ui:Label name="course-title" class="course-title" />
+            <ui:Label name="course-description" class="description" />
+            <ui:Label text="Scegli una lezione" class="section-title" />
+            <ui:VisualElement name="chapter-list" class="chapter-list" />
+            <ui:Label text="L'apertura di un'anteprima non completa la lezione." class="note" />
+        </ui:ScrollView>
+        <ui:VisualElement name="lesson-panel" class="lesson-panel">
+            <ui:Button name="return-to-menu" text="← Torna al corso" class="back-button" />
+            <ui:Label text="ANTEPRIMA DELLA LEZIONE" class="eyebrow" />
+            <ui:Label name="lesson-title" class="lesson-title" />
+            <ui:Label text="Obiettivo" class="section-title" />
+            <ui:Label name="lesson-objective" class="description" />
+            <ui:Label name="lesson-description" class="description" />
+            <ui:Label text="Questo workspace mostra il contesto della lezione. La simulazione e i controlli dell'esperimento non sono ancora disponibili." class="note" />
+        </ui:VisualElement>
+        <ui:Label name="navigation-status" class="status" />
+    </ui:VisualElement>
+</ui:UXML>
