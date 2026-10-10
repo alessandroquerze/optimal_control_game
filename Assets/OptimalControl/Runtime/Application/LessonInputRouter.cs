@@ -88,7 +88,8 @@ namespace OptCon.Application
             var state = session.State;
             if (state.Sample.IsTerminal) return;
             // Input edits operate on the requested sequence; displayed results always use Result.Configuration.
-            var values = state.RequestedConfiguration.Controls[state.Sample.Timestep].ToArray();
+            if (!state.TryGetEditableInput(state.Sample.Timestep, out var editable)) return;
+            var values = editable.ToArray();
             values[controlComponent] = direction == 0 ? 0 : values[controlComponent] + direction * controlIncrement;
             if (NumericValidation.IsFinite(values[controlComponent]))
                 commands.Execute(SimulationCommand.SetInput(state.Sample.Timestep, new NumericVector(values), editScope));

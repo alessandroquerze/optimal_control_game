@@ -44,12 +44,12 @@ namespace OptCon.Presentation
         }
         private void ChangeInput(int component, double value)
         {
-            if (state == null || state.Sample.IsTerminal) return;
+            if (state == null || !state.TryGetEditableInput(state.Sample.Timestep, out var editable)) return;
             if (!NumericValidation.IsFinite(value)) { root.Q<Label>("parameter-status").text = "Input rifiutato: valore non finito."; RenderFields(); return; }
-            var values = state.RequestedConfiguration.Controls[state.Sample.Timestep].ToArray(); values[component] = value;
+            var values = editable.ToArray(); values[component] = value;
             commands.Execute(SimulationCommand.SetInput(state.Sample.Timestep, new NumericVector(values), scope.index == 0 ? InputEditScope.Single : InputEditScope.Tail));
         }
-        public void Render(SessionState value) { state = value; root.Q<Label>("parameter-status").text = value.Error ?? "Valori della revisione valida; le modifiche ricalcolano la simulazione."; RenderFields(); }
+        public void Render(SessionState value) { state = value; root.Q<Label>("parameter-status").text = value.InputEditingDiagnostic ?? "Valori della revisione valida; le modifiche ricalcolano la simulazione."; RenderFields(); }
         private void RenderFields()
         {
             foreach (var entry in parameters)
@@ -57,12 +57,13 @@ namespace OptCon.Presentation
                 var value = state.Result.Configuration.Model.Parameters.FirstOrDefault(p => p.Target == entry.target);
                 entry.field.SetEnabled(value != null); if (value != null) entry.field.SetValueWithoutNotify(value.Value);
             }
-            scope.SetEnabled(!state.Sample.IsTerminal);
+            bool editable = state.TryGetEditableInput(state.Sample.Timestep, out _);
+            scope.SetEnabled(editable);
             root.Q<VisualElement>("input-fields").style.display = state.Sample.IsTerminal ? DisplayStyle.None : DisplayStyle.Flex;
             root.Q<Label>("input-unavailable").style.display = state.Sample.IsTerminal ? DisplayStyle.Flex : DisplayStyle.None;
             for (int i = 0; i < inputs.Count; i++)
             {
-                inputs[i].SetEnabled(!state.Sample.IsTerminal);
+                inputs[i].SetEnabled(editable);
                 if (!state.Sample.IsTerminal) inputs[i].SetValueWithoutNotify(state.Sample.AppliedControl[i]);
             }
         }

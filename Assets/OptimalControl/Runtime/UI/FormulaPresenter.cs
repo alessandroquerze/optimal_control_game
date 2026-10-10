@@ -13,7 +13,7 @@ namespace OptCon.Presentation
     {
         private readonly VisualElement root;
         private readonly HighlightRegistry registry;
-        private readonly FormulaBindingResolver resolver = new FormulaBindingResolver();
+        private readonly FormulaBindingResolver resolver;
         private readonly IReadOnlyList<FormulaDefinition> formulas;
         private readonly Dictionary<string, Label> values = new Dictionary<string, Label>();
         private readonly Dictionary<string, Button> buttons = new Dictionary<string, Button>();
@@ -26,8 +26,9 @@ namespace OptCon.Presentation
         public int Cursor { get; private set; }
         public IReadOnlyDictionary<string, MetricResolution> Resolutions { get; private set; }
         public FormulaDefinition Formula => formulas[formulaIndex];
-        public FormulaPresenter(VisualElement root, IReadOnlyList<FormulaDefinition> formulas, HighlightRegistry registry)
+        public FormulaPresenter(VisualElement root, IReadOnlyList<FormulaDefinition> formulas, HighlightRegistry registry, RuntimeMetricResolver metrics)
         {
+            resolver = new FormulaBindingResolver(metrics);
             this.root = root; this.formulas = formulas; this.registry = registry;
             choice = root.Q<DropdownField>("formula-choice");
             choice.choices = formulas.Select(f => f.Title + " · " + f.Id).ToList(); choice.SetValueWithoutNotify(choice.choices[0]);

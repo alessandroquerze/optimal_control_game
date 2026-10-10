@@ -1,6 +1,6 @@
 # Optimal Control — roadmap operativa
 
-Data della revisione: 10 ottobre 2026. **31 fasi, da F00 a F30.** **F00–F07 completate e verificate il 9 ottobre 2026; F08 completata e verificata il 10 ottobre 2026.** F09–F30 restano pianificate e non avviate. La revisione documentale iniziale è conservata; l'implementazione corrente comprende foundation, catalogo, navigazione, core matematico/simulativo puro, sessione runtime, primitive visuali, controlli della dinamica, Formula/HUD live con binding tipizzati, costi discreti, target, confronto A/B e primo vertical slice didattico con Lesson Logic.
+Data della revisione: 10 ottobre 2026. **31 fasi, da F00 a F30.** **F00–F07 completate e verificate il 9 ottobre 2026; F08 e F09 completate e verificate il 10 ottobre 2026.** F10–F30 restano pianificate e non avviate. La revisione documentale iniziale è conservata; l'implementazione corrente comprende foundation, catalogo, navigazione, core matematico/simulativo puro, sessione runtime, primitive visuali, controlli della dinamica, Formula/HUD live con binding tipizzati, costi discreti, target, confronto A/B, primo vertical slice didattico con Lesson Logic, validazione consolidata e progressione persistente versionata.
 
 ## Specifica, fonti e risultato della revisione
 
@@ -694,6 +694,7 @@ Evidenze: `C:/Users/querz/AppData/Local/Temp/OptCon-F08-ec9d91964e83410993697f48
 
 ## F09 — Stabilizzazione, validazione e progressione persistente
 
+- **Stato:** **completata**, 10 ottobre 2026; tutti i criteri sotto verificati. AF08-01/02/03 preservati; AF08-04/05/06/07 risolti. **F10 non iniziata.**
 - **Obiettivo:** correggere i problemi emersi nel slice e rendere affidabili contenuti, transizioni e salvataggi.
 - **Prerequisiti:** slice accettato e osservazioni d'uso raccolte; schema dei dati runtime/editor già distinto.
 - **Dipendenze:** F08.
@@ -702,6 +703,14 @@ Evidenze: `C:/Users/querz/AppData/Local/Temp/OptCon-F08-ec9d91964e83410993697f48
 - **Risultato verificabile:** contenuti invalidi producono errori localizzati; riavviando l'app il progresso valido resta; riordinare capitoli/lezioni conserva l'identità dei completamenti.
 - **Criteri di completamento:** niente dipendenze circolari tra assembly; validazione di ID/cicli/capability/unità/metriche/scene/pagine; nessun listener residuo; dati non finiti mantengono identificabile l'ultima revisione valida. Versione dello schema e del contenuto impedisce di promuovere automaticamente il completamento del prototipo.
 - **Test:** EditMode su validatori, migrazione del salvataggio e prerequisiti; PlayMode di transizioni ripetute e risultato obsoleto scartato se esistono lavori asincroni. Non introdurre asincronia solo per poterla testare.
+
+### Consegna e verifiche F09
+
+Progressione separata da catalogo e runtime: completamenti per courseId/lessonId/versione/schema, store JSON v1 nel percorso applicativo e store in memoria sostituibile. Prerequisiti orientativi come previsto dall'architettura; nessuna promozione del prototipo a C1.L1. Commit dopo pubblicazione educativa riuscita e fine del notification scope, verificando destinazione, lifetime, risultato e consumer disponibili. Reset/restart non duplicano il credito.
+
+AF08-04: dominio di editing input indisponibile dopo richiesta fallita, con recupero/reset comune a HUD/tastiera/Inspector. AF08-05: target/tipo/unità confrontati col provider. AF08-06: resolver/condition registry composti e passati coerentemente a runtime e validatori. AF08-07: completion text neutro. CourseContentValidator/BindingValidator consolidano i controlli e diagnosticano capability non ancora eseguibili.
+
+Unity 6000.3.8f1: **268/268 EditMode, 64/64 PlayMode**, zero falliti/saltati; compilazione finale exit 0 senza errori/warning C#. Percorso nativo F08, file/reload anche in nuovo processo Unity, seconda lesson/prerequisiti/identità, pendolo/index-only, NonRepresentable, Enter fallito, richiesta T1 fallita e recuperi: PASS. Tre smoke menu/workspace/menu, incluso senza domain reload: PASS. **359 file applicativi identici alla copia verificata**. Report, inventario e procedura: [F09_IMPLEMENTATION.md](REVIEWS/F09_IMPLEMENTATION.md). **READY FOR F10; F10 non iniziata.**
 
 ## F10 — Authoring formule e prova di estensibilità
 
@@ -936,6 +945,6 @@ Evidenze: `C:/Users/querz/AppData/Local/Temp/OptCon-F08-ec9d91964e83410993697f48
 
 ## Prossimo passo e limite di questa consegna
 
-**F00–F08 sono completate; il prossimo intervento pianificato è F09, non avviato in questa consegna.** Il percorso fino a F08 valida la pipeline completa prima di produrre il corso; F09–F10 consolidano quanto emerge; F11–F27 producono i capitoli nell'ordine richiesto; F28 chiude le dipendenze applicative; F29–F30 completano polish e consegna.
+**F00–F09 sono completate; il prossimo intervento pianificato è F10, non avviato in questa consegna.** Il percorso fino a F08 valida la pipeline completa prima di produrre il corso; F09 consolida validazione, lifecycle e progresso; F10 introdurrà authoring formule e prova del secondo esperimento; F11–F27 producono i capitoli nell'ordine richiesto; F28 chiude le dipendenze applicative; F29–F30 completano polish e consegna.
 
-La consegna corrente comprende esclusivamente F08: Lesson Logic data-driven, controlli/disclosure, formule/layer, condizioni/risposte e primo percorso didattico completo, attraverso F04–F07 esistenti. Conserva A01–A04; Core e Simulation invariati. Altre specifiche e review precedenti, PDF, scene, asset URP, ProjectSettings e pacchetti invariati. Nessuna persistenza, produzione dei capitoli o polish finale. Il lavoro termina con F08.
+La consegna corrente comprende esclusivamente F09, documentata in [F09_IMPLEMENTATION.md](REVIEWS/F09_IMPLEMENTATION.md). Preserva A01–A04 e AF08-01/02/03, risolve AF08-04/05/06/07 e aggiunge progressione persistente senza completare contenuti di produzione. Asset, scene, prefab, PDF, specifiche/review precedenti, URP, ProjectSettings e pacchetti invariati. Nessun contratto di esperimento statico, layout matematico o polish F10 e successivi introdotto. Il lavoro termina con F09.

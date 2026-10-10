@@ -29,10 +29,10 @@ namespace OptCon.Presentation
         {
             var panel = root.Q<VisualElement>("lesson-progress"); panel.style.display = state.StepCount == 0 ? DisplayStyle.None : DisplayStyle.Flex;
             var step = state.Step;
-            root.Q<Label>("lesson-step-title").text = state.IsFreeExploration ? "Esplorazione libera" : state.IsCompleted ? "Percorso del prototipo completato" :
+            root.Q<Label>("lesson-step-title").text = state.IsFreeExploration ? "Esplorazione libera" : state.IsCompleted ? "Lezione completata" :
                 (state.StepIndex + 1) + "/" + state.StepCount + " · " + step?.Title;
             root.Q<Label>("lesson-step-objective").text = state.IsFreeExploration ? "Prova gli strumenti. Il completamento didattico richiede il percorso guidato." : step?.Objective;
-            root.Q<Label>("lesson-instruction").text = state.IsCompleted ? "Hai collegato stato, input, transizione, traiettoria e costo. Questo completa soltanto il prototipo; nessun'altra lezione è completata." : state.IsFreeExploration ? "Reset/R ripristina il preset e rimuove A; Ricomincia torna al percorso guidato." : step?.Instruction;
+            root.Q<Label>("lesson-instruction").text = state.IsCompleted ? "Hai completato il percorso guidato di questa lezione." : state.IsFreeExploration ? "Reset/R ripristina il preset e rimuove A; Ricomincia torna al percorso guidato." : step?.Instruction;
             root.Q<Label>("lesson-help").text = step?.Help;
             root.Q<VisualElement>("lesson-help-panel").style.display = !state.IsFreeExploration && !string.IsNullOrEmpty(step?.Help) ? DisplayStyle.Flex : DisplayStyle.None;
             root.Q<Label>("lesson-question").text = state.IsFreeExploration || state.IsCompleted ? "" : step?.Question;

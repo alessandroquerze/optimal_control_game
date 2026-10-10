@@ -25,6 +25,7 @@ namespace OptCon.Presentation
         private Action<VisualizationStatus> statusCallback;
         private IVisualizationStatus visualization;
         private Label visualizationDiagnostic;
+        private RuntimeMetricResolver metrics;
         public ILessonRuntime BoundLesson => lessonRuntime;
         public FormulaPresenter Formula { get; private set; }
         public SimulationSession BoundSession => session;
@@ -48,8 +49,10 @@ namespace OptCon.Presentation
             for (var element = focus; element != null; element = element.parent) if (element is SliderInt) return true;
             return false;
         }
-        public void Bind(LessonDefinition destination, SimulationSession value, HighlightRegistry registry, ILessonRuntime runtime = null, IVisualizationStatus visualStatus = null)
+        public void Bind(LessonDefinition destination, SimulationSession value, HighlightRegistry registry, ILessonRuntime runtime = null, IVisualizationStatus visualStatus = null, RuntimeMetricResolver metricResolver = null)
         {
+            // Standalone/test binding is itself a composition boundary; leaf presenters never create providers.
+            metrics = metricResolver ?? new RuntimeMetricResolver();
             Disconnect(); lesson = destination; session = value; highlights = registry; lessonRuntime = runtime; visualization = visualStatus;
             if (isActiveAndEnabled) Connect();
         }
@@ -58,11 +61,11 @@ namespace OptCon.Presentation
             if (session == null || lesson == null || subscribed) return;
             var root = GetComponent<UIDocument>().rootVisualElement.Q<VisualElement>("lesson-hud");
             if (root == null || lesson.Formulas.Count == 0) throw new InvalidOperationException("Lesson HUD requires its visual tree and formula definitions.");
-            Formula = new FormulaPresenter(root, lesson.Formulas, highlights);
+            Formula = new FormulaPresenter(root, lesson.Formulas, highlights, metrics);
             ICommandSink commands = lessonRuntime ?? (ICommandSink)session;
             timeline = new TimelinePresenter(root, commands);
             parameters = new ParameterPanelPresenter(root, lesson.Experiment, commands, session.State);
-            costs = new CostPanelPresenter(root, commands, session.State);
+            costs = new CostPanelPresenter(root, commands, session.State, metrics);
             visualizationDiagnostic = root.Q<Label>("visualization-diagnostic");
             if (visualizationDiagnostic == null) { visualizationDiagnostic = new Label { name = "visualization-diagnostic" }; root.Insert(0, visualizationDiagnostic); }
             visualizationDiagnostic.AddToClassList("hud-note");

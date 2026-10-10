@@ -11,11 +11,13 @@ namespace OptCon.Presentation
         private ICourseNavigation navigation;
         private bool subscribed;
         private Button backButton;
+        private ICourseProgress progress;
 
-        public void Bind(ICourseNavigation value)
+        public void Bind(ICourseNavigation value, ICourseProgress courseProgress = null)
         {
             Unsubscribe();
             navigation = value;
+            progress = courseProgress;
             if (isActiveAndEnabled) Subscribe();
             Render();
         }
@@ -33,12 +35,14 @@ namespace OptCon.Presentation
         {
             if (navigation == null || subscribed) return;
             navigation.Changed += Render;
+            if (progress != null) progress.Changed += Render;
             subscribed = true;
         }
 
         private void Unsubscribe()
         {
             if (navigation != null && subscribed) navigation.Changed -= Render;
+            if (progress != null && subscribed) progress.Changed -= Render;
             subscribed = false;
         }
 
@@ -59,7 +63,7 @@ namespace OptCon.Presentation
             menu.style.display = inLesson ? DisplayStyle.None : DisplayStyle.Flex;
             overview.style.display = inLesson ? DisplayStyle.Flex : DisplayStyle.None;
             root.Q<VisualElement>("shell").EnableInClassList("workspace", inLesson);
-            root.Q<Label>("navigation-status").text = navigation.StatusMessage;
+            root.Q<Label>("navigation-status").text = navigation.StatusMessage + (string.IsNullOrEmpty(progress?.Diagnostic) ? "" : "\n" + progress.Diagnostic);
             if (inLesson)
             {
                 root.Q<Label>("lesson-title").text = navigation.ActiveLesson.Title;
@@ -73,6 +77,9 @@ namespace OptCon.Presentation
                     backButton.clicked += ReturnToMenu;
                 }
                 backButton.SetEnabled(!navigation.IsTransitioning);
+                var saved = overview.Q<Label>("persistent-progress");
+                if (saved == null) { saved = new Label { name = "persistent-progress" }; overview.Insert(1, saved); }
+                saved.text = ProgressText(navigation.ActiveLesson.Id);
             }
             else
             {
@@ -95,10 +102,18 @@ namespace OptCon.Presentation
                         button.AddToClassList("lesson-button");
                         button.SetEnabled(!navigation.IsTransitioning);
                         section.Add(button);
+                        section.Add(new Label(ProgressText(id)) { name = "progress-" + id });
                     }
                     list.Add(section);
                 }
             }
+        }
+        private string ProgressText(string id)
+        {
+            if (progress == null) return "";
+            var status = progress.GetStatus(id);
+            return (status.IsCompleted ? "Completamento salvato" : "Non completata")
+                + (status.MissingPrerequisiteIds.Count == 0 ? " · Disponibile" : " · Esplorabile; prerequisiti consigliati mancanti: " + string.Join(", ", status.MissingPrerequisiteIds));
         }
     }
 }

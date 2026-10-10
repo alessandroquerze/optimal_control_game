@@ -45,7 +45,9 @@ namespace OptCon.Simulation
             {
                 case SimulationCommandKind.Reset: return Revise(() => preset, true);
                 case SimulationCommandKind.SetHorizon: return Revise(() => requested.WithHorizon(command.Index));
-                case SimulationCommandKind.SetInput: return Revise(() => requested.WithInput(command.Index, command.Vector, command.Scope));
+                case SimulationCommandKind.SetInput:
+                    if (!State.TryGetEditableInput(command.Index, out _)) return false;
+                    return Revise(() => requested.WithInput(command.Index, command.Vector, command.Scope));
                 case SimulationCommandKind.SetParameter: return Revise(() =>
                 {
                     if (rules.TryGetValue(command.Target ?? string.Empty, out var rule)) rule.Validate(command.Value);

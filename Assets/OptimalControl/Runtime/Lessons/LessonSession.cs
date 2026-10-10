@@ -17,13 +17,17 @@ namespace OptCon.Application
         private long generation;
         private bool free, completed, busy, dispatching, closed;
         private string answer, feedback, entryError;
+        private readonly string contentVersion;
+        private readonly int schemaVersion;
         private sealed class EntryFailure : InvalidOperationException
         { public EntryFailure(string message) : base(message) { } }
         public LessonPresentationState Presentation { get; private set; }
         public event Action<LessonPresentationState> Changed;
+        public event Action<LessonCompletion> CompletionValidated;
         public LessonSession(LessonDefinition definition, SimulationSession simulation, LessonConditionRegistry registry = null, IReadOnlyList<string> availableLayers = null)
         {
             this.simulation = simulation ?? throw new ArgumentNullException(nameof(simulation)); plan = new LessonPlan(definition);
+            contentVersion = definition.ContentVersion; schemaVersion = definition.SchemaVersion;
             var parameterTargets = simulation.State.Result.Configuration.Model.Parameters.Concat(simulation.State.Result.Configuration.Cost?.Parameters ?? Array.Empty<OptCon.Core.ModelParameterValue>()).Select(p => p.Target).ToArray();
             foreach (var step in plan.Steps)
             {
@@ -79,7 +83,7 @@ namespace OptCon.Application
             if (Blocked) return false;
             using (simulation.Notifications.Enter())
             {
-                bool success = true; Exception unexpected = null; busy = true;
+                bool success = true; Exception unexpected = null; busy = true; bool wasCompleted = completed;
                 try { action(); }
                 catch (EntryFailure exception)
                 {
@@ -96,12 +100,20 @@ namespace OptCon.Application
                 finally { busy = false; Refresh(); }
                 Publish();
                 if (unexpected != null) System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(unexpected).Throw();
+                if (!wasCompleted && completed)
+                {
+                    var receipt = new LessonCompletion(this, plan.LessonId, contentVersion, schemaVersion, simulation.State.Result, generation);
+                    dispatching = true;
+                    try { CompletionValidated?.Invoke(receipt); }
+                    catch { receipt.Cancelled = true; throw; }
+                    finally { dispatching = false; }
+                }
                 return success;
             }
         }
         public bool Next()
         {
-            if (Blocked || !Presentation.CanAdvance) return false;
+            if (Blocked || !Presentation.CanAdvance || simulation.State.IsClosed || simulation.State.Error != null || simulation.LastPublicationFailure != null) return false;
             return Transition(() => { if (index + 1 < plan.Steps.Count) Enter(index + 1, false); else { RequireEntry(SimulationCommand.Pause(), index); completed = true; } });
         }
         public bool Previous()
@@ -164,7 +176,11 @@ namespace OptCon.Application
         }
         public void Dispose()
         {
-            if (closed) return; closed = true; simulation.Changed -= OnSimulation; Changed = null; facts.Clear();
+            if (closed) return; closed = true; simulation.Changed -= OnSimulation; Changed = null; CompletionValidated = null; facts.Clear();
         }
+        internal bool IsCurrentCompletion(LessonCompletion receipt) => !closed && completed && !free && entryError == null
+            && Presentation.IsCompleted && Presentation.Error == null && Presentation.ConditionsMet.All(v => v)
+            && receipt.Generation == generation && ReferenceEquals(receipt.Result, simulation.State.Result)
+            && !simulation.State.IsClosed && simulation.State.Error == null && simulation.LastPublicationFailure == null;
     }
 }

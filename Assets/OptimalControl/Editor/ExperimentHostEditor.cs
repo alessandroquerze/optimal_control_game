@@ -36,7 +36,9 @@ namespace OptCon.Editor
             if (rate != state.SamplesPerSecond) session.Execute(SimulationCommand.SetPlaybackRate(rate));
             inputIndex = EditorGUILayout.IntSlider("Input sample", inputIndex, 0, state.Sample.Horizon - 1);
             inputScope = (InputEditScope)EditorGUILayout.EnumPopup("Input scope", inputScope);
-            var input = state.RequestedConfiguration.Controls[inputIndex].ToArray();
+            if (!state.TryGetEditableInput(inputIndex, out var editable))
+                EditorGUILayout.HelpBox(state.InputEditingDiagnostic ?? "Input unavailable at this index.", MessageType.Info);
+            var input = editable?.ToArray() ?? System.Array.Empty<double>();
             bool changed = false;
             for (int i = 0; i < input.Length; i++)
             {

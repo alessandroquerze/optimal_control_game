@@ -132,7 +132,7 @@ namespace OptCon.Tests
             Assert.That(Session.State.Result.Configuration.Controls.All(u => u[0] == 3), Is.True);
             var a = Session.State.Result;
             var copy = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/OptimalControl/UI/LessonHud.uxml").CloneTree();
-            using (var retained = new FormulaPresenter(copy, lesson.Formulas, null))
+            using (var retained = new FormulaPresenter(copy, lesson.Formulas, null, bootstrap.Services.Metrics))
             {
                 retained.Render(a, 0); Root.Q<DoubleField>("parameter-model.mass").value = 2; var b = Session.State.Result;
                 Assert.That(b, Is.Not.SameAs(a)); Assert.That(Hud.Formula.DisplayedResult, Is.SameAs(b));

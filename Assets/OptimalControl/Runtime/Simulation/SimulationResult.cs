@@ -29,6 +29,15 @@ namespace OptCon.Simulation
         public bool IsPlaying { get; }
         public bool IsClosed { get; }
         public double SamplesPerSecond { get; }
+        // A failed request is not an input-editing domain. Correct its parameters or reset first.
+        public string InputEditingDiagnostic => IsClosed ? "Session closed." : Error != null
+            ? "Input editing unavailable after a failed request. Correct the request or Reset. " + Error : null;
+        public bool TryGetEditableInput(int index, out OptCon.Core.NumericVector input)
+        {
+            input = null;
+            if (InputEditingDiagnostic != null || index < 0 || index >= RequestedConfiguration.Horizon) return false;
+            input = RequestedConfiguration.Controls[index]; return true;
+        }
         internal SessionState(SimulationResult result, SimulationConfiguration requested, int cursor,
             long attempt, string error, bool playing, double samplesPerSecond, bool closed, ComparisonSnapshot comparison = null)
         {

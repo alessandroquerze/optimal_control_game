@@ -14,12 +14,13 @@ namespace OptCon.Presentation
         private readonly VisualElement root;
         private readonly List<Action> cleanup = new List<Action>();
         private readonly Dictionary<string, DoubleField> fields = new Dictionary<string, DoubleField>();
-        private readonly RuntimeMetricResolver resolver = new RuntimeMetricResolver();
+        private readonly RuntimeMetricResolver resolver;
         private readonly IntegerField horizon;
         private readonly Button save, clear;
         public SimulationResult DisplayedResult { get; private set; }
-        public CostPanelPresenter(VisualElement root, ICommandSink commands, SessionState initial)
+        public CostPanelPresenter(VisualElement root, ICommandSink commands, SessionState initial, RuntimeMetricResolver metrics)
         {
+            resolver = metrics ?? throw new ArgumentNullException(nameof(metrics));
             this.root = root;
             var list = root.Q<VisualElement>("cost-parameters"); list.Clear();
             if (initial.Result.Configuration.Cost != null) foreach (var parameter in initial.Result.Configuration.Cost.Parameters)

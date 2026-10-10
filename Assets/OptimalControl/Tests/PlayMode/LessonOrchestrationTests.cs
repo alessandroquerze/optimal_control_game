@@ -186,7 +186,8 @@ namespace OptCon.Tests
             Assert.That(Hud.DisplayedState.Result,Is.SameAs(bootstrap.ActiveHost.GetComponent<ExperimentVisualization>().DisplayedState.Result));
             Assert.That(bootstrap.ActiveHost.GetComponentInChildren<CostContributionVisualizer>(true).DisplayedResult,Is.SameAs(Hud.Formula.DisplayedResult));
             Next();Assert.That(Lesson.Presentation.IsCompleted,Is.True);Assert.That(Lesson.Presentation.LessonId,Is.EqualTo("prototype.pendulum"));
-            Assert.That(EditorJsonUtility.ToJson(bootstrap.Navigation.ActiveLesson),Is.EqualTo(authored));Assert.That(Root.Q<Label>("lesson-instruction").text,Does.Contain("nessun'altra lezione"));
+            Assert.That(EditorJsonUtility.ToJson(bootstrap.Navigation.ActiveLesson),Is.EqualTo(authored));Assert.That(Root.Q<Label>("lesson-instruction").text,Does.Contain("questa lezione"));
+            Assert.That(bootstrap.Progress.GetStatus("prototype.pendulum").IsCompleted, Is.True);
         }
         [UnityTest] public IEnumerator CostStepRestrictsParametersAndRetainsTheSameRevisionInAllConsumers()
         {

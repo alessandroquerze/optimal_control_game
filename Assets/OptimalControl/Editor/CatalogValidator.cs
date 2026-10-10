@@ -7,6 +7,8 @@ using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using OptCon.Content;
 using OptCon.Simulation;
+using OptCon.Application;
+using OptCon.Presentation;
 using UnityEditor;
 using UnityEngine;
 
@@ -43,6 +45,8 @@ namespace OptCon.Editor
     public static class CatalogValidator
     {
         public static CatalogValidationResult ValidateCatalog(CourseDefinition course, string projectRoot = null, bool verifySourceFiles = true)
+            => ValidateCatalog(course, projectRoot, verifySourceFiles, new CourseRuntimeServices());
+        public static CatalogValidationResult ValidateCatalog(CourseDefinition course, string projectRoot, bool verifySourceFiles, CourseRuntimeServices services)
         {
             var result = new CatalogValidationResult();
             if (course == null)
@@ -51,7 +55,7 @@ namespace OptCon.Editor
                 return result;
             }
             new CatalogCheck(course, projectRoot ?? Directory.GetParent(UnityEngine.Application.dataPath).FullName,
-                verifySourceFiles, result).Run();
+                verifySourceFiles, result, services ?? new CourseRuntimeServices()).Run();
             return result;
         }
 
@@ -61,13 +65,18 @@ namespace OptCon.Editor
         /// Provider-specific mathematical validation is introduced with the actual providers.
         /// </summary>
         public static CatalogValidationResult ValidateExecutionConfiguration(CourseDefinition course, string projectRoot = null, bool verifySourceFiles = true)
+            => ValidateExecutionConfiguration(course, projectRoot, verifySourceFiles, new CourseRuntimeServices());
+        public static CatalogValidationResult ValidateExecutionConfiguration(CourseDefinition course, string projectRoot, bool verifySourceFiles, CourseRuntimeServices services)
         {
-            var result = ValidateCatalog(course, projectRoot, verifySourceFiles);
+            services = services ?? new CourseRuntimeServices();
+            var result = ValidateCatalog(course, projectRoot, verifySourceFiles, services);
             if (course == null) return result;
             foreach (var experiment in course.Chapters.Where(c => c != null)
                 .SelectMany(c => c.Lessons).Where(l => l != null)
                 .Select(l => l.Experiment).Where(e => e != null).Distinct())
             {
+                if (!experiment.UsesDiscreteTime)
+                    result.Add(experiment, "UnsupportedRuntimeCapability", "usesDiscreteTime", "Current host requires discrete dynamics. Static experiments require the F10 contract.");
                 if (experiment.Model == null)
                     result.Add(experiment, "MissingModelProvider", "model", "No concrete mathematical provider is assigned.");
                 else if (experiment.UsesDiscreteTime)
@@ -87,6 +96,8 @@ namespace OptCon.Editor
                 }
                 if (experiment.ScenarioPrefab == null || !PrefabUtility.IsPartOfPrefabAsset(experiment.ScenarioPrefab))
                     result.Add(experiment, "MissingScenarioPrefab", "scenarioPrefab", "A scenario prefab asset is required for execution.");
+                else if (experiment.ScenarioPrefab.GetComponent<ExperimentHost>() == null)
+                    result.Add(experiment, "MissingScenarioHost", "scenarioPrefab", "Scenario root requires ExperimentHost.");
             }
             // Validate bindings against an actual immutable provider result, using the same resolver as the HUD.
             foreach (var lesson in course.Chapters.Where(c => c != null).SelectMany(c => c.Lessons).Where(l => l != null).Distinct())
@@ -98,12 +109,15 @@ namespace OptCon.Editor
                     using (var session = experiment.Model.CreateSession(experiment))
                     {
                         ValidateEntryDomains(lesson, session.State.Result.Configuration, result);
-                        foreach (var formula in lesson.Formulas.Where(f => f != null))
-                            foreach (var term in formula.Terms.Where(t => t != null))
-                            {
-                                var binding = new RuntimeMetricResolver().Resolve(term, session.State.Result, 0);
-                                if (binding.Validity == MetricValidity.Invalid) result.Add(formula, "RuntimeBinding", "terms." + term.Id, binding.Diagnostic);
-                            }
+                        var configuration = session.State.Result.Configuration;
+                        var targets = configuration.Model.Parameters.Concat(configuration.Cost?.Parameters ?? Array.Empty<OptCon.Core.ModelParameterValue>()).Select(p => p.Target).ToArray();
+                        var layers = experiment.ScenarioPrefab == null ? Array.Empty<string>() : experiment.ScenarioPrefab.GetComponent<LayerController>()?.Ids ?? Array.Empty<string>();
+                        foreach (var step in lesson.Steps.Where(s => s != null))
+                        {
+                            foreach (var target in step.EditableParameterTargets.Where(t => !targets.Contains(t))) result.Add(lesson, "UnknownStepParameter", "steps." + step.Id + ".editableParameterTargets", "Unknown provider target: " + target);
+                            foreach (var layer in step.VisibleLayerIds.Where(l => !layers.Contains(l))) result.Add(lesson, "UnknownStepLayer", "steps." + step.Id + ".visibleLayerIds", "Unknown scenario layer: " + layer);
+                        }
+                        BindingValidator.Validate(lesson, session.State.Result, services.Metrics, result);
                     }
                 }
                 catch (Exception exception) when (exception is ArgumentException || exception is InvalidOperationException || exception is RolloutException || exception is ArithmeticException)
@@ -162,13 +176,15 @@ namespace OptCon.Editor
             private readonly Dictionary<string, ContentDefinition> identities = new Dictionary<string, ContentDefinition>(StringComparer.Ordinal);
             private readonly Dictionary<string, LessonDefinition> lessons = new Dictionary<string, LessonDefinition>(StringComparer.Ordinal);
             private readonly HashSet<SourceDocumentDefinition> registeredSources;
+            private readonly CourseRuntimeServices services;
 
-            internal CatalogCheck(CourseDefinition course, string root, bool verifyFiles, CatalogValidationResult result)
+            internal CatalogCheck(CourseDefinition course, string root, bool verifyFiles, CatalogValidationResult result, CourseRuntimeServices services)
             {
                 this.course = course;
                 this.root = Path.GetFullPath(root);
                 this.verifyFiles = verifyFiles;
                 this.result = result;
+                this.services = services;
                 registeredSources = new HashSet<SourceDocumentDefinition>(course.Sources.Where(s => s != null));
             }
 
@@ -405,7 +421,7 @@ namespace OptCon.Editor
                 try
                 {
                     var plan = new LessonPlan(lesson);
-                    var registry = new OptCon.Application.LessonConditionRegistry();
+                    var registry = services.Conditions;
                     foreach (var step in plan.Steps) foreach (var condition in step.Conditions) registry.Resolve(condition.EvaluatorId);
                 }
                 catch (ArgumentException exception) { Error(lesson, "LessonPlan", "steps", exception.Message); }

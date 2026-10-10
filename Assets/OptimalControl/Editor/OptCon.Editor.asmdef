@@ -5,7 +5,8 @@
         "OptCon.Core",
         "OptCon.Content",
         "OptCon.Simulation",
-        "OptCon.Application"
+        "OptCon.Application",
+        "OptCon.Presentation"
     ],
     "includePlatforms": [
         "Editor"

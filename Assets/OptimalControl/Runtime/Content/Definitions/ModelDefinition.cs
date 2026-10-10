@@ -27,6 +27,16 @@ namespace OptCon.Content
                 values.Add(parameter.ModelTarget, parameter.DefaultValue);
             }
             var model = CreateModel(experiment.DiscreteTime.StepSeconds, values);
+            foreach (var parameter in experiment.Parameters)
+            {
+                var actual = model.Parameters.SingleOrDefault(p => p.Target == parameter.ModelTarget);
+                if (actual == null) throw new ArgumentException("Unknown provider parameter target: " + parameter.ModelTarget);
+                bool kindMatches = (parameter.ValueKind == ParameterValueKind.Real && actual.Kind == ModelParameterKind.Real)
+                    || (parameter.ValueKind == ParameterValueKind.Integer && actual.Kind == ModelParameterKind.Integer)
+                    || (parameter.ValueKind == ParameterValueKind.Boolean && actual.Kind == ModelParameterKind.Boolean);
+                if (!kindMatches || !string.Equals(parameter.Unit, actual.Unit, StringComparison.Ordinal))
+                    throw new ArgumentException("Provider parameter metadata mismatch: " + parameter.ModelTarget + ". Expected " + actual.Kind + " [" + actual.Unit + "].");
+            }
             var descriptor = model.Descriptor;
             if (experiment.StateDimension != descriptor.Dimensions.State || experiment.ControlDimension != descriptor.Dimensions.Control || experiment.OutputDimension != descriptor.Dimensions.Output
                 || !experiment.StateUnits.SequenceEqual(descriptor.StateUnits) || !experiment.ControlUnits.SequenceEqual(descriptor.ControlUnits) || !experiment.OutputUnits.SequenceEqual(descriptor.OutputUnits))
