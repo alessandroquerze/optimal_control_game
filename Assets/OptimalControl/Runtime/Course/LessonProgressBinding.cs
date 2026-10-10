@@ -7,11 +7,11 @@ namespace OptCon.Application
     public sealed class LessonProgressBinding : IDisposable
     {
         private readonly LessonSession lesson;
-        private readonly SimulationSession simulation;
+        private readonly IExperimentSession simulation;
         private readonly ProgressionService progress;
         private readonly Func<bool> canCommit;
         private bool disposed;
-        public LessonProgressBinding(LessonSession lesson, SimulationSession simulation, ProgressionService progress, Func<bool> canCommit)
+        public LessonProgressBinding(LessonSession lesson, IExperimentSession simulation, ProgressionService progress, Func<bool> canCommit)
         {
             this.lesson = lesson; this.simulation = simulation; this.progress = progress; this.canCommit = canCommit;
             lesson.CompletionValidated += OnCompletion;
@@ -20,7 +20,7 @@ namespace OptCon.Application
         {
             simulation.Notifications.Defer(() =>
             {
-                if (!disposed && completion.IsCurrent && !simulation.State.IsClosed && simulation.State.Error == null
+                if (!disposed && completion.IsCurrent && !simulation.Current.IsClosed && simulation.Current.Error == null
                     && simulation.LastPublicationFailure == null && canCommit())
                     using (simulation.Notifications.Enter()) progress.Commit(completion);
             });

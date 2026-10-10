@@ -28,3 +28,19 @@
 .lesson-progress { padding: 7px; margin-bottom: 8px; border-left-width: 3px; border-left-color: rgb(141, 218, 231); background-color: rgb(26, 37, 51); }
 .lesson-objective { font-size: 12px; color: rgb(141, 218, 231); white-space: normal; margin: 4px 0; }
 .lesson-answer { white-space: normal; -unity-text-align: middle-left; min-height: 28px; margin: 2px 0; padding: 4px; }
+
+/* F10 display trees: mathematical structure is independent of metric binding. */
+.math-layout { margin-top: 6px; margin-bottom: 10px; min-height: 48px; flex-shrink: 0; }
+.math-layout Label { color: rgb(231, 239, 248); font-size: 17px; -unity-text-align: middle-center; white-space: nowrap; flex-shrink: 0; }
+.math-row { flex-direction: row; align-items: center; flex-shrink: 0; }
+.math-fraction { align-items: center; flex-shrink: 0; margin-left: 3px; margin-right: 3px; }
+.math-numerator { border-bottom-width: 1px; border-bottom-color: rgb(215, 229, 245); padding-bottom: 3px; align-items: center; }
+.math-scripts { margin-left: 1px; justify-content: center; }
+.math-scripts Label, .math-limits Label { font-size: 12px; }
+.math-limits { align-items: center; margin-left: 3px; margin-right: 3px; }
+.math-limits .math-operator { font-size: 34px; }
+.math-term { font-size: 17px; color: rgb(180, 221, 255); background-color: rgba(30, 60, 85, 0.6); border-width: 0; margin: 1px; padding: 3px; flex-shrink: 0; }
+.math-term.selected { color: rgb(255, 228, 110); background-color: rgb(70, 67, 40); }
+.math-matrix { border-left-width: 1px; border-right-width: 1px; border-left-color: rgb(215, 229, 245); border-right-color: rgb(215, 229, 245); padding: 3px; }
+.math-cell { min-width: 38px; align-items: center; margin: 2px; }
+#snapshot-parameters { margin-top: 8px; margin-bottom: 8px; }

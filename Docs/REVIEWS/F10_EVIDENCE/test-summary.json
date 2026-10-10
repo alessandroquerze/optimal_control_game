@@ -1,0 +1,39 @@
+{
+  "EditMode": {
+    "total": "296",
+    "passed": "296",
+    "failed": "0",
+    "skipped": "0",
+    "start-time": "2026-10-10 15:37:30Z",
+    "end-time": "2026-10-10 15:37:35Z",
+    "classes": {
+      "OptCon.Tests.CatalogValidatorTests": 64,
+      "OptCon.Tests.CostSystemTests": 30,
+      "OptCon.Tests.ExperimentExtensibilityTests": 28,
+      "OptCon.Tests.FormulaResolverTests": 28,
+      "OptCon.Tests.LessonSessionTests": 34,
+      "OptCon.Tests.PendulumDynamicsTests": 26,
+      "OptCon.Tests.ProgressionTests": 46,
+      "OptCon.Tests.RolloutEngineTests": 13,
+      "OptCon.Tests.SimulationSessionTests": 19,
+      "OptCon.Tests.StateProjectionTests": 8
+    }
+  },
+  "PlayMode": {
+    "total": "74",
+    "passed": "74",
+    "failed": "0",
+    "skipped": "0",
+    "start-time": "2026-10-10 15:38:34Z",
+    "end-time": "2026-10-10 15:39:05Z",
+    "classes": {
+      "OptCon.Tests.CostPresentationTests": 8,
+      "OptCon.Tests.CourseNavigationTests": 15,
+      "OptCon.Tests.ExperimentExtensibilityRuntimeTests": 10,
+      "OptCon.Tests.FormulaHudTests": 9,
+      "OptCon.Tests.LessonOrchestrationTests": 17,
+      "OptCon.Tests.ProgressionRuntimeTests": 8,
+      "OptCon.Tests.VisualizationTests": 7
+    }
+  }
+}

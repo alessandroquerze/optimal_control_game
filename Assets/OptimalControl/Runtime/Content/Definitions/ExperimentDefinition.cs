@@ -10,6 +10,8 @@ namespace OptCon.Content
     {
         [SerializeField, Tooltip("May remain unassigned in an editorial draft. No runtime model is fabricated.")]
         private ModelDefinition model;
+        [SerializeField, Tooltip("General experiment provider. Legacy dynamic assets continue using model.")]
+        private ExperimentProviderDefinition provider;
         [SerializeField] private GameObject scenarioPrefab;
         [SerializeField] private CostDefinition cost;
         [SerializeField] private int stateDimension;
@@ -25,6 +27,8 @@ namespace OptCon.Content
         [SerializeField] private SourceReference[] sources = Array.Empty<SourceReference>();
 
         public ModelDefinition Model => model;
+        public ExperimentProviderDefinition Provider => provider != null ? provider : model;
+        public bool HasConflictingProviders => provider != null && model != null && provider != model;
         public CostDefinition Cost => cost;
         public GameObject ScenarioPrefab => scenarioPrefab;
         public int StateDimension => stateDimension;

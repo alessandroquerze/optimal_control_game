@@ -11,7 +11,9 @@ namespace OptCon.Presentation
         public long RevisionId { get; private set; }
         public int? SampleIndex { get; private set; }
         public bool IsHighlighted { get; private set; }
-        public void SetSample(long revision, int? sample) { RevisionId = revision; SampleIndex = sample; }
+        public bool IsGlobalAvailable { get; private set; }
+        public void SetGlobal(long revision, bool available) { RevisionId = revision; SampleIndex = null; IsGlobalAvailable = available; }
+        public void SetSample(long revision, int? sample) { RevisionId = revision; SampleIndex = sample; IsGlobalAvailable = false; }
         public void Highlight(bool selected)
         {
             IsHighlighted = selected;

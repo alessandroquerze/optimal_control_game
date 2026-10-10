@@ -15,6 +15,7 @@ namespace OptCon.Presentation
         private readonly ICommandSink commands;
         private readonly List<(DoubleField field, string target)> parameters = new List<(DoubleField, string)>();
         private readonly List<DoubleField> inputs = new List<DoubleField>();
+        private readonly List<DoubleField> initialStates = new List<DoubleField>();
         private readonly List<Action> cleanup = new List<Action>();
         private readonly DropdownField scope;
         private SessionState state;
@@ -34,6 +35,21 @@ namespace OptCon.Presentation
             scope = root.Q<DropdownField>("input-scope"); scope.choices = new List<string> { "Solo transizione t", "Coda da t" }; scope.SetValueWithoutNotify(scope.choices[1]);
             var inputList = root.Q<VisualElement>("input-fields"); inputList.Clear();
             var model = initial.Result.Configuration.Model.Descriptor;
+            var initialList = root.Q<VisualElement>("initial-state-fields"); initialList.Clear();
+            for (int i = 0; i < model.Dimensions.State; i++)
+            {
+                int component = i;
+                var field = new DoubleField("x₀[" + i + "] [" + model.StateUnits[i] + "]") { name = "initial-state-" + i, isDelayed = true };
+                EventCallback<ChangeEvent<double>> handler = e =>
+                {
+                    if (state == null) return;
+                    if (!NumericValidation.IsFinite(e.newValue)) { RenderFields(); return; }
+                    var values = state.Result.Configuration.InitialState.ToArray(); values[component] = e.newValue;
+                    commands.Execute(SimulationCommand.SetInitialState(new NumericVector(values)));
+                };
+                field.RegisterValueChangedCallback(handler); cleanup.Add(() => field.UnregisterValueChangedCallback(handler));
+                initialList.Add(field); initialStates.Add(field);
+            }
             for (int i = 0; i < model.Dimensions.Control; i++)
             {
                 int component = i;
@@ -52,6 +68,11 @@ namespace OptCon.Presentation
         public void Render(SessionState value) { state = value; root.Q<Label>("parameter-status").text = value.InputEditingDiagnostic ?? "Valori della revisione valida; le modifiche ricalcolano la simulazione."; RenderFields(); }
         private void RenderFields()
         {
+            for (int i = 0; i < initialStates.Count; i++)
+            {
+                initialStates[i].SetValueWithoutNotify(state.Result.Configuration.InitialState[i]);
+                initialStates[i].SetEnabled(!state.IsClosed && state.Error == null);
+            }
             foreach (var entry in parameters)
             {
                 var value = state.Result.Configuration.Model.Parameters.FirstOrDefault(p => p.Target == entry.target);
@@ -67,6 +88,6 @@ namespace OptCon.Presentation
                 if (!state.Sample.IsTerminal) inputs[i].SetValueWithoutNotify(state.Sample.AppliedControl[i]);
             }
         }
-        public void Dispose() { foreach (var remove in cleanup) remove(); root.Q<VisualElement>("parameter-fields").Clear(); root.Q<VisualElement>("input-fields").Clear(); state = null; }
+        public void Dispose() { foreach (var remove in cleanup) remove(); root.Q<VisualElement>("parameter-fields").Clear(); root.Q<VisualElement>("input-fields").Clear(); root.Q<VisualElement>("initial-state-fields").Clear(); state = null; }
     }
 }

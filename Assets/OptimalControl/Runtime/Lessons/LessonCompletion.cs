@@ -10,10 +10,10 @@ namespace OptCon.Application
         public string LessonId { get; }
         public string ContentVersion { get; }
         public int SchemaVersion { get; }
-        public SimulationResult Result { get; }
+        public IExperimentResult Result { get; }
         internal long Generation { get; }
         internal bool IsCurrent => !Cancelled && source.IsCurrentCompletion(this);
-        internal LessonCompletion(LessonSession source, string id, string version, int schema, SimulationResult result, long generation)
+        internal LessonCompletion(LessonSession source, string id, string version, int schema, IExperimentResult result, long generation)
         { this.source = source; LessonId = id; ContentVersion = version; SchemaVersion = schema; Result = result; Generation = generation; }
     }
 }

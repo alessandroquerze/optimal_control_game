@@ -20,9 +20,10 @@ namespace OptCon.Application
         public NavigationTransition Transition { get; }
         public NavigationPhase Phase { get; }
         public Scene Scene { get; }
-        public SimulationSession Session { get; }
+        public IExperimentSession Experiment { get; }
+        public SimulationSession Session => Experiment as SimulationSession;
         public bool IsReady => Phase == NavigationPhase.Ready;
-        internal NavigationUpdate(NavigationTransition transition, NavigationPhase phase, Scene scene, SimulationSession session)
-        { Transition = transition; Phase = phase; Scene = scene; Session = session; }
+        internal NavigationUpdate(NavigationTransition transition, NavigationPhase phase, Scene scene, IExperimentSession session)
+        { Transition = transition; Phase = phase; Scene = scene; Experiment = session; }
     }
 }

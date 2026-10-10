@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47289dc042634438a8678726a1950906, type: 3}
   m_Name: 
   m_EditorClassIdentifier: OptCon.Application::OptCon.Application.AppBootstrap
-  course: {fileID: 11400000, guid: a83fca8afec742eca03fe6f98945324f, type: 2}
+  course: {fileID: 11400000, guid: deaa802dd5005012a59d95a10666ec36, type: 2}
   menuScenePath: Assets/OptimalControl/Scenes/MainMenu.unity
 --- !u!4 &1221670205
 Transform:

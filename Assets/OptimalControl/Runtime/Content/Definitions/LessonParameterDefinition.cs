@@ -4,7 +4,7 @@ using UnityEngine;
 namespace OptCon.Content
 {
     public enum ParameterValueKind { Real, Integer, Boolean }
-    public enum ParameterRecalculation { FullRollout, FutureRollout, Diagnostics, Presentation }
+    public enum ParameterRecalculation { FullRollout, FutureRollout, Diagnostics, Presentation, ReevaluateObjective }
 
     /// <summary>Embedded editorial descriptor; a session will own mutable overrides.</summary>
     [Serializable]

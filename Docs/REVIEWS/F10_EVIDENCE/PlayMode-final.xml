@@ -1,0 +1,562 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="74" result="Passed" total="74" passed="74" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-10 15:38:34Z" end-time="2026-10-10 15:39:05Z" duration="31,0064965">
+  <test-suite type="TestSuite" id="1089" name="optimal_control" fullname="optimal_control" runstate="Runnable" testcasecount="74" result="Passed" start-time="2026-10-10 15:38:34Z" end-time="2026-10-10 15:39:05Z" duration="31.006497" total="74" passed="74" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1083" name="OptCon.Navigation.PlayModeTests.dll" fullname="C:/Users/querz/AppData/Local/Temp/OptCon-F08-ec9d91964e83410993697f4884d3ecac/Project/Library/ScriptAssemblies/OptCon.Navigation.PlayModeTests.dll" runstate="Runnable" testcasecount="74" result="Passed" start-time="2026-10-10 15:38:34Z" end-time="2026-10-10 15:39:05Z" duration="30.996100" total="74" passed="74" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="13528" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1084" name="OptCon" fullname="OptCon" runstate="Runnable" testcasecount="74" result="Passed" start-time="2026-10-10 15:38:34Z" end-time="2026-10-10 15:39:05Z" duration="30.994232" total="74" passed="74" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="SetUpFixture" id="1074" name="Tests" fullname="OptCon.Tests.ProgressStoreIsolation" classname="OptCon.Tests.ProgressStoreIsolation" runstate="Runnable" testcasecount="74" result="Passed" start-time="2026-10-10 15:38:34Z" end-time="2026-10-10 15:39:05Z" duration="30.992242" total="74" passed="74" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1001" name="CostPresentationTests" fullname="OptCon.Tests.CostPresentationTests" classname="OptCon.Tests.CostPresentationTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-10 15:38:34Z" end-time="2026-10-10 15:38:37Z" duration="3.489246" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1008" name="ClosingReopeningAndDisableReleaseComparisonAndHudCallbacks" fullname="OptCon.Tests.CostPresentationTests.ClosingReopeningAndDisableReleaseComparisonAndHudCallbacks" methodname="ClosingReopeningAndDisableReleaseComparisonAndHudCallbacks" classname="OptCon.Tests.CostPresentationTests" runstate="Runnable" seed="2120556839" result="Passed" start-time="2026-10-10 15:38:34Z" end-time="2026-10-10 15:38:35Z" duration="1.338061" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1009" name="ComparisonOfDifferentPhysicalStepsUsesTheCommonPhysicalInterval" fullname="OptCon.Tests.CostPresentationTests.ComparisonOfDifferentPhysicalStepsUsesTheCommonPhysicalInterval" methodname="ComparisonOfDifferentPhysicalStepsUsesTheCommonPhysicalInterval" classname="OptCon.Tests.CostPresentationTests" runstate="Runnable" seed="12567321" result="Passed" start-time="2026-10-10 15:38:35Z" end-time="2026-10-10 15:38:35Z" duration="0.305517" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1006" name="CostFailureKeepsHudGraphAndWholeValidResult" fullname="OptCon.Tests.CostPresentationTests.CostFailureKeepsHudGraphAndWholeValidResult" methodname="CostFailureKeepsHudGraphAndWholeValidResult" classname="OptCon.Tests.CostPresentationTests" runstate="Runnable" seed="974815861" result="Passed" start-time="2026-10-10 15:38:35Z" end-time="2026-10-10 15:38:36Z" duration="0.327093" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1002" name="CostHudGraphAndTargetsUseTheSameRevisionBeforeAnySeek" fullname="OptCon.Tests.CostPresentationTests.CostHudGraphAndTargetsUseTheSameRevisionBeforeAnySeek" methodname="CostHudGraphAndTargetsUseTheSameRevisionBeforeAnySeek" classname="OptCon.Tests.CostPresentationTests" runstate="Runnable" seed="1327830962" result="Passed" start-time="2026-10-10 15:38:36Z" end-time="2026-10-10 15:38:36Z" duration="0.290845" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1007" name="IndexOnlyCostHudDisplaysThirtyEightAndTerminalWithoutSeconds" fullname="OptCon.Tests.CostPresentationTests.IndexOnlyCostHudDisplaysThirtyEightAndTerminalWithoutSeconds" methodname="IndexOnlyCostHudDisplaysThirtyEightAndTerminalWithoutSeconds" classname="OptCon.Tests.CostPresentationTests" runstate="Runnable" seed="155557052" result="Passed" start-time="2026-10-10 15:38:36Z" end-time="2026-10-10 15:38:36Z" duration="0.299879" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1005" name="TerminalAndShorterHorizonHaveNoInventedStageOrInputAndCompareCommonSamples" fullname="OptCon.Tests.CostPresentationTests.TerminalAndShorterHorizonHaveNoInventedStageOrInputAndCompareCommonSamples" methodname="TerminalAndShorterHorizonHaveNoInventedStageOrInputAndCompareCommonSamples" classname="OptCon.Tests.CostPresentationTests" runstate="Runnable" seed="1931774604" result="Passed" start-time="2026-10-10 15:38:36Z" end-time="2026-10-10 15:38:37Z" duration="0.299102" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1003" name="TerminalSelectionHighlightsTheFinalStateWhileCursorIsElsewhere" fullname="OptCon.Tests.CostPresentationTests.TerminalSelectionHighlightsTheFinalStateWhileCursorIsElsewhere" methodname="TerminalSelectionHighlightsTheFinalStateWhileCursorIsElsewhere" classname="OptCon.Tests.CostPresentationTests" runstate="Runnable" seed="855861311" result="Passed" start-time="2026-10-10 15:38:37Z" end-time="2026-10-10 15:38:37Z" duration="0.296444" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1004" name="WeightTargetAndInputEditsUpdateCostsButDoNotDirtyAssetsOrReinterpretA" fullname="OptCon.Tests.CostPresentationTests.WeightTargetAndInputEditsUpdateCostsButDoNotDirtyAssetsOrReinterpretA" methodname="WeightTargetAndInputEditsUpdateCostsButDoNotDirtyAssetsOrReinterpretA" classname="OptCon.Tests.CostPresentationTests" runstate="Runnable" seed="1220946593" result="Passed" start-time="2026-10-10 15:38:37Z" end-time="2026-10-10 15:38:37Z" duration="0.317057" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1010" name="CourseNavigationTests" fullname="OptCon.Tests.CourseNavigationTests" classname="OptCon.Tests.CourseNavigationTests" runstate="Runnable" testcasecount="15" result="Passed" start-time="2026-10-10 15:38:37Z" end-time="2026-10-10 15:38:45Z" duration="7.506210" total="15" passed="15" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1013" name="AdditionalCatalogEntryPreservesOrderAndOpensWithoutCodeChanges" fullname="OptCon.Tests.CourseNavigationTests.AdditionalCatalogEntryPreservesOrderAndOpensWithoutCodeChanges" methodname="AdditionalCatalogEntryPreservesOrderAndOpensWithoutCodeChanges" classname="OptCon.Tests.CourseNavigationTests" runstate="Runnable" seed="740885588" result="Passed" start-time="2026-10-10 15:38:37Z" end-time="2026-10-10 15:38:38Z" duration="0.546619" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1021" name="CloseReopenDisposesSessionsAndDiagnosticSubscriptions" fullname="OptCon.Tests.CourseNavigationTests.CloseReopenDisposesSessionsAndDiagnosticSubscriptions" methodname="CloseReopenDisposesSessionsAndDiagnosticSubscriptions" classname="OptCon.Tests.CourseNavigationTests" runstate="Runnable" seed="1181304285" result="Passed" start-time="2026-10-10 15:38:38Z" end-time="2026-10-10 15:38:38Z" duration="0.354698" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1024" name="CompositionFailureNeverPublishesReadyAndLeavesReturnToMenuAvailable" fullname="OptCon.Tests.CourseNavigationTests.CompositionFailureNeverPublishesReadyAndLeavesReturnToMenuAvailable" methodname="CompositionFailureNeverPublishesReadyAndLeavesReturnToMenuAvailable" classname="OptCon.Tests.CourseNavigationTests" runstate="Runnable" seed="1667166251" result="Passed" start-time="2026-10-10 15:38:38Z" end-time="2026-10-10 15:38:39Z" duration="0.536130" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1015" name="ConcurrentRequestsCannotCreateTwoWorkspaces" fullname="OptCon.Tests.CourseNavigationTests.ConcurrentRequestsCannotCreateTwoWorkspaces" methodname="ConcurrentRequestsCannotCreateTwoWorkspaces" classname="OptCon.Tests.CourseNavigationTests" runstate="Runnable" seed="1613142121" result="Passed" start-time="2026-10-10 15:38:39Z" end-time="2026-10-10 15:38:39Z" duration="0.286993" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1016" name="DuplicateBootstrapAndAdditiveReloadKeepOneApplicationRoot" fullname="OptCon.Tests.CourseNavigationTests.DuplicateBootstrapAndAdditiveReloadKeepOneApplicationRoot" methodname="DuplicateBootstrapAndAdditiveReloadKeepOneApplicationRoot" classname="OptCon.Tests.CourseNavigationTests" runstate="Runnable" seed="573913995" result="Passed" start-time="2026-10-10 15:38:39Z" end-time="2026-10-10 15:38:39Z" duration="0.252957" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1018" name="InputSystemPointerOpensTheActualMenuButton" fullname="OptCon.Tests.CourseNavigationTests.InputSystemPointerOpensTheActualMenuButton" methodname="InputSystemPointerOpensTheActualMenuButton" classname="OptCon.Tests.CourseNavigationTests" runstate="Runnable" seed="1163919477" result="Passed" start-time="2026-10-10 15:38:39Z" end-time="2026-10-10 15:38:41Z" duration="1.337441" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1025" name="MathematicalCoreAndPresentationRespectAssemblyBoundaries" fullname="OptCon.Tests.CourseNavigationTests.MathematicalCoreAndPresentationRespectAssemblyBoundaries" methodname="MathematicalCoreAndPresentationRespectAssemblyBoundaries" classname="OptCon.Tests.CourseNavigationTests" runstate="Runnable" seed="1171309633" result="Passed" start-time="2026-10-10 15:38:41Z" end-time="2026-10-10 15:38:41Z" duration="0.279031" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1011" name="MenuWorkspaceMenuTwiceUsesAssetTitlesObjectivesAndOneScene" fullname="OptCon.Tests.CourseNavigationTests.MenuWorkspaceMenuTwiceUsesAssetTitlesObjectivesAndOneScene" methodname="MenuWorkspaceMenuTwiceUsesAssetTitlesObjectivesAndOneScene" classname="OptCon.Tests.CourseNavigationTests" runstate="Runnable" seed="1118571307" result="Passed" start-time="2026-10-10 15:38:41Z" end-time="2026-10-10 15:38:41Z" duration="0.409941" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1012" name="MissingSceneAndUnknownIdKeepCurrentMenuUsable" fullname="OptCon.Tests.CourseNavigationTests.MissingSceneAndUnknownIdKeepCurrentMenuUsable" methodname="MissingSceneAndUnknownIdKeepCurrentMenuUsable" classname="OptCon.Tests.CourseNavigationTests" runstate="Runnable" seed="2138868049" result="Passed" start-time="2026-10-10 15:38:41Z" end-time="2026-10-10 15:38:42Z" duration="0.597653" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1022" name="PlaybackAdapterUsesPresentationSecondsAtDifferentFrequenciesAndStopsAtTerminal" fullname="OptCon.Tests.CourseNavigationTests.PlaybackAdapterUsesPresentationSecondsAtDifferentFrequenciesAndStopsAtTerminal" methodname="PlaybackAdapterUsesPresentationSecondsAtDifferentFrequenciesAndStopsAtTerminal" classname="OptCon.Tests.CourseNavigationTests" runstate="Runnable" seed="1784595728" result="Passed" start-time="2026-10-10 15:38:42Z" end-time="2026-10-10 15:38:43Z" duration="0.704920" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1017" name="PresenterRebindingAndDisableEnableReleaseSubscriptions" fullname="OptCon.Tests.CourseNavigationTests.PresenterRebindingAndDisableEnableReleaseSubscriptions" methodname="PresenterRebindingAndDisableEnableReleaseSubscriptions" classname="OptCon.Tests.CourseNavigationTests" runstate="Runnable" seed="1237233912" result="Passed" start-time="2026-10-10 15:38:43Z" end-time="2026-10-10 15:38:43Z" duration="0.286434" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1019" name="ReadyFollowsCompositionAndBindingAndRejectsReentrantObservers" fullname="OptCon.Tests.CourseNavigationTests.ReadyFollowsCompositionAndBindingAndRejectsReentrantObservers" methodname="ReadyFollowsCompositionAndBindingAndRejectsReentrantObservers" classname="OptCon.Tests.CourseNavigationTests" runstate="Runnable" seed="194386" result="Passed" start-time="2026-10-10 15:38:43Z" end-time="2026-10-10 15:38:43Z" duration="0.350679" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1023" name="RuntimeOverridesAndResetNeverWriteAuthoredAssets" fullname="OptCon.Tests.CourseNavigationTests.RuntimeOverridesAndResetNeverWriteAuthoredAssets" methodname="RuntimeOverridesAndResetNeverWriteAuthoredAssets" classname="OptCon.Tests.CourseNavigationTests" runstate="Runnable" seed="744189180" result="Passed" start-time="2026-10-10 15:38:43Z" end-time="2026-10-10 15:38:44Z" duration="0.344995" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1014" name="SharedLessonAcrossChaptersUsesOneStableIdentity" fullname="OptCon.Tests.CourseNavigationTests.SharedLessonAcrossChaptersUsesOneStableIdentity" methodname="SharedLessonAcrossChaptersUsesOneStableIdentity" classname="OptCon.Tests.CourseNavigationTests" runstate="Runnable" seed="406807233" result="Passed" start-time="2026-10-10 15:38:44Z" end-time="2026-10-10 15:38:44Z" duration="0.589963" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1020" name="TwoLessonsSharingWorkspaceHaveDistinctDestinationsAndSessions" fullname="OptCon.Tests.CourseNavigationTests.TwoLessonsSharingWorkspaceHaveDistinctDestinationsAndSessions" methodname="TwoLessonsSharingWorkspaceHaveDistinctDestinationsAndSessions" classname="OptCon.Tests.CourseNavigationTests" runstate="Runnable" seed="361424911" result="Passed" start-time="2026-10-10 15:38:44Z" end-time="2026-10-10 15:38:45Z" duration="0.622905" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1026" name="ExperimentExtensibilityRuntimeTests" fullname="OptCon.Tests.ExperimentExtensibilityRuntimeTests" classname="OptCon.Tests.ExperimentExtensibilityRuntimeTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-10-10 15:38:45Z" end-time="2026-10-10 15:38:49Z" duration="3.837101" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1027" name="CatalogToReadyPublishesBoundCommonStaticSessionWithoutFakeTime" fullname="OptCon.Tests.ExperimentExtensibilityRuntimeTests.CatalogToReadyPublishesBoundCommonStaticSessionWithoutFakeTime" methodname="CatalogToReadyPublishesBoundCommonStaticSessionWithoutFakeTime" classname="OptCon.Tests.ExperimentExtensibilityRuntimeTests" runstate="Runnable" seed="1149530412" result="Passed" start-time="2026-10-10 15:38:45Z" end-time="2026-10-10 15:38:45Z" duration="0.371082" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1036" name="ComposedCustomStaticMetricAndConditionReachActualFormulaHudAndRuntime" fullname="OptCon.Tests.ExperimentExtensibilityRuntimeTests.ComposedCustomStaticMetricAndConditionReachActualFormulaHudAndRuntime" methodname="ComposedCustomStaticMetricAndConditionReachActualFormulaHudAndRuntime" classname="OptCon.Tests.ExperimentExtensibilityRuntimeTests" runstate="Runnable" seed="2086748240" result="Passed" start-time="2026-10-10 15:38:45Z" end-time="2026-10-10 15:38:46Z" duration="0.585025" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1029" name="ExitReopenAndApplicationRestartDisposeOldSessionAndKeepDistinctProgress" fullname="OptCon.Tests.ExperimentExtensibilityRuntimeTests.ExitReopenAndApplicationRestartDisposeOldSessionAndKeepDistinctProgress" methodname="ExitReopenAndApplicationRestartDisposeOldSessionAndKeepDistinctProgress" classname="OptCon.Tests.ExperimentExtensibilityRuntimeTests" runstate="Runnable" seed="732934270" result="Passed" start-time="2026-10-10 15:38:46Z" end-time="2026-10-10 15:38:46Z" duration="0.624515" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1028" name="HudEditCreatesNewRevisionSharedByFormulaVisualsAndKeepsAImmutable" fullname="OptCon.Tests.ExperimentExtensibilityRuntimeTests.HudEditCreatesNewRevisionSharedByFormulaVisualsAndKeepsAImmutable" methodname="HudEditCreatesNewRevisionSharedByFormulaVisualsAndKeepsAImmutable" classname="OptCon.Tests.ExperimentExtensibilityRuntimeTests" runstate="Runnable" seed="1538490454" result="Passed" start-time="2026-10-10 15:38:46Z" end-time="2026-10-10 15:38:47Z" duration="0.321478" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1030" name="NavigationDuringStaticPublicationDefersUntilAllConsumersAndClosesLifetime" fullname="OptCon.Tests.ExperimentExtensibilityRuntimeTests.NavigationDuringStaticPublicationDefersUntilAllConsumersAndClosesLifetime" methodname="NavigationDuringStaticPublicationDefersUntilAllConsumersAndClosesLifetime" classname="OptCon.Tests.ExperimentExtensibilityRuntimeTests" runstate="Runnable" seed="1905688757" result="Passed" start-time="2026-10-10 15:38:47Z" end-time="2026-10-10 15:38:47Z" duration="0.333524" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1031" name="SharedHudSupportsStructuredMatrixIntegralAndCompactLayouts" fullname="OptCon.Tests.ExperimentExtensibilityRuntimeTests.SharedHudSupportsStructuredMatrixIntegralAndCompactLayouts" methodname="SharedHudSupportsStructuredMatrixIntegralAndCompactLayouts" classname="OptCon.Tests.ExperimentExtensibilityRuntimeTests" runstate="Runnable" seed="850699686" result="Passed" start-time="2026-10-10 15:38:47Z" end-time="2026-10-10 15:38:47Z" duration="0.317645" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1034" name="StaticFailedEnterCannotCompleteAndRestartRecovers" fullname="OptCon.Tests.ExperimentExtensibilityRuntimeTests.StaticFailedEnterCannotCompleteAndRestartRecovers" methodname="StaticFailedEnterCannotCompleteAndRestartRecovers" classname="OptCon.Tests.ExperimentExtensibilityRuntimeTests" runstate="Runnable" seed="1343657822" result="Passed" start-time="2026-10-10 15:38:47Z" end-time="2026-10-10 15:38:48Z" duration="0.312469" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1032" name="StaticFailedRequestKeepsLastValidSnapshotAndResetRecovers" fullname="OptCon.Tests.ExperimentExtensibilityRuntimeTests.StaticFailedRequestKeepsLastValidSnapshotAndResetRecovers" methodname="StaticFailedRequestKeepsLastValidSnapshotAndResetRecovers" classname="OptCon.Tests.ExperimentExtensibilityRuntimeTests" runstate="Runnable" seed="168939137" result="Passed" start-time="2026-10-10 15:38:48Z" end-time="2026-10-10 15:38:48Z" duration="0.317106" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1035" name="StaticNavigationFromCompletionObserverCancelsPersistentReceipt" fullname="OptCon.Tests.ExperimentExtensibilityRuntimeTests.StaticNavigationFromCompletionObserverCancelsPersistentReceipt" methodname="StaticNavigationFromCompletionObserverCancelsPersistentReceipt" classname="OptCon.Tests.ExperimentExtensibilityRuntimeTests" runstate="Runnable" seed="444732028" result="Passed" start-time="2026-10-10 15:38:48Z" end-time="2026-10-10 15:38:48Z" duration="0.325434" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1033" name="StaticNonRepresentableStillPublishesMathAndCannotAwardProgressUntilRecovery" fullname="OptCon.Tests.ExperimentExtensibilityRuntimeTests.StaticNonRepresentableStillPublishesMathAndCannotAwardProgressUntilRecovery" methodname="StaticNonRepresentableStillPublishesMathAndCannotAwardProgressUntilRecovery" classname="OptCon.Tests.ExperimentExtensibilityRuntimeTests" runstate="Runnable" seed="1334428240" result="Passed" start-time="2026-10-10 15:38:48Z" end-time="2026-10-10 15:38:49Z" duration="0.323632" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1037" name="FormulaHudTests" fullname="OptCon.Tests.FormulaHudTests" classname="OptCon.Tests.FormulaHudTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-10 15:38:49Z" end-time="2026-10-10 15:38:52Z" duration="3.204540" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1045" name="DisableRebindAndCloseReleaseSubscriptionsAndSelection" fullname="OptCon.Tests.FormulaHudTests.DisableRebindAndCloseReleaseSubscriptionsAndSelection" methodname="DisableRebindAndCloseReleaseSubscriptionsAndSelection" classname="OptCon.Tests.FormulaHudTests" runstate="Runnable" seed="180079773" result="Passed" start-time="2026-10-10 15:38:49Z" end-time="2026-10-10 15:38:49Z" duration="0.386239" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1046" name="EditingFocusPreventsLessonKeyboardShortcuts" fullname="OptCon.Tests.FormulaHudTests.EditingFocusPreventsLessonKeyboardShortcuts" methodname="EditingFocusPreventsLessonKeyboardShortcuts" classname="OptCon.Tests.FormulaHudTests" runstate="Runnable" seed="1980834471" result="Passed" start-time="2026-10-10 15:38:49Z" end-time="2026-10-10 15:38:50Z" duration="0.450749" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1039" name="HudIsBoundAndRenderedBeforeReadyWithTheVisualResult" fullname="OptCon.Tests.FormulaHudTests.HudIsBoundAndRenderedBeforeReadyWithTheVisualResult" methodname="HudIsBoundAndRenderedBeforeReadyWithTheVisualResult" classname="OptCon.Tests.FormulaHudTests" runstate="Runnable" seed="156779790" result="Passed" start-time="2026-10-10 15:38:50Z" end-time="2026-10-10 15:38:50Z" duration="0.319048" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1044" name="IndexOnlyHudUsesTheSameGenericFormulaWithoutPhysicalTime" fullname="OptCon.Tests.FormulaHudTests.IndexOnlyHudUsesTheSameGenericFormulaWithoutPhysicalTime" methodname="IndexOnlyHudUsesTheSameGenericFormulaWithoutPhysicalTime" classname="OptCon.Tests.FormulaHudTests" runstate="Runnable" seed="1070901880" result="Passed" start-time="2026-10-10 15:38:50Z" end-time="2026-10-10 15:38:50Z" duration="0.325195" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1038" name="InputSystemPointerSelectsAnActualFormulaTerm" fullname="OptCon.Tests.FormulaHudTests.InputSystemPointerSelectsAnActualFormulaTerm" methodname="InputSystemPointerSelectsAnActualFormulaTerm" classname="OptCon.Tests.FormulaHudTests" runstate="Runnable" seed="843198703" result="Passed" start-time="2026-10-10 15:38:50Z" end-time="2026-10-10 15:38:51Z" duration="0.375098" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1042" name="ParameterInputAndSpecializationReadOnlyTheirRevisionAndPreserveAssets" fullname="OptCon.Tests.FormulaHudTests.ParameterInputAndSpecializationReadOnlyTheirRevisionAndPreserveAssets" methodname="ParameterInputAndSpecializationReadOnlyTheirRevisionAndPreserveAssets" classname="OptCon.Tests.FormulaHudTests" runstate="Runnable" seed="1191123259" result="Passed" start-time="2026-10-10 15:38:51Z" end-time="2026-10-10 15:38:51Z" duration="0.331848" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1041" name="SeekAndUiCommandsKeepAllLiveValuesAndVisualsCoherent" fullname="OptCon.Tests.FormulaHudTests.SeekAndUiCommandsKeepAllLiveValuesAndVisualsCoherent" methodname="SeekAndUiCommandsKeepAllLiveValuesAndVisualsCoherent" classname="OptCon.Tests.FormulaHudTests" runstate="Runnable" seed="557743253" result="Passed" start-time="2026-10-10 15:38:51Z" end-time="2026-10-10 15:38:51Z" duration="0.349691" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1040" name="SelectingTermsUsesSemanticRolesAndTheSameAbsoluteSample" fullname="OptCon.Tests.FormulaHudTests.SelectingTermsUsesSemanticRolesAndTheSameAbsoluteSample" methodname="SelectingTermsUsesSemanticRolesAndTheSameAbsoluteSample" classname="OptCon.Tests.FormulaHudTests" runstate="Runnable" seed="2031434877" result="Passed" start-time="2026-10-10 15:38:51Z" end-time="2026-10-10 15:38:52Z" duration="0.336128" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1043" name="TerminalHasNoInputNextTransitionOrInventedValues" fullname="OptCon.Tests.FormulaHudTests.TerminalHasNoInputNextTransitionOrInventedValues" methodname="TerminalHasNoInputNextTransitionOrInventedValues" classname="OptCon.Tests.FormulaHudTests" runstate="Runnable" seed="114878530" result="Passed" start-time="2026-10-10 15:38:52Z" end-time="2026-10-10 15:38:52Z" duration="0.325710" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1047" name="LessonOrchestrationTests" fullname="OptCon.Tests.LessonOrchestrationTests" classname="OptCon.Tests.LessonOrchestrationTests" runstate="Runnable" testcasecount="17" result="Passed" start-time="2026-10-10 15:38:52Z" end-time="2026-10-10 15:38:59Z" duration="6.909212" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1051" name="AF08_02_AnotherLessonAfterHudKeepsDestinationIdentity" fullname="OptCon.Tests.LessonOrchestrationTests.AF08_02_AnotherLessonAfterHudKeepsDestinationIdentity" methodname="AF08_02_AnotherLessonAfterHudKeepsDestinationIdentity" classname="OptCon.Tests.LessonOrchestrationTests" runstate="Runnable" seed="79227534" result="Passed" start-time="2026-10-10 15:38:52Z" end-time="2026-10-10 15:38:52Z" duration="0.611990" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1050" name="AF08_02_AnotherLessonBeforeHudKeepsDestinationIdentity" fullname="OptCon.Tests.LessonOrchestrationTests.AF08_02_AnotherLessonBeforeHudKeepsDestinationIdentity" methodname="AF08_02_AnotherLessonBeforeHudKeepsDestinationIdentity" classname="OptCon.Tests.LessonOrchestrationTests" runstate="Runnable" seed="1745228428" result="Passed" start-time="2026-10-10 15:38:52Z" end-time="2026-10-10 15:38:53Z" duration="0.610332" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1052" name="AF08_02_CapturedCallbacksCannotOverwriteAReboundConsumer" fullname="OptCon.Tests.LessonOrchestrationTests.AF08_02_CapturedCallbacksCannotOverwriteAReboundConsumer" methodname="AF08_02_CapturedCallbacksCannotOverwriteAReboundConsumer" classname="OptCon.Tests.LessonOrchestrationTests" runstate="Runnable" seed="638056604" result="Passed" start-time="2026-10-10 15:38:53Z" end-time="2026-10-10 15:38:53Z" duration="0.336022" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1049" name="AF08_02_MenuAfterHudIsDeferredAcrossTheLessonOperation" fullname="OptCon.Tests.LessonOrchestrationTests.AF08_02_MenuAfterHudIsDeferredAcrossTheLessonOperation" methodname="AF08_02_MenuAfterHudIsDeferredAcrossTheLessonOperation" classname="OptCon.Tests.LessonOrchestrationTests" runstate="Runnable" seed="1846582882" result="Passed" start-time="2026-10-10 15:38:53Z" end-time="2026-10-10 15:38:54Z" duration="0.332531" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1048" name="AF08_02_MenuRequestedBeforeHudWaitsForDispatchBoundary" fullname="OptCon.Tests.LessonOrchestrationTests.AF08_02_MenuRequestedBeforeHudWaitsForDispatchBoundary" methodname="AF08_02_MenuRequestedBeforeHudWaitsForDispatchBoundary" classname="OptCon.Tests.LessonOrchestrationTests" runstate="Runnable" seed="901477544" result="Passed" start-time="2026-10-10 15:38:54Z" end-time="2026-10-10 15:38:54Z" duration="0.342886" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1056" name="CostStepRestrictsParametersAndRetainsTheSameRevisionInAllConsumers" fullname="OptCon.Tests.LessonOrchestrationTests.CostStepRestrictsParametersAndRetainsTheSameRevisionInAllConsumers" methodname="CostStepRestrictsParametersAndRetainsTheSameRevisionInAllConsumers" classname="OptCon.Tests.LessonOrchestrationTests" runstate="Runnable" seed="1870967237" result="Passed" start-time="2026-10-10 15:38:54Z" end-time="2026-10-10 15:38:54Z" duration="0.373656" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1061" name="DisabledKeyboardCommandsCannotBypassTheLessonAndResetIsDeterministic" fullname="OptCon.Tests.LessonOrchestrationTests.DisabledKeyboardCommandsCannotBypassTheLessonAndResetIsDeterministic" methodname="DisabledKeyboardCommandsCannotBypassTheLessonAndResetIsDeterministic" classname="OptCon.Tests.LessonOrchestrationTests" runstate="Runnable" seed="1773341470" result="Passed" start-time="2026-10-10 15:38:54Z" end-time="2026-10-10 15:38:55Z" duration="0.456771" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1062" name="DisableEnableHudRebindsWithoutCreditingAutomaticSelection" fullname="OptCon.Tests.LessonOrchestrationTests.DisableEnableHudRebindsWithoutCreditingAutomaticSelection" methodname="DisableEnableHudRebindsWithoutCreditingAutomaticSelection" classname="OptCon.Tests.LessonOrchestrationTests" runstate="Runnable" seed="246075565" result="Passed" start-time="2026-10-10 15:38:55Z" end-time="2026-10-10 15:38:55Z" duration="0.334742" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1055" name="EntireGuidedVerticalSliceUsesTheRealResultAndCompletesOnlyPrototype" fullname="OptCon.Tests.LessonOrchestrationTests.EntireGuidedVerticalSliceUsesTheRealResultAndCompletesOnlyPrototype" methodname="EntireGuidedVerticalSliceUsesTheRealResultAndCompletesOnlyPrototype" classname="OptCon.Tests.LessonOrchestrationTests" runstate="Runnable" seed="242061227" result="Passed" start-time="2026-10-10 15:38:55Z" end-time="2026-10-10 15:38:56Z" duration="0.402011" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1059" name="ExitAndReenterReleaseLessonAndPresentationSubscriptions" fullname="OptCon.Tests.LessonOrchestrationTests.ExitAndReenterReleaseLessonAndPresentationSubscriptions" methodname="ExitAndReenterReleaseLessonAndPresentationSubscriptions" classname="OptCon.Tests.LessonOrchestrationTests" runstate="Runnable" seed="1059855388" result="Passed" start-time="2026-10-10 15:38:56Z" end-time="2026-10-10 15:38:56Z" duration="0.429450" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1054" name="FirstStepDisclosesOnlyStateAndBlocksCommandsAndHiddenTerms" fullname="OptCon.Tests.LessonOrchestrationTests.FirstStepDisclosesOnlyStateAndBlocksCommandsAndHiddenTerms" methodname="FirstStepDisclosesOnlyStateAndBlocksCommandsAndHiddenTerms" classname="OptCon.Tests.LessonOrchestrationTests" runstate="Runnable" seed="1133728103" result="Passed" start-time="2026-10-10 15:38:56Z" end-time="2026-10-10 15:38:56Z" duration="0.315615" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1063" name="GenericLayerToggleKeepsItsAdditionalRootsTogetherWithoutChangingSimulation" fullname="OptCon.Tests.LessonOrchestrationTests.GenericLayerToggleKeepsItsAdditionalRootsTogetherWithoutChangingSimulation" methodname="GenericLayerToggleKeepsItsAdditionalRootsTogetherWithoutChangingSimulation" classname="OptCon.Tests.LessonOrchestrationTests" runstate="Runnable" seed="757185144" result="Passed" start-time="2026-10-10 15:38:56Z" end-time="2026-10-10 15:38:57Z" duration="0.318123" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1064" name="IndexOnlyGuidedLessonUsesGenericFormulaAndF07CostsWithoutInventingSeconds" fullname="OptCon.Tests.LessonOrchestrationTests.IndexOnlyGuidedLessonUsesGenericFormulaAndF07CostsWithoutInventingSeconds" methodname="IndexOnlyGuidedLessonUsesGenericFormulaAndF07CostsWithoutInventingSeconds" classname="OptCon.Tests.LessonOrchestrationTests" runstate="Runnable" seed="1857398701" result="Passed" start-time="2026-10-10 15:38:57Z" end-time="2026-10-10 15:38:57Z" duration="0.329651" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1053" name="LessonAndConsumersAreComposedBeforeReady" fullname="OptCon.Tests.LessonOrchestrationTests.LessonAndConsumersAreComposedBeforeReady" methodname="LessonAndConsumersAreComposedBeforeReady" classname="OptCon.Tests.LessonOrchestrationTests" runstate="Runnable" seed="395821671" result="Passed" start-time="2026-10-10 15:38:57Z" end-time="2026-10-10 15:38:57Z" duration="0.317541" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1058" name="RestartAndBackClearFutureControlsSelectionsComparisonAndFacts" fullname="OptCon.Tests.LessonOrchestrationTests.RestartAndBackClearFutureControlsSelectionsComparisonAndFacts" methodname="RestartAndBackClearFutureControlsSelectionsComparisonAndFacts" classname="OptCon.Tests.LessonOrchestrationTests" runstate="Runnable" seed="1562792476" result="Passed" start-time="2026-10-10 15:38:57Z" end-time="2026-10-10 15:38:58Z" duration="0.397783" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1057" name="TerminalHighlightUsesTWhileTheCursorIsElsewhereAndUnavailableIsExplicit" fullname="OptCon.Tests.LessonOrchestrationTests.TerminalHighlightUsesTWhileTheCursorIsElsewhereAndUnavailableIsExplicit" methodname="TerminalHighlightUsesTWhileTheCursorIsElsewhereAndUnavailableIsExplicit" classname="OptCon.Tests.LessonOrchestrationTests" runstate="Runnable" seed="1613273804" result="Passed" start-time="2026-10-10 15:38:58Z" end-time="2026-10-10 15:38:58Z" duration="0.371820" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1060" name="TwoLessonsSharingWorkspaceRecomposeEducationalIdentityBeforeReady" fullname="OptCon.Tests.LessonOrchestrationTests.TwoLessonsSharingWorkspaceRecomposeEducationalIdentityBeforeReady" methodname="TwoLessonsSharingWorkspaceRecomposeEducationalIdentityBeforeReady" classname="OptCon.Tests.LessonOrchestrationTests" runstate="Runnable" seed="755993311" result="Passed" start-time="2026-10-10 15:38:58Z" end-time="2026-10-10 15:38:59Z" duration="0.620674" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1065" name="ProgressionRuntimeTests" fullname="OptCon.Tests.ProgressionRuntimeTests" classname="OptCon.Tests.ProgressionRuntimeTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-10 15:38:59Z" end-time="2026-10-10 15:39:02Z" duration="3.428738" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1072" name="AF08_04_HudKeyboardAndInspectorPolicyHandleFailedShortRequestedDomain" fullname="OptCon.Tests.ProgressionRuntimeTests.AF08_04_HudKeyboardAndInspectorPolicyHandleFailedShortRequestedDomain" methodname="AF08_04_HudKeyboardAndInspectorPolicyHandleFailedShortRequestedDomain" classname="OptCon.Tests.ProgressionRuntimeTests" runstate="Runnable" seed="1120673246" result="Passed" start-time="2026-10-10 15:38:59Z" end-time="2026-10-10 15:38:59Z" duration="0.359719" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1073" name="AF08_06_ComposedCustomMetricAndConditionReachActualHudAndLesson" fullname="OptCon.Tests.ProgressionRuntimeTests.AF08_06_ComposedCustomMetricAndConditionReachActualHudAndLesson" methodname="AF08_06_ComposedCustomMetricAndConditionReachActualHudAndLesson" classname="OptCon.Tests.ProgressionRuntimeTests" runstate="Runnable" seed="1823412012" result="Passed" start-time="2026-10-10 15:38:59Z" end-time="2026-10-10 15:39:00Z" duration="0.595977" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1067" name="AF08_07_TwoDifferentLessonsUseNeutralCompletionWithoutPrototypeConcepts" fullname="OptCon.Tests.ProgressionRuntimeTests.AF08_07_TwoDifferentLessonsUseNeutralCompletionWithoutPrototypeConcepts" methodname="AF08_07_TwoDifferentLessonsUseNeutralCompletionWithoutPrototypeConcepts" classname="OptCon.Tests.ProgressionRuntimeTests" runstate="Runnable" seed="1411419103" result="Passed" start-time="2026-10-10 15:39:00Z" end-time="2026-10-10 15:39:00Z" duration="0.396878" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1066" name="CompletionMenuReopenAndApplicationRestartPreserveOnlyCompletedIdentity" fullname="OptCon.Tests.ProgressionRuntimeTests.CompletionMenuReopenAndApplicationRestartPreserveOnlyCompletedIdentity" methodname="CompletionMenuReopenAndApplicationRestartPreserveOnlyCompletedIdentity" classname="OptCon.Tests.ProgressionRuntimeTests" runstate="Runnable" seed="1279525913" result="Passed" start-time="2026-10-10 15:39:00Z" end-time="2026-10-10 15:39:01Z" duration="0.693119" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1071" name="FailedEnterRuntimeCannotSaveAndRestartRecovers" fullname="OptCon.Tests.ProgressionRuntimeTests.FailedEnterRuntimeCannotSaveAndRestartRecovers" methodname="FailedEnterRuntimeCannotSaveAndRestartRecovers" classname="OptCon.Tests.ProgressionRuntimeTests" runstate="Runnable" seed="926121638" result="Passed" start-time="2026-10-10 15:39:01Z" end-time="2026-10-10 15:39:01Z" duration="0.342951" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1068" name="NavigationDuringFinalPublicationNeverSavesOldDestination" fullname="OptCon.Tests.ProgressionRuntimeTests.NavigationDuringFinalPublicationNeverSavesOldDestination" methodname="NavigationDuringFinalPublicationNeverSavesOldDestination" classname="OptCon.Tests.ProgressionRuntimeTests" runstate="Runnable" seed="1087878922" result="Passed" start-time="2026-10-10 15:39:01Z" end-time="2026-10-10 15:39:02Z" duration="0.347836" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1069" name="NavigationFromLateCompletionObserverCancelsEarlierQueuedCommit" fullname="OptCon.Tests.ProgressionRuntimeTests.NavigationFromLateCompletionObserverCancelsEarlierQueuedCommit" methodname="NavigationFromLateCompletionObserverCancelsEarlierQueuedCommit" classname="OptCon.Tests.ProgressionRuntimeTests" runstate="Runnable" seed="1493013517" result="Passed" start-time="2026-10-10 15:39:02Z" end-time="2026-10-10 15:39:02Z" duration="0.343357" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1070" name="PresentationNonRepresentableBlocksPersistentCompletionAndResetRecovers" fullname="OptCon.Tests.ProgressionRuntimeTests.PresentationNonRepresentableBlocksPersistentCompletionAndResetRecovers" methodname="PresentationNonRepresentableBlocksPersistentCompletionAndResetRecovers" classname="OptCon.Tests.ProgressionRuntimeTests" runstate="Runnable" seed="956416677" result="Passed" start-time="2026-10-10 15:39:02Z" end-time="2026-10-10 15:39:02Z" duration="0.343577" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1075" name="VisualizationTests" fullname="OptCon.Tests.VisualizationTests" classname="OptCon.Tests.VisualizationTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-10 15:39:02Z" end-time="2026-10-10 15:39:05Z" duration="2.610404" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1076" name="AF08_01_DoubleResultOutsideFloatRangeStillReachesHud" fullname="OptCon.Tests.VisualizationTests.AF08_01_DoubleResultOutsideFloatRangeStillReachesHud" methodname="AF08_01_DoubleResultOutsideFloatRangeStillReachesHud" classname="OptCon.Tests.VisualizationTests" runstate="Runnable" seed="2030512228" result="Passed" start-time="2026-10-10 15:39:02Z" end-time="2026-10-10 15:39:03Z" duration="0.336376" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1082" name="ClosingAndReopeningReleasesVisualSubscriptionsAndClonedActions" fullname="OptCon.Tests.VisualizationTests.ClosingAndReopeningReleasesVisualSubscriptionsAndClonedActions" methodname="ClosingAndReopeningReleasesVisualSubscriptionsAndClonedActions" classname="OptCon.Tests.VisualizationTests" runstate="Runnable" seed="470477689" result="Passed" start-time="2026-10-10 15:39:03Z" end-time="2026-10-10 15:39:03Z" duration="0.390787" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1078" name="EveryTrajectoryPointAndTwoMarkersUseTheSameSavedResultAfterCommands" fullname="OptCon.Tests.VisualizationTests.EveryTrajectoryPointAndTwoMarkersUseTheSameSavedResultAfterCommands" methodname="EveryTrajectoryPointAndTwoMarkersUseTheSameSavedResultAfterCommands" classname="OptCon.Tests.VisualizationTests" runstate="Runnable" seed="1951693899" result="Passed" start-time="2026-10-10 15:39:03Z" end-time="2026-10-10 15:39:03Z" duration="0.337204" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1079" name="HiddenLayersNeverChangeSimulationAndHighlightUsesResolvedIndex" fullname="OptCon.Tests.VisualizationTests.HiddenLayersNeverChangeSimulationAndHighlightUsesResolvedIndex" methodname="HiddenLayersNeverChangeSimulationAndHighlightUsesResolvedIndex" classname="OptCon.Tests.VisualizationTests" runstate="Runnable" seed="1215017812" result="Passed" start-time="2026-10-10 15:39:03Z" end-time="2026-10-10 15:39:04Z" duration="0.324972" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1080" name="PhysicalPoseUsesResultConfigurationAndTerminalHasNoGhostOrTorque" fullname="OptCon.Tests.VisualizationTests.PhysicalPoseUsesResultConfigurationAndTerminalHasNoGhostOrTorque" methodname="PhysicalPoseUsesResultConfigurationAndTerminalHasNoGhostOrTorque" classname="OptCon.Tests.VisualizationTests" runstate="Runnable" seed="651763341" result="Passed" start-time="2026-10-10 15:39:04Z" end-time="2026-10-10 15:39:04Z" duration="0.330374" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1081" name="RealKeyboardChangesInputPlaybackStepsAndResetWithoutMutatingAssets" fullname="OptCon.Tests.VisualizationTests.RealKeyboardChangesInputPlaybackStepsAndResetWithoutMutatingAssets" methodname="RealKeyboardChangesInputPlaybackStepsAndResetWithoutMutatingAssets" classname="OptCon.Tests.VisualizationTests" runstate="Runnable" seed="184463977" result="Passed" start-time="2026-10-10 15:39:04Z" end-time="2026-10-10 15:39:04Z" duration="0.567122" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1077" name="VisualConsumersAndDedicatedInputAreBoundBeforeReady" fullname="OptCon.Tests.VisualizationTests.VisualConsumersAndDedicatedInputAreBoundBeforeReady" methodname="VisualConsumersAndDedicatedInputAreBoundBeforeReady" classname="OptCon.Tests.VisualizationTests" runstate="Runnable" seed="750743337" result="Passed" start-time="2026-10-10 15:39:04Z" end-time="2026-10-10 15:39:05Z" duration="0.318801" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/querz/AppData/LocalLow/DefaultCompany/optimal_control\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

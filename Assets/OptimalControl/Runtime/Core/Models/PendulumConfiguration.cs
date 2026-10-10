@@ -21,6 +21,7 @@ namespace OptCon.Core
         }
 
         public override IDiscreteDynamics CreateDynamics() => dynamics;
+        public override IOutputFunction CreateOutputFunction() => new StateComponentOutput(2, 1, 0);
         public override ModelConfiguration WithParameter(string target, double value)
         {
             double mass = Physics.Mass, length = Physics.Length, gravity = Physics.Gravity;

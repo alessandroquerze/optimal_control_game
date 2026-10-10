@@ -3,24 +3,31 @@ using System;
 namespace OptCon.Simulation
 {
     /// <summary>Atomic result: history and the exact immutable configuration of the same revision.</summary>
-    public sealed class SimulationResult
+    public sealed class SimulationResult : IExperimentResult
     {
         public SimulationConfiguration Configuration { get; }
+        IExperimentConfiguration IExperimentResult.Configuration => Configuration;
+        public SessionState Select(int cursor) => new SessionState(this, Configuration, cursor, RevisionId, null, false, 10, false);
         public TrajectoryHistory History { get; }
         public long RevisionId => History.RevisionId;
         public CostEvaluation Costs { get; }
+        public OutputEvaluation Outputs { get; }
         internal SimulationResult(SimulationConfiguration configuration, TrajectoryHistory history)
         {
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             History = history ?? throw new ArgumentNullException(nameof(history));
             Costs = configuration.Cost == null ? null : new CostEvaluation(configuration.Cost, history);
+            var output = configuration.Model.CreateOutputFunction();
+            Outputs = output == null ? null : new OutputEvaluation(output, history);
         }
     }
 
     /// <summary>A complete publication. Interpret Sample through Result.Configuration, never RequestedConfiguration.</summary>
-    public sealed class SessionState
+    public sealed class SessionState : IExperimentSnapshot
     {
         public SimulationResult Result { get; }
+        IExperimentResult IExperimentSnapshot.Result => Result;
+        public ExperimentCapabilities Capabilities => ExperimentCapabilities.Parameters | ExperimentCapabilities.Trajectory;
         public SimulationSnapshot Sample { get; }
         public ComparisonSnapshot Comparison { get; }
         public SimulationConfiguration RequestedConfiguration { get; }

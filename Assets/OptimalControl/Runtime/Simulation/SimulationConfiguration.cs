@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using OptCon.Core;
 
 namespace OptCon.Simulation
@@ -7,7 +8,7 @@ namespace OptCon.Simulation
     public enum InputEditScope { Single, Tail }
 
     /// <summary>Frozen mathematical inputs for one candidate/result. No Unity assets or presentation clock.</summary>
-    public sealed class SimulationConfiguration
+    public sealed class SimulationConfiguration : IExperimentConfiguration
     {
         public string ExperimentId { get; }
         public ModelConfiguration Model { get; }
@@ -17,6 +18,7 @@ namespace OptCon.Simulation
         public CostConfiguration Cost { get; }
         public NumericVector ReferenceState => Cost?.ReferenceState ?? referenceState;
         public int Horizon => Controls.Count;
+        public IReadOnlyList<ModelParameterValue> Parameters { get; }
 
         public SimulationConfiguration(string experimentId, ModelConfiguration model, NumericVector initialState,
             IReadOnlyList<NumericVector> controls, NumericVector referenceState = null, CostConfiguration cost = null)
@@ -33,6 +35,7 @@ namespace OptCon.Simulation
             }
             if (referenceState != null) NumericValidation.RequireDimension(referenceState, model.Descriptor.Dimensions.State, nameof(referenceState));
             cost?.Validate(model.Descriptor); Cost = cost;
+            Parameters = Array.AsReadOnly(model.Parameters.Concat(cost?.Parameters ?? Array.Empty<ModelParameterValue>()).ToArray());
             ExperimentId = experimentId; InitialState = initialState; Controls = Array.AsReadOnly(copy); this.referenceState = referenceState;
         }
 

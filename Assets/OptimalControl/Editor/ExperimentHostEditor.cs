@@ -17,6 +17,19 @@ namespace OptCon.Editor
         {
             var host = (ExperimentHost)target;
             var session = host.Session;
+            if (host.Experiment != null && session == null)
+            {
+                var snapshot = host.Experiment.Current;
+                EditorGUILayout.LabelField("Snapshot revision / attempt", snapshot.Result.RevisionId + " / " + snapshot.AttemptRevisionId);
+                if (snapshot.Error != null) EditorGUILayout.HelpBox(snapshot.Error, MessageType.Error);
+                foreach (var parameter in snapshot.Result.Configuration.Parameters)
+                {
+                    double value = EditorGUILayout.DoubleField(parameter.Target + " [" + parameter.Unit + "]", parameter.Value);
+                    if (value != parameter.Value) host.Commands.Execute(SimulationCommand.SetParameter(parameter.Target, value));
+                }
+                if (GUILayout.Button("Reset")) host.Commands.Execute(SimulationCommand.Reset());
+                return;
+            }
             if (session == null) { EditorGUILayout.HelpBox("Enter Play and open a lesson to inspect its session.", MessageType.Info); return; }
             var state = session.State;
             EditorGUILayout.LabelField("Result revision / attempt", state.Result.RevisionId + " / " + state.AttemptRevisionId);

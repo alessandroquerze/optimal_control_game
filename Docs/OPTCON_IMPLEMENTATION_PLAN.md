@@ -1,6 +1,6 @@
 # Optimal Control — roadmap operativa
 
-Data della revisione: 10 ottobre 2026. **31 fasi, da F00 a F30.** **F00–F07 completate e verificate il 9 ottobre 2026; F08 e F09 completate e verificate il 10 ottobre 2026.** F10–F30 restano pianificate e non avviate. La revisione documentale iniziale è conservata; l'implementazione corrente comprende foundation, catalogo, navigazione, core matematico/simulativo puro, sessione runtime, primitive visuali, controlli della dinamica, Formula/HUD live con binding tipizzati, costi discreti, target, confronto A/B, primo vertical slice didattico con Lesson Logic, validazione consolidata e progressione persistente versionata.
+Data della revisione: 11 ottobre 2026. **31 fasi, da F00 a F30.** **F00–F07 completate e verificate il 9 ottobre 2026; F08–F10 il 10 ottobre 2026; F11 l'11 ottobre 2026.** F12–F30 restano pianificate e non avviate. La revisione documentale iniziale è conservata; l'implementazione corrente comprende foundation, catalogo, navigazione, core matematico/simulativo puro, sessione runtime, primitive visuali, controlli della dinamica, Formula/HUD live con binding tipizzati, costi discreti, target, confronto A/B, primo vertical slice didattico con Lesson Logic, validazione consolidata, progressione persistente versionata, authoring strutturato verificato su un esperimento statico e C1.L1 di produzione raggiungibile dal Bootstrap predefinito.
 
 ## Specifica, fonti e risultato della revisione
 
@@ -714,6 +714,7 @@ Unity 6000.3.8f1: **268/268 EditMode, 64/64 PlayMode**, zero falliti/saltati; co
 
 ## F10 — Authoring formule e prova di estensibilità
 
+- **Stato:** **completata**, 10 ottobre 2026. Contratto comune dinamico/statico, obiettivo quadratico tramite catalogo/host reale, layout strutturato e authoring verificati. F11 non era iniziata nella consegna F10; il suo stato corrente è riportato nella sezione successiva.
 - **Obiettivo:** consolidare la UI e dimostrare che un esperimento diverso si aggiunge senza riscrivere i sistemi comuni.
 - **Prerequisiti:** infrastruttura stabile e validatori; feedback reale sulla leggibilità delle formule del slice.
 - **Dipendenze:** F09.
@@ -723,8 +724,11 @@ Unity 6000.3.8f1: **268/268 EditMode, 64/64 PlayMode**, zero falliti/saltati; co
 - **Criteri di completamento:** nessuna modifica specifica per capitolo in CourseManager o TrajectoryRenderer; l'host accetta anche un esperimento senza dinamica tramite un provider, senza inventare una timeline fisica; layout e binding restano separati. Il fixture non è una nuova lezione del curriculum.
 - **Test:** test dei binding/dimensioni del secondo esperimento; prova manuale con espressioni reali di I/O/K e selezione dei termini. Scegliere un'eventuale dipendenza per formule solo se il prototipo dimostra una necessità concreta.
 
+**Verifica di completamento F10:** Unity 6000.3.8f1, compilazione finale exit 0 senza errori/warning C#; **296/296 EditMode e 74/74 PlayMode**, zero falliti/saltati. Conservati tutti i 268+64 test F09; aggiunti 28+10 test. Pendolo completo nativo (formula, traiettoria, costo, A/B, lesson, progresso, terminale, failure e recupero) e fixture statica tramite normale UI/catalogo/workspace: PASS. Oracoli statici 9→12→20, revisioni immutabili, scope Snapshot senza SampleIndex/tempo/trajectory, provider custom E2E, readiness, teardown, NonRepresentable ed Enter fallito verificati. Layout somma/frazione/indici/matrice/integrale e selezione ispezionati nella Game View; matrice solo di layout, nessun Matrix runtime. Nessun ramo per capitolo in CourseManager o TrajectoryRenderer; nessuna dipendenza esterna. Tutti i 416 file applicativi coincidono con la copia verificata. Report, inventario, XML e catture: [F10_IMPLEMENTATION.md](REVIEWS/F10_IMPLEMENTATION.md). **READY FOR CHAPTER 1 PRODUCTION / F11.**
+
 ## F11 — Chapter 1: lezione introduttiva completa
 
+- **Stato:** **completata**, 11 ottobre 2026. Corso di produzione `optimal-control`, Chapter `C1`, lesson indipendente `C1.L1` versione/schema `1`, esperimento `c1.introduction.pendulum`; accesso dal Bootstrap salvato senza fixture. **F12 non iniziata.**
 - **Obiettivo:** trasformare il laboratorio validato nella C1.L1 di produzione, includendo motivazione, stato/input/output e tempo continuo/discreto.
 - **Prerequisiti:** esperienza del slice completa e authoring verificato su un secondo esperimento.
 - **Dipendenze:** F08, F10.
@@ -733,6 +737,8 @@ Unity 6000.3.8f1: **268/268 EditMode, 64/64 PlayMode**, zero falliti/saltati; co
 - **Risultato verificabile:** Chapter 1 appare nel menu e C1.L1 propone esperimento, motivazioni e verifica completa, con riferimenti I pp. 2–10 e pendolo/Euler dichiarati.
 - **Criteri di completamento:** lo studente distingue x, u e y, legge t/τ/δ e riconosce che la posizione non è tutto lo stato; i domini motivanti sono contenuti contestuali, non scene decorative separate.
 - **Test:** validazione asset e regressione del percorso del slice solo se il nuovo authoring modifica il wiring; prova manuale di prerequisiti, progressione e domande.
+
+**Verifica di completamento F11:** Unity 6000.3.8f1, compilazione finale exit 0 senza errori/warning C#; **316/316 EditMode e 80/80 PlayMode**, zero falliti/saltati. Tutti i 296+74 casi F10 conservati e passanti; aggiunti 20+6 test. Catalogo e binding validati anche contro hash/pagine delle fonti. Percorso di produzione a undici passaggi verificato in runtime nativo tramite normale UI, con equazioni Euler prima della previsione, output puro h e campioni immutabili, stato distinto dalla posa, t/δ/τ, risposte errate bloccate e terminale senza input/next inventati. Completion soltanto `optimal-control/C1.L1`; ritorno/riapertura, restart Play e nuovo processo Unity confermano persistenza e sessione fresca. Pendolo/prototipo, index-only e fixture statica F10 riverificati nativamente; contratti A01–A04 e AF08-01–07 preservati. Tutti i **446 file applicativi** corrispondono alla copia verificata. Catture Game View ispezionate; interazioni native automatizzate, nessuno studio di usabilità dichiarato. Inventario, test, fonti, procedura e gate: [F11_IMPLEMENTATION.md](REVIEWS/F11_IMPLEMENTATION.md). **READY FOR F12.**
 
 ## F12 — Chapter 1: traiettorie, equilibri e linearizzazione
 
@@ -945,6 +951,6 @@ Unity 6000.3.8f1: **268/268 EditMode, 64/64 PlayMode**, zero falliti/saltati; co
 
 ## Prossimo passo e limite di questa consegna
 
-**F00–F09 sono completate; il prossimo intervento pianificato è F10, non avviato in questa consegna.** Il percorso fino a F08 valida la pipeline completa prima di produrre il corso; F09 consolida validazione, lifecycle e progresso; F10 introdurrà authoring formule e prova del secondo esperimento; F11–F27 producono i capitoli nell'ordine richiesto; F28 chiude le dipendenze applicative; F29–F30 completano polish e consegna.
+**F00–F11 sono completate; il prossimo intervento pianificato è F12, non avviato in questa consegna.** Il percorso fino a F08 valida la pipeline completa prima di produrre il corso; F09 consolida validazione, lifecycle e progresso; F10 verifica authoring formule e riuso tramite un vero esperimento statico; F11 avvia la produzione con C1.L1; F12–F27 proseguono i capitoli nell'ordine richiesto; F28 chiude le dipendenze applicative; F29–F30 completano polish e consegna.
 
-La consegna corrente comprende esclusivamente F09, documentata in [F09_IMPLEMENTATION.md](REVIEWS/F09_IMPLEMENTATION.md). Preserva A01–A04 e AF08-01/02/03, risolve AF08-04/05/06/07 e aggiunge progressione persistente senza completare contenuti di produzione. Asset, scene, prefab, PDF, specifiche/review precedenti, URP, ProjectSettings e pacchetti invariati. Nessun contratto di esperimento statico, layout matematico o polish F10 e successivi introdotto. Il lavoro termina con F09.
+La consegna corrente comprende esclusivamente F10, documentata in [F10_IMPLEMENTATION.md](REVIEWS/F10_IMPLEMENTATION.md). Preserva A01–A04 e AF08-01…07 e aggiunge il contratto comune, l'obiettivo statico di test e il layout matematico minimo, senza completare contenuti di produzione. Asset editoriali/scene/prefab precedenti, PDF, specifiche/review precedenti, URP, ProjectSettings e pacchetti invariati. Il catalogo di fixture è separato dal corso predefinito; nessun esperimento statico usa una timeline fittizia. Il lavoro termina con F10.

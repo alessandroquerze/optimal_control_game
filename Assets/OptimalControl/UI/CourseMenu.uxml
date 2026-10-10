@@ -9,7 +9,7 @@
             <ui:Label name="course-description" class="description" />
             <ui:Label text="Scegli una lezione" class="section-title" />
             <ui:VisualElement name="chapter-list" class="chapter-list" />
-            <ui:Label text="L'apertura di un'anteprima non completa la lezione." class="note" />
+            <ui:Label text="Il completamento viene salvato dopo la verifica guidata della lezione." class="note" />
         </ui:ScrollView>
         <ui:ScrollView name="lesson-panel" class="lesson-panel">
             <ui:Button name="return-to-menu" text="← Torna al corso" class="back-button" />

@@ -7,10 +7,10 @@ namespace OptCon.Presentation
     /// <summary>Presentation outcome for one exact session publication; never a mathematical error.</summary>
     public sealed class VisualizationStatus
     {
-        public SessionState Source { get; }
+        public IExperimentSnapshot Source { get; }
         public VisualizationAvailability Availability { get; }
         public string Diagnostic { get; }
-        public VisualizationStatus(SessionState source, VisualizationAvailability availability, string diagnostic = null)
+        public VisualizationStatus(IExperimentSnapshot source, VisualizationAvailability availability, string diagnostic = null)
         { Source = source; Availability = availability; Diagnostic = diagnostic; }
     }
     public interface IVisualizationStatus

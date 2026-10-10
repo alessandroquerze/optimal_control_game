@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59d5625f604e45c9b45fe52b2a57a79f, type: 3}
+  m_Name: Chapter01
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.ChapterDefinition
+  id: C1
+  schemaVersion: 1
+  contentVersion: '1'
+  title: Chapter 1 — Introduction to Optimal Control
+  description: Inizia da stato, input, output e tempo; le altre lesson saranno prodotte nelle fasi successive.
+  lessons:
+  - {fileID: 11400000, guid: aed57ac4dc235f278869d9240ee0c279, type: 2}
+  sources:
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 2
+    lastPhysicalPage: 10
+    firstSlide: 1
+    lastSlide: 9
+    section: Motivazioni, stato/input/output, tempo e notazione
+    usage: 0
+    note: ''
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 27
+    lastPhysicalPage: 27
+    firstSlide: 26
+    lastSlide: 26
+    section: Forward Euler
+    usage: 1
+    note: 'Euler del drone applicato al pendolo: adattamento dichiarato.'
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 33
+    lastPhysicalPage: 33
+    firstSlide: 32
+    lastSlide: 32
+    section: 'Pendolo: x₁=θ, x₂=ω, y=θ'
+    usage: 0
+    note: ''

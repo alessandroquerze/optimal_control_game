@@ -1,0 +1,2 @@
+PASS
+Fresh Unity process, saved Bootstrap, no content replacement. FileProgressStore restored exactly optimal-control/C1.L1/version1/schema1. Normal menu showed saved progress; opening created a fresh runtime lesson at context, t=0, delta=.02, output y0=.35.

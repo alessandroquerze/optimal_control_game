@@ -24,7 +24,7 @@ namespace OptCon.Presentation
         {
             if (targets == null) targets = GetComponentsInChildren<HighlightTarget>(true);
             foreach (var target in targets)
-                target.Highlight(role != null && target.SemanticRole == role && target.SampleIndex.HasValue &&
+                target.Highlight(role != null && target.SemanticRole == role && (target.SampleIndex.HasValue || (target.IsGlobalAvailable && !sample.HasValue)) &&
                     (!sample.HasValue || target.SampleIndex == sample) && (!revision.HasValue || target.RevisionId == revision));
         }
         public void Clear() { role = null; sample = null; revision = null; Refresh(); }

@@ -5,6 +5,7 @@
             <ui:Label name="lesson-step-title" class="term-name" />
             <ui:Label name="lesson-step-objective" class="lesson-objective" />
             <ui:Label name="lesson-instruction" class="hud-note" />
+            <ui:Label name="lesson-formula-expression" class="formula-expression" />
             <ui:Foldout name="lesson-help-panel" text="Suggerimento" value="false"><ui:Label name="lesson-help" class="hud-note" /></ui:Foldout>
             <ui:Label name="lesson-question" class="hud-note" />
             <ui:VisualElement name="lesson-answers" />
@@ -26,6 +27,7 @@
             <ui:VisualElement name="input-fields" />
             <ui:Label name="input-unavailable" text="N/A · al terminale non esiste u_T." class="hud-note" />
             <ui:VisualElement name="parameter-fields" />
+            <ui:VisualElement name="initial-state-fields" />
             <ui:Label name="parameter-status" class="hud-note" />
             <ui:DoubleField name="playback-rate" label="Playback [campioni/s]" value="10" is-delayed="true" />
             <ui:Label text="Il playback regola la presentazione: non modifica δ né il risultato matematico." class="hud-note" />
@@ -47,6 +49,7 @@
                 <ui:Label name="comparison-status" class="hud-note" />
             </ui:Foldout>
         </ui:Foldout>
+        <ui:VisualElement name="snapshot-parameters" />
         <ui:Label text="MATEMATICA LIVE · seleziona un termine" class="eyebrow" />
         <ui:DropdownField name="formula-choice" />
         <ui:Label name="formula-expression" class="formula-expression" />
@@ -61,7 +64,7 @@
         <ui:Foldout text="Ipotesi e convenzioni" value="false">
             <ui:Label name="formula-description" class="hud-note" />
             <ui:Label name="formula-assumptions" class="hud-note" />
-            <ui:Label text="Sfera blu: stato corrente. Cubo/ghost arancio: campione successivo. Linee: guide fra campioni, non interpolazione fisica. Tasti 1/2/3: layer corpo/fase/stato-tempo." class="hud-note" />
+            <ui:Label name="dynamic-legend" text="Sfera blu: stato corrente. Cubo/ghost arancio: campione successivo. Linee: guide fra campioni, non interpolazione fisica. Tasti 1/2/3: layer corpo/fase/stato-tempo." class="hud-note" />
         </ui:Foldout>
     </ui:VisualElement>
 </ui:UXML>

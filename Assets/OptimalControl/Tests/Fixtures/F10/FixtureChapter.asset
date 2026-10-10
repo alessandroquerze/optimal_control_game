@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59d5625f604e45c9b45fe52b2a57a79f, type: 3}
+  m_Name: FixtureChapter
+  m_EditorClassIdentifier: null
+  id: fixture.f10.chapter
+  schemaVersion: 1
+  contentVersion: 1
+  title: Architectural fixtures
+  description: F10 only; not a course chapter.
+  lessons:
+  - {fileID: 11400000, guid: fe11fade585142168c5c72b85a6618a8, type: 2}
+  sources:
+  - document: {fileID: 11400000, guid: 4cf2e393966f46098661e413d3a1fc87, type: 2}
+    firstPhysicalPage: 23
+    lastPhysicalPage: 23
+    firstSlide: 0
+    lastSlide: 0
+    section: Quadratic Programming
+    usage: 1
+    note: Diagonal specialization with q=0, value only; no optimization algorithm.

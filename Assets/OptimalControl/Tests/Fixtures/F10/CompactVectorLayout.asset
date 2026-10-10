@@ -1,0 +1,143 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e039087c2f4e1ab6f8639bc051389d, type: 3}
+  m_Name: CompactVectorLayout
+  m_EditorClassIdentifier: null
+  id: fixture.f10.compact-layout
+  schemaVersion: 1
+  contentVersion: 1
+  title: 'K p.10: compact vector (layout)'
+  description: Source stack excludes the fixed initial state.
+  expression: x = col(x1,...,xT)
+  layout:
+    rootId: root
+    nodes:
+    - id: root
+      kind: 2
+      text: 
+      termId: 
+      children:
+      - x
+      - eq
+      - matrix
+      rows: 0
+      columns: 0
+    - id: x
+      kind: 0
+      text: x
+      termId: 
+      children: []
+      rows: 0
+      columns: 0
+    - id: eq
+      kind: 0
+      text: =
+      termId: 
+      children: []
+      rows: 0
+      columns: 0
+    - id: matrix
+      kind: 7
+      text: 
+      termId: 
+      children:
+      - x1
+      - dots
+      - xT
+      rows: 3
+      columns: 1
+    - id: x1
+      kind: 4
+      text: 
+      termId: 
+      children:
+      - term
+      - one
+      - empty
+      rows: 0
+      columns: 0
+    - id: term
+      kind: 1
+      text: x
+      termId: stack
+      children: []
+      rows: 0
+      columns: 0
+    - id: one
+      kind: 0
+      text: 1
+      termId: 
+      children: []
+      rows: 0
+      columns: 0
+    - id: empty
+      kind: 0
+      text: 
+      termId: 
+      children: []
+      rows: 0
+      columns: 0
+    - id: dots
+      kind: 0
+      text: "\u22EE"
+      termId: 
+      children: []
+      rows: 0
+      columns: 0
+    - id: xT
+      kind: 4
+      text: 
+      termId: 
+      children:
+      - term
+      - T
+      - empty
+      rows: 0
+      columns: 0
+    - id: T
+      kind: 0
+      text: T
+      termId: 
+      children: []
+      rows: 0
+      columns: 0
+  sourceTranscription: K p.10 x = col(x1,...,xT)
+  assumptions: Editorial display only; this is not the static decision z or a live
+    trajectory. No runtime sample or Matrix value invented.
+  terms:
+  - id: stack
+    symbol: x
+    label: Stacked states
+    meaning: Stacked free states from x1 to xT; fixed x0 is excluded. Editorial layout
+      sample.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - 1
+    value:
+      metricId: 
+      kind: 0
+      scope: 4
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: 
+      scope: 4
+  sources:
+  - document: {fileID: 11400000, guid: 32cbfcdf06ae4cb6b5ab8201db41ab96, type: 2}
+    firstPhysicalPage: 10
+    lastPhysicalPage: 10
+    firstSlide: 0
+    lastSlide: 0
+    section: Compact state and input vectors
+    usage: 0
+    note: 

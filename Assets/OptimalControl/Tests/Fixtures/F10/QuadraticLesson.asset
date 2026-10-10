@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2447a3f1440a48128f99dcbb8f745af5, type: 3}
+  m_Name: QuadraticLesson
+  m_EditorClassIdentifier: null
+  id: fixture.f10.static
+  schemaVersion: 1
+  contentVersion: 1
+  title: 'F10 fixture: decision and objective'
+  description: Architecture proof, not a production curriculum lesson.
+  objective: Modify z1 and read the saved objective value. The point is z; the separate
+    ordinate is ell(z).
+  prerequisiteLessonIds: []
+  workspace:
+    assetPath: Assets/OptimalControl/Scenes/LessonWorkspace.unity
+  experiment: {fileID: 11400000, guid: a98d74dcca6f438b86741cf53972bdca, type: 2}
+  formulas:
+  - {fileID: 11400000, guid: 782e6f9d35a1451491708cf044e2eb28, type: 2}
+  - {fileID: 11400000, guid: 8a760d7ef26c4dfdb4d5ee4ed67672e5, type: 2}
+  - {fileID: 11400000, guid: ea96b759d52c4e259570d1e11043f6fa, type: 2}
+  - {fileID: 11400000, guid: 5dc76dd61cb84c079db0589881d7fe86, type: 2}
+  sources:
+  - document: {fileID: 11400000, guid: 4cf2e393966f46098661e413d3a1fc87, type: 2}
+    firstPhysicalPage: 23
+    lastPhysicalPage: 23
+    firstSlide: 0
+    lastSlide: 0
+    section: Quadratic Programming
+    usage: 1
+    note: Diagonal specialization with q=0, value only; no optimization algorithm.
+  steps:
+  - id: inspect
+    title: Static decision and objective
+    objective: Relate z to the objective value.
+    instruction: 'Change z1 from 1 to 2: the objective goes from 9 to 12. Select
+      ell(z), then conclude. No time evolves.'
+    help: ell(z)=1/2 (w1 z1^2 + w2 z2^2), with z=[1,2], w=[2,4] initially. This evaluates
+      a point, it does not optimize.
+    formulaFocus: {fileID: 11400000, guid: 782e6f9d35a1451491708cf044e2eb28, type: 2}
+    selectedTermId: decision
+    visibleTermIds: []
+    enabledControlIds:
+    - parameter
+    - formula
+    - layers
+    editableParameterTargets:
+    - decision.0
+    - decision.1
+    - objective.weight.0
+    - objective.weight.1
+    visibleLayerIds:
+    - decision
+    - objective
+    showCosts: 0
+    entryActions: []
+    question: 
+    answers: []
+    conditions:
+    - evaluatorId: action
+      targetId: parameter.changed:decision.0
+      expectedAnswerId: 
+    - evaluatorId: term
+      targetId: value
+      expectedAnswerId: 
+  completionCriteria: Explicitly modify z1, select objective value and conclude this
+    fixture only.

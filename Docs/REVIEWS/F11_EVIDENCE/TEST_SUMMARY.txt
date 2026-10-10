@@ -1,0 +1,27 @@
+F11 final verification - 2026-10-11
+Unity 6000.3.8f1
+Compile final: exit 0; zero C# errors/warnings; no native helpers in final compilation/suites.
+EditMode-final.xml: total=316 passed=316 failed=0 skipped=0; preserved=296 new=20
+  OptCon.Content.EditModeTests.dll: 64/64
+  OptCon.Formula.EditModeTests.dll: 106/106
+  OptCon.Lessons.EditModeTests.dll: 80/80
+  OptCon.Mathematics.EditModeTests.dll: 58/58
+  OptCon.Visualization.EditModeTests.dll: 8/8
+PlayMode-final.xml: total=80 passed=80 failed=0 skipped=0; preserved=74 new=6
+  OptCon.Navigation.PlayModeTests.dll: 80/80
+compile-final.log: SHA256 36cbce8d26e898a5f62864eb00befab014239de40ba30bb7317292177f06a1dd
+EditMode-final.log: SHA256 bd4eea6beb7c7cfa13da517f4b66b5770e63fa897902e5555d7df602ad52af23
+PlayMode-final.log: SHA256 9882388b7f63791b8019dd266ab3dc1a75a4a60c0f77b13182bac961c7635f40
+native-production-final.log: SHA256 47f3ea72461269ced7344316b21c9710ad76a05c9555039835f8749736b4c1b3
+native-process-reload.log: SHA256 bb941d13e9d3c8434ec7e0579a83a41a07e7a9bdf401d257842c61dd2f5a6bb1
+native-regression-pendulum.log: SHA256 8e5abba22eda4242e7d0b394d5124786cd0c93c7aa2d98c5c894c4139fcf9237
+native-regression-static.log: SHA256 9c3a86e86c68f0483e7bc818d75705b4e21d8fca4427c50ec6f11f624cca376e
+Native production: PASS; saved Bootstrap; no course/lesson/experiment replacement; isolated FileProgressStore path only.
+Native full process reload: PASS; exact C1.L1 completion restored; fresh runtime at context/t=0.
+Native prototype/pendulum/index-only/failures: PASS. Native static F10: PASS.
+Native interactions automated through real UI callbacks/events; GameView captures visually inspected; no user Editor control or usability study claimed.
+20 production captures plus one fresh-process capture acquired; 17 selected unmodified GameView captures archived.
+Application manifest: 446 files; zero differences from verified isolated project.
+Temporary native helpers not shipped. No F12 implementation.
+Full local logs: C:\Users\querz\AppData\Local\Temp\OptCon-F11-90e8193ae1ec453b88bd40f418744c92
+Final read-only checks: original source PDFs/specifications/prior review reports, legacy content assets, prefabs, Packages and ProjectSettings unchanged from F11 baseline. Pure Core/Simulation dependency boundaries preserved. git diff --check PASS (CRLF treated as line ending).

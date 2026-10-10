@@ -1,0 +1,260 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e039087c2f4e1ab6f8639bc051389d, type: 3}
+  m_Name: QuadraticFormula
+  m_EditorClassIdentifier: null
+  id: fixture.f10.quadratic
+  schemaVersion: 1
+  contentVersion: 1
+  title: Static quadratic objective
+  description: A weighted sum of squared decision components.
+  expression: "\u2113(z) = \xBD \u03A3_(i=1)^2 w_i z_i\xB2"
+  layout:
+    rootId: root
+    nodes:
+    - id: root
+      kind: 2
+      text: 
+      termId: 
+      children:
+      - value
+      - eq
+      - half
+      - sum
+      rows: 0
+      columns: 0
+    - id: value
+      kind: 1
+      text: 
+      termId: value
+      children: []
+      rows: 0
+      columns: 0
+    - id: eq
+      kind: 0
+      text: =
+      termId: 
+      children: []
+      rows: 0
+      columns: 0
+    - id: half
+      kind: 3
+      text: 
+      termId: 
+      children:
+      - one
+      - two
+      rows: 0
+      columns: 0
+    - id: one
+      kind: 0
+      text: 1
+      termId: 
+      children: []
+      rows: 0
+      columns: 0
+    - id: two
+      kind: 0
+      text: 2
+      termId: 
+      children: []
+      rows: 0
+      columns: 0
+    - id: sum
+      kind: 5
+      text: 
+      termId: 
+      children:
+      - lower
+      - upper
+      - body
+      rows: 0
+      columns: 0
+    - id: lower
+      kind: 0
+      text: i=1
+      termId: 
+      children: []
+      rows: 0
+      columns: 0
+    - id: upper
+      kind: 0
+      text: 2
+      termId: 
+      children: []
+      rows: 0
+      columns: 0
+    - id: body
+      kind: 2
+      text: 
+      termId: 
+      children:
+      - wi
+      - zi
+      rows: 0
+      columns: 0
+    - id: wi
+      kind: 4
+      text: 
+      termId: 
+      children:
+      - w
+      - i
+      - empty
+      rows: 0
+      columns: 0
+    - id: zi
+      kind: 4
+      text: 
+      termId: 
+      children:
+      - z
+      - i
+      - square
+      rows: 0
+      columns: 0
+    - id: w
+      kind: 1
+      text: w
+      termId: weights
+      children: []
+      rows: 0
+      columns: 0
+    - id: z
+      kind: 1
+      text: z
+      termId: decision
+      children: []
+      rows: 0
+      columns: 0
+    - id: i
+      kind: 0
+      text: i
+      termId: 
+      children: []
+      rows: 0
+      columns: 0
+    - id: empty
+      kind: 0
+      text: 
+      termId: 
+      children: []
+      rows: 0
+      columns: 0
+    - id: square
+      kind: 0
+      text: 2
+      termId: 
+      children: []
+      rows: 0
+      columns: 0
+  sourceTranscription: ell(z)=1/2 z^T Q z; Q=diag(w1,w2), q=0
+  assumptions: z and weights dimensionless. Positive weights. No time, trajectory,
+    iterations or derivatives. Fixture, not C2.L1.
+  terms:
+  - id: value
+    symbol: "\u2113(z)"
+    label: Objective value
+    meaning: Saved objective value at the current decision; no minimum is claimed.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - 1
+    value:
+      metricId: objective.value
+      kind: 0
+      scope: 4
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: objective.value
+      scope: 4
+  - id: decision
+    symbol: z
+    label: Decision vector
+    meaning: Dimensionless decision coordinates, not a physical position or a state
+      trajectory.
+    rows: 2
+    columns: 1
+    componentUnits:
+    - 1
+    - 1
+    value:
+      metricId: decision.current
+      kind: 1
+      scope: 4
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: decision.current
+      scope: 4
+  - id: weights
+    symbol: w
+    label: Diagonal weights
+    meaning: Positive diagonal entries of Q belonging to this result.
+    rows: 2
+    columns: 1
+    componentUnits:
+    - 1
+    - 1
+    value:
+      metricId: objective.weights
+      kind: 1
+      scope: 4
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: 
+      scope: 4
+  - id: z1
+    symbol: "z\u2081"
+    label: First decision component
+    meaning: Explicit scalar component 0 of z.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - 1
+    value:
+      metricId: decision.current
+      kind: 0
+      scope: 4
+      component: 0
+      numericFormat: G6
+    highlight:
+      semanticRole: decision.current
+      scope: 4
+  - id: z2
+    symbol: "z\u2082"
+    label: Second decision component
+    meaning: Explicit scalar component 1 of z.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - 1
+    value:
+      metricId: decision.current
+      kind: 0
+      scope: 4
+      component: 1
+      numericFormat: G6
+    highlight:
+      semanticRole: decision.current
+      scope: 4
+  sources:
+  - document: {fileID: 11400000, guid: 4cf2e393966f46098661e413d3a1fc87, type: 2}
+    firstPhysicalPage: 23
+    lastPhysicalPage: 23
+    firstSlide: 0
+    lastSlide: 0
+    section: Quadratic Programming
+    usage: 1
+    note: Diagonal specialization with q=0, value only; no optimization algorithm.

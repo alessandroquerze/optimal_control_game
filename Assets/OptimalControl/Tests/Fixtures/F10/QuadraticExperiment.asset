@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4a65509c5394032a246076299067e3a, type: 3}
+  m_Name: QuadraticExperiment
+  m_EditorClassIdentifier: null
+  id: fixture.f10.objective
+  schemaVersion: 1
+  contentVersion: 1
+  title: Static quadratic fixture
+  description: Change z/weights to evaluate a static objective; no optimizer, trajectory
+    or physical time.
+  model: {fileID: 0}
+  provider: {fileID: 11400000, guid: 156175e6177a4d689f53d83203083db0, type: 2}
+  scenarioPrefab: {fileID: 6662455645700110763, guid: 6651c81f255b1694aa9f642d2781ecd2, type: 3}
+  cost: {fileID: 0}
+  stateDimension: 0
+  controlDimension: 0
+  outputDimension: 0
+  stateUnits: []
+  controlUnits: []
+  outputUnits: []
+  usesDiscreteTime: 0
+  discreteTime:
+    horizon: 0
+    hasPhysicalTimeStep: 0
+    stepSeconds: 0
+    initialState: []
+    defaultControl: []
+    referenceState: []
+  parameters:
+  - id: z1
+    label: z1
+    description: Dimensionless decision component; no physical coordinate.
+    valueKind: 0
+    unit: 1
+    defaultValue: 1
+    minimum: -5
+    maximum: 5
+    step: 0.1
+    modelTarget: decision.0
+    recalculation: 4
+  - id: z2
+    label: z2
+    description: Dimensionless decision component; no physical coordinate.
+    valueKind: 0
+    unit: 1
+    defaultValue: 2
+    minimum: -5
+    maximum: 5
+    step: 0.1
+    modelTarget: decision.1
+    recalculation: 4
+  - id: w1
+    label: w1
+    description: Positive diagonal quadratic weight.
+    valueKind: 0
+    unit: 1
+    defaultValue: 2
+    minimum: 0.1
+    maximum: 20
+    step: 0.1
+    modelTarget: objective.weight.0
+    recalculation: 4
+  - id: w2
+    label: w2
+    description: Positive diagonal quadratic weight.
+    valueKind: 0
+    unit: 1
+    defaultValue: 4
+    minimum: 0.1
+    maximum: 20
+    step: 0.1
+    modelTarget: objective.weight.1
+    recalculation: 4
+  sources:
+  - document: {fileID: 11400000, guid: 4cf2e393966f46098661e413d3a1fc87, type: 2}
+    firstPhysicalPage: 23
+    lastPhysicalPage: 23
+    firstSlide: 0
+    lastSlide: 0
+    section: Quadratic Programming
+    usage: 1
+    note: Diagonal specialization with q=0, value only; no optimization algorithm.

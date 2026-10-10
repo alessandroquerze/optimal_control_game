@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d70cdcbf4e04d33914b30a745b26a6a, type: 3}
+  m_Name: FixtureCourse
+  m_EditorClassIdentifier: null
+  id: fixture.f10.course
+  schemaVersion: 1
+  contentVersion: 1
+  title: F10 extensibility gate
+  description: Existing pendulum plus a static objective fixture. Not production
+    curriculum.
+  isPrototype: 1
+  chapters:
+  - {fileID: 11400000, guid: 3f2df1520d65488590fe514207b4c496, type: 2}
+  - {fileID: 11400000, guid: cd47a4fa71234652b8e0a145bb0aab25, type: 2}
+  sources:
+  - {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+  - {fileID: 11400000, guid: 4cf2e393966f46098661e413d3a1fc87, type: 2}
+  - {fileID: 11400000, guid: 32cbfcdf06ae4cb6b5ab8201db41ab96, type: 2}

@@ -1,0 +1,9 @@
+PASS
+Unity 6000.3.8f1
+Saved Bootstrap normal UI -> optimal-control / C1 / C1.L1 / c1.introduction.pendulum. No course injection, no fixture lesson. Only storage path isolated.
+Eleven steps through UI; wrong purpose/state/prediction/terminal answers blocked. Authored term selection gives no action credit. Initial angular velocity edited independently of angle.
+Same-angle different-state output stays theta; concrete Euler shown before prediction; x0=[0,0], u0=1 -> x1=[0,.02], y1=0. Next becomes current after step.
+HUD and visualization share the same immutable result; t=1, delta=.02 s, tau=.02 s. Playback-rate changes do not alter mathematical results.
+T=100 terminal: 101 states, 100 inputs, no u_T or x_(T+1); y_T remains available. Completion saved only optimal-control/C1.L1/version1/schema1.
+Return/reopen and full PlayMode restart reload FileProgressStore; runtime restarts at first step with fresh session. Incomplete exploration cannot complete.
+NonRepresentable revision remains shared with HUD; invalid mathematical request keeps last valid output/configuration; Restart recovers. Zero Error/Exception/Assert; twenty GameView captures.

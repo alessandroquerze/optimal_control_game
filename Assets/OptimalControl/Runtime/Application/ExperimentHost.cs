@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using OptCon.Simulation;
 using OptCon.Presentation;
 using OptCon.Content;
@@ -6,29 +7,35 @@ using UnityEngine;
 
 namespace OptCon.Application
 {
-    /// <summary>Owns the lifetime of one pure session and its presentation-clock adapter.</summary>
-    [RequireComponent(typeof(PlaybackController)), DisallowMultipleComponent]
+    /// <summary>Owns one common experiment lifetime; trajectory adapters are bound only when offered.</summary>
+    [DisallowMultipleComponent]
     public sealed class ExperimentHost : MonoBehaviour
     {
-        public SimulationSession Session { get; private set; }
+        public IExperimentSession Experiment { get; private set; }
+        public SimulationSession Session => Experiment as SimulationSession;
         public LessonSession Lesson { get; private set; }
-        public ICommandSink Commands => Lesson ?? (ICommandSink)Session;
-        public void Initialize(SimulationSession session, LessonSession lesson = null)
+        public IExperimentPresentation Presentation { get; private set; }
+        public ICommandSink Commands => Lesson ?? (ICommandSink)Experiment;
+        public void Initialize(IExperimentSession session, LessonSession lesson = null, RuntimeMetricResolver metrics = null)
         {
-            if (Session != null) throw new InvalidOperationException("Host already owns a session.");
-            Session = session ?? throw new ArgumentNullException(nameof(session));
+            if (Experiment != null) throw new InvalidOperationException("Host already owns an experiment.");
+            Experiment = session ?? throw new ArgumentNullException(nameof(session));
             Lesson = lesson;
-            foreach (var view in GetComponentsInChildren<ExperimentVisualization>(true)) view.Bind(session, lesson);
-            foreach (var input in GetComponentsInChildren<LessonInputRouter>(true)) input.Bind(session, lesson);
-            GetComponent<PlaybackController>().Bind(session);
+            Presentation = GetComponents<MonoBehaviour>().OfType<IExperimentPresentation>().SingleOrDefault();
+            if (Presentation == null) throw new InvalidOperationException("Scenario root requires one experiment presentation.");
+            if ((session.Capabilities & Presentation.RequiredCapabilities) != Presentation.RequiredCapabilities)
+                throw new InvalidOperationException("Scenario presentation requires unavailable experiment capabilities.");
+            Presentation.BindExperiment(session, lesson, metrics ?? new RuntimeMetricResolver());
+            foreach (var input in GetComponentsInChildren<LessonInputRouter>(true)) input.Bind(Session, lesson);
+            GetComponent<PlaybackController>()?.Bind(Session);
         }
         public void Close()
         {
             GetComponent<PlaybackController>()?.Bind(null);
             foreach (var input in GetComponentsInChildren<LessonInputRouter>(true)) input.Bind(null);
-            foreach (var view in GetComponentsInChildren<ExperimentVisualization>(true)) view.Bind(null);
+            Presentation?.BindExperiment(null, null, null); Presentation = null;
             Lesson?.Dispose(); Lesson = null;
-            Session?.Dispose(); Session = null;
+            Experiment?.Dispose(); Experiment = null;
         }
         private void OnDestroy() => Close();
     }

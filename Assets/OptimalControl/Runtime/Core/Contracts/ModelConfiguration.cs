@@ -9,6 +9,8 @@ namespace OptCon.Core
         public abstract ModelDescriptor Descriptor { get; }
         public abstract IReadOnlyList<ModelParameterValue> Parameters { get; }
         public abstract IDiscreteDynamics CreateDynamics();
+        // Optional capability. Declaring output dimensions alone never fabricates output values.
+        public virtual IOutputFunction CreateOutputFunction() => null;
         public abstract ModelConfiguration WithParameter(string target, double value);
         public abstract ModelConfiguration WithPhysicalStep(double? seconds);
     }

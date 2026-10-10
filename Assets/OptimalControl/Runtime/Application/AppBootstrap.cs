@@ -50,13 +50,13 @@ namespace OptCon.Application
             if (!Navigation.ReturnToMenu()) Debug.LogError(Navigation.StatusMessage, this);
         }
 
-        private SimulationSession Compose(NavigationTransition transition, Scene scene)
+        private IExperimentSession Compose(NavigationTransition transition, Scene scene)
         {
             if (transition.Destination == null) return null;
             var experiment = transition.Destination.Experiment;
-            if (experiment == null || experiment.Model == null || experiment.ScenarioPrefab == null)
-                throw new InvalidOperationException("Lesson requires a model provider and scenario prefab.");
-            var session = experiment.Model.CreateSession(experiment);
+            if (experiment == null || experiment.Provider == null || experiment.HasConflictingProviders || experiment.ScenarioPrefab == null)
+                throw new InvalidOperationException("Lesson requires one experiment provider and a scenario prefab.");
+            var session = experiment.Provider.CreateExperimentSession(experiment);
             GameObject scenario = null;
             LessonSession lessonSession = null;
             try
@@ -66,7 +66,7 @@ namespace OptCon.Application
                 var host = scenario.GetComponent<ExperimentHost>();
                 if (host == null) throw new InvalidOperationException("Scenario root requires an ExperimentHost.");
                 lessonSession = new LessonSession(transition.Destination, session, Services.Conditions, availableLayers: scenario.GetComponent<LayerController>()?.Ids ?? Array.Empty<string>());
-                host.Initialize(session, lessonSession); ActiveHost = host;
+                host.Initialize(session, lessonSession, Services.Metrics); ActiveHost = host;
                 return session;
             }
             catch
@@ -77,7 +77,7 @@ namespace OptCon.Application
             }
         }
 
-        private void BindScene(NavigationTransition transition, Scene scene, SimulationSession session)
+        private void BindScene(NavigationTransition transition, Scene scene, IExperimentSession session)
         {
             foreach (var root in scene.GetRootGameObjects())
             {
@@ -86,7 +86,7 @@ namespace OptCon.Application
                 foreach (var hud in root.GetComponentsInChildren<LessonHudPresenter>(true))
                 {
                     hud.Bind(transition.Destination, session, ActiveHost == null ? null : ActiveHost.GetComponent<HighlightRegistry>(), ActiveHost?.Lesson,
-                        ActiveHost == null ? null : ActiveHost.GetComponent<ExperimentVisualization>(), Services.Metrics);
+                        ActiveHost?.Presentation, Services.Metrics);
                     if (ActiveHost != null)
                         foreach (var input in ActiveHost.GetComponentsInChildren<LessonInputRouter>(true)) input.SetFocusGuard(hud.BlocksLessonShortcut);
                 }
@@ -94,16 +94,16 @@ namespace OptCon.Application
             if (session != null && ActiveHost != null)
             {
                 var host = ActiveHost;
-                var view = host.GetComponent<ExperimentVisualization>();
+                var view = host.Presentation;
                 var huds = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.SelectMany(scene.GetRootGameObjects(), root => root.GetComponentsInChildren<LessonHudPresenter>(true)));
                 progressBinding = new LessonProgressBinding(host.Lesson, session, Progress, () => Navigation.IsReady
                     && ReferenceEquals(ActiveHost, host) && ReferenceEquals(Navigation.ActiveLesson, transition.Destination)
                     && ((CourseManager)Navigation).State.Transition.Id == transition.Id
                     && view != null && view.Status != null && view.Status.Availability == VisualizationAvailability.Available
-                    && ReferenceEquals(view.BoundSession, session) && huds.Length != 0
-                    && ReferenceEquals(view.Status.Source.Result, session.State.Result)
-                    && System.Linq.Enumerable.All(huds, hud => hud != null && ReferenceEquals(hud.BoundSession, session) && ReferenceEquals(hud.BoundLesson, host.Lesson)
-                        && ReferenceEquals(hud.DisplayedState?.Result, session.State.Result)));
+                    && ReferenceEquals(view.BoundExperiment, session) && huds.Length != 0
+                    && ReferenceEquals(view.Status.Source.Result, session.Current.Result)
+                    && System.Linq.Enumerable.All(huds, hud => hud != null && ReferenceEquals(hud.BoundExperiment, session) && ReferenceEquals(hud.BoundLesson, host.Lesson)
+                        && ReferenceEquals(hud.DisplayedSnapshot?.Result, session.Current.Result)));
             }
         }
         private void Release()

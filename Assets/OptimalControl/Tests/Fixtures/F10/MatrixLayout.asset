@@ -1,0 +1,126 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e039087c2f4e1ab6f8639bc051389d, type: 3}
+  m_Name: MatrixLayout
+  m_EditorClassIdentifier: null
+  id: fixture.f10.matrix-layout
+  schemaVersion: 1
+  contentVersion: 1
+  title: 'Q: matrix layout 2x2'
+  description: Display of the diagonal quadratic weights; no runtime Matrix metric.
+  expression: Q = diag(w1,w2)
+  layout:
+    rootId: root
+    nodes:
+    - id: root
+      kind: 2
+      text: 
+      termId: 
+      children:
+      - q
+      - eq
+      - matrix
+      rows: 0
+      columns: 0
+    - id: q
+      kind: 0
+      text: Q
+      termId: 
+      children: []
+      rows: 0
+      columns: 0
+    - id: eq
+      kind: 0
+      text: =
+      termId: 
+      children: []
+      rows: 0
+      columns: 0
+    - id: matrix
+      kind: 7
+      text: 
+      termId: 
+      children:
+      - w1
+      - zero
+      - zero
+      - w2
+      rows: 2
+      columns: 2
+    - id: w1
+      kind: 1
+      text: 
+      termId: w1
+      children: []
+      rows: 0
+      columns: 0
+    - id: w2
+      kind: 1
+      text: 
+      termId: w2
+      children: []
+      rows: 0
+      columns: 0
+    - id: zero
+      kind: 0
+      text: 0
+      termId: 
+      children: []
+      rows: 0
+      columns: 0
+  sourceTranscription: 'Q = [[w1,0],[0,w2]]'
+  assumptions: Matrix display layout only. Its two diagonal entries bind to real
+    scalar parameters; not a flattened Matrix value.
+  terms:
+  - id: w1
+    symbol: "w\u2081"
+    label: First weight
+    meaning: First diagonal entry of Q.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - 1
+    value:
+      metricId: parameter.objective.weight.0
+      kind: 0
+      scope: 4
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: 
+      scope: 4
+  - id: w2
+    symbol: "w\u2082"
+    label: Second weight
+    meaning: Second diagonal entry of Q.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - 1
+    value:
+      metricId: parameter.objective.weight.1
+      kind: 0
+      scope: 4
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: 
+      scope: 4
+  sources:
+  - document: {fileID: 11400000, guid: 4cf2e393966f46098661e413d3a1fc87, type: 2}
+    firstPhysicalPage: 23
+    lastPhysicalPage: 23
+    firstSlide: 0
+    lastSlide: 0
+    section: Quadratic Programming
+    usage: 1
+    note: Diagonal specialization with q=0, value only; no optimization algorithm.

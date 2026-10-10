@@ -8,6 +8,7 @@ namespace OptCon.Presentation
     {
         private readonly RuntimeMetricResolver metrics;
         public FormulaBindingResolver(RuntimeMetricResolver metrics) => this.metrics = metrics ?? throw new System.ArgumentNullException(nameof(metrics));
+        public MetricResolution Resolve(FormulaTermDefinition term, IExperimentSnapshot snapshot) => metrics.Resolve(term, snapshot);
         public MetricResolution Resolve(FormulaTermDefinition term, SimulationResult result, int cursor)
         {
             return metrics.Resolve(term, result, cursor);

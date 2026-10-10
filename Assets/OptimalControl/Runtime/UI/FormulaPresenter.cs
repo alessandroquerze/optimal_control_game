@@ -12,6 +12,7 @@ namespace OptCon.Presentation
     public sealed class FormulaPresenter : IDisposable
     {
         private readonly VisualElement root;
+        private readonly IFormulaView view;
         private readonly HighlightRegistry registry;
         private readonly FormulaBindingResolver resolver;
         private readonly IReadOnlyList<FormulaDefinition> formulas;
@@ -22,14 +23,18 @@ namespace OptCon.Presentation
         private string selected;
         private IReadOnlyList<string> disclosedTerms;
         public event Action<string, string> TermSelected;
-        public SimulationResult DisplayedResult { get; private set; }
-        public int Cursor { get; private set; }
+        public IExperimentSnapshot DisplayedSnapshot { get; private set; }
+        public SimulationResult DisplayedResult => DisplayedSnapshot?.Result as SimulationResult;
+        public int? Cursor { get; private set; }
         public IReadOnlyDictionary<string, MetricResolution> Resolutions { get; private set; }
         public FormulaDefinition Formula => formulas[formulaIndex];
         public FormulaPresenter(VisualElement root, IReadOnlyList<FormulaDefinition> formulas, HighlightRegistry registry, RuntimeMetricResolver metrics)
         {
             resolver = new FormulaBindingResolver(metrics);
             this.root = root; this.formulas = formulas; this.registry = registry;
+            view = new StructuredFormulaView();
+            var expression = root.Q<Label>("formula-expression");
+            expression.parent.Insert(expression.parent.IndexOf(expression) + 1, view.Element);
             choice = root.Q<DropdownField>("formula-choice");
             choice.choices = formulas.Select(f => f.Title + " · " + f.Id).ToList(); choice.SetValueWithoutNotify(choice.choices[0]);
             choice.RegisterValueChangedCallback(ChangeFormula);
@@ -49,17 +54,22 @@ namespace OptCon.Presentation
             if (index < 0) throw new ArgumentException("Formula does not belong to the lesson: " + id);
             formulaIndex = index; selected = null; disclosedTerms = null; registry?.Clear(); Build();
             choice.SetValueWithoutNotify(choice.choices[index]);
-            if (DisplayedResult != null) Render(DisplayedResult, Cursor);
+            if (DisplayedSnapshot != null) Render(DisplayedSnapshot);
         }
         public void SetDisclosedTerms(IReadOnlyList<string> terms)
         {
-            disclosedTerms = terms;
+            disclosedTerms = terms; view.Disclose(terms);
             foreach (var button in buttons) button.Value.style.display = terms == null || terms.Count == 0 || terms.Contains(button.Key) ? DisplayStyle.Flex : DisplayStyle.None;
             if (terms != null && terms.Count > 0 && !terms.Contains(selected)) selected = terms[0];
         }
         private void Build()
         {
             root.Q<Label>("formula-expression").text = Formula.Expression;
+            // Same editorial expression beside the guided question; no second binding or calculation.
+            var context = root.Q<Label>("lesson-formula-expression");
+            if (context != null) context.text = Formula.Expression;
+            view.Show(Formula, id => SelectTerm(id));
+            root.Q<Label>("formula-expression").style.display = Formula.Layout != null && Formula.Layout.IsDefined ? DisplayStyle.None : DisplayStyle.Flex;
             root.Q<Label>("formula-description").text = Formula.Description;
             root.Q<Label>("formula-assumptions").text = Formula.Assumptions;
             var list = root.Q<VisualElement>("formula-terms"); list.Clear(); values.Clear(); buttons.Clear();
@@ -74,13 +84,14 @@ namespace OptCon.Presentation
             }
             selected = Formula.Terms[0].Id;
         }
-        public void Render(SimulationResult result, int cursor)
+        public void Render(SimulationResult result, int cursor) => Render(result.Select(cursor));
+        public void Render(IExperimentSnapshot snapshot)
         {
-            DisplayedResult = result; Cursor = cursor;
+            DisplayedSnapshot = snapshot; Cursor = snapshot is SessionState trajectory ? trajectory.Sample.Timestep : (int?)null;
             var resolutions = new Dictionary<string, MetricResolution>();
             foreach (var term in Formula.Terms)
             {
-                var resolved = resolver.Resolve(term, result, cursor); resolutions.Add(term.Id, resolved);
+                var resolved = resolver.Resolve(term, snapshot); resolutions.Add(term.Id, resolved);
                 values[term.Id].text = Format(resolved, term.Value?.NumericFormat, false);
                 buttons[term.Id].EnableInClassList("unavailable", resolved.Validity != MetricValidity.Available);
             }
@@ -91,7 +102,7 @@ namespace OptCon.Presentation
         {
             var term = Formula.Terms.FirstOrDefault(t => t.Id == id);
             if (term == null || Resolutions == null || (disclosedTerms != null && disclosedTerms.Count > 0 && !disclosedTerms.Contains(id))) return;
-            selected = id; var resolved = Resolutions[id];
+            selected = id; view.Select(id); var resolved = Resolutions[id];
             foreach (var button in buttons) button.Value.EnableInClassList("selected", button.Key == id);
             root.Q<Label>("term-detail-title").text = term.Symbol + " · " + term.Label;
             root.Q<Label>("term-detail-meaning").text = term.Meaning;
@@ -101,7 +112,7 @@ namespace OptCon.Presentation
                 (resolved.Value == null ? "" : " · " + resolved.Value.Kind + " " + resolved.Value.Rows + "×" + resolved.Value.Columns) +
                 (resolved.Diagnostic == null ? "" : "\n" + resolved.Diagnostic);
             string role = term.Highlight?.SemanticRole;
-            if (resolved.Validity == MetricValidity.Available && resolved.SampleIndex.HasValue && !string.IsNullOrWhiteSpace(role) && term.Highlight.Scope == term.Value.Scope)
+            if (resolved.Validity == MetricValidity.Available && (resolved.SampleIndex.HasValue || resolved.Value?.Scope == FormulaScope.Snapshot) && !string.IsNullOrWhiteSpace(role) && term.Highlight.Scope == term.Value.Scope)
             {
                 registry?.Select(role, resolved.SampleIndex, resolved.Result.RevisionId);
                 root.Q<Label>("term-detail-world").text = "Legame 3D: " + role +
@@ -131,6 +142,6 @@ namespace OptCon.Presentation
             }
             catch (FormatException) { return "Formato numerico non valido: " + numericFormat; }
         }
-        public void Dispose() { choice.UnregisterValueChangedCallback(ChangeFormula); registry?.Clear(); root.Q<VisualElement>("formula-terms").Clear(); TermSelected = null; DisplayedResult = null; Resolutions = null; }
+        public void Dispose() { choice.UnregisterValueChangedCallback(ChangeFormula); registry?.Clear(); root.Q<VisualElement>("formula-terms").Clear(); view.Dispose(); TermSelected = null; DisplayedSnapshot = null; Resolutions = null; }
     }
 }

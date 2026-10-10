@@ -1,0 +1,10 @@
+PASS
+Unity 6000.3.8f1
+Seven-step guided path completed through real UI: state/answer, input/prediction, next/step, trajectory, cost weight, A/B and terminal/explanation.
+Before Ready: lesson, simulation, HUD and visualization bound. Disabled commands rejected; authored selection gives no action credit.
+Current after step equals the previously saved next state; all consumers share the immutable result.
+Q0 edit changes J without changing any state object. A retains its configuration and cost after B input changes.
+Terminal: x_T, C_T and terminal cost available; no input/stage/next. Pendulum delta=.02s and tau_T=2s.
+Completion saved only for prototype.pendulum; no implicit promotion. File store reload verified after leaving/re-entering Play Mode. Restart and close/reopen restore first step, controls, highlights and empty comparison.
+Index-only educational fixture: x0=2,u0=3,x1=5,J=13+25=38; terminal HUD and native cost graph agree; no delta/tau.
+Second lesson prerequisite and independent completion verified. Failed requested T=1 from valid T=100/cursor50 rejects input edits and Reset recovers. NonRepresentable result remains shared and Reset recovers. Failed lesson entry cannot complete. Ten GameViews retained; zero Error/Exception/Assert.

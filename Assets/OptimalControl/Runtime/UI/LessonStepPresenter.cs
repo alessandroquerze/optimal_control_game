@@ -29,10 +29,11 @@ namespace OptCon.Presentation
         {
             var panel = root.Q<VisualElement>("lesson-progress"); panel.style.display = state.StepCount == 0 ? DisplayStyle.None : DisplayStyle.Flex;
             var step = state.Step;
+            root.Q<VisualElement>("lesson-formula-expression").style.display = state.IsFreeExploration || state.IsCompleted ? DisplayStyle.None : DisplayStyle.Flex;
             root.Q<Label>("lesson-step-title").text = state.IsFreeExploration ? "Esplorazione libera" : state.IsCompleted ? "Lezione completata" :
                 (state.StepIndex + 1) + "/" + state.StepCount + " · " + step?.Title;
             root.Q<Label>("lesson-step-objective").text = state.IsFreeExploration ? "Prova gli strumenti. Il completamento didattico richiede il percorso guidato." : step?.Objective;
-            root.Q<Label>("lesson-instruction").text = state.IsCompleted ? "Hai completato il percorso guidato di questa lezione." : state.IsFreeExploration ? "Reset/R ripristina il preset e rimuove A; Ricomincia torna al percorso guidato." : step?.Instruction;
+            root.Q<Label>("lesson-instruction").text = state.IsCompleted ? "Hai completato il percorso guidato di questa lezione." : state.IsFreeExploration ? "Reset ripristina il preset; Ricomincia torna al percorso guidato." : step?.Instruction;
             root.Q<Label>("lesson-help").text = step?.Help;
             root.Q<VisualElement>("lesson-help-panel").style.display = !state.IsFreeExploration && !string.IsNullOrEmpty(step?.Help) ? DisplayStyle.Flex : DisplayStyle.None;
             root.Q<Label>("lesson-question").text = state.IsFreeExploration || state.IsCompleted ? "" : step?.Question;
@@ -66,9 +67,15 @@ namespace OptCon.Presentation
             {
                 if (field.name.StartsWith("parameter-", StringComparison.Ordinal)) Restrict(field.name, state.AllowsParameter(field.name.Substring(10)));
                 if (field.name.StartsWith("input-", StringComparison.Ordinal)) Restrict(field.name, state.Allows(LessonControls.Input));
+                if (field.name.StartsWith("initial-state-", StringComparison.Ordinal)) Restrict(field.name, state.Allows(LessonControls.InitialState));
             }
             bool modelParameters = root.Q<VisualElement>("parameter-fields").Query<DoubleField>().ToList().Any(field => state.AllowsParameter(field.name.Substring(10)));
-            root.Q<VisualElement>("parameter-panel").style.display = state.Allows(LessonControls.Input) || modelParameters || state.Allows(LessonControls.PlaybackRate) ? DisplayStyle.Flex : DisplayStyle.None;
+            root.Q<VisualElement>("input-fields").style.display = state.Allows(LessonControls.Input) ? root.Q<VisualElement>("input-fields").style.display : DisplayStyle.None;
+            root.Q<VisualElement>("input-scope").style.display = state.Allows(LessonControls.Input) ? DisplayStyle.Flex : DisplayStyle.None;
+            root.Q<VisualElement>("initial-state-fields").style.display = state.Allows(LessonControls.InitialState) ? DisplayStyle.Flex : DisplayStyle.None;
+            root.Q<VisualElement>("parameter-fields").style.display = modelParameters ? DisplayStyle.Flex : DisplayStyle.None;
+            root.Q<VisualElement>("playback-rate").style.display = state.Allows(LessonControls.PlaybackRate) ? DisplayStyle.Flex : DisplayStyle.None;
+            root.Q<VisualElement>("parameter-panel").style.display = state.Allows(LessonControls.Input) || state.Allows(LessonControls.InitialState) || modelParameters || state.Allows(LessonControls.PlaybackRate) ? DisplayStyle.Flex : DisplayStyle.None;
             if (!state.IsFreeExploration && state.Step != null && !state.Step.ShowCosts) root.Q<VisualElement>("cost-panel").style.display = DisplayStyle.None;
             root.Q<VisualElement>("comparison-controls").style.display = root.Q<VisualElement>("comparison-configuration").style.display = state.Allows(LessonControls.Comparison) ? DisplayStyle.Flex : DisplayStyle.None;
             bool costEditing = state.IsFreeExploration || state.Allows(LessonControls.Horizon) || (state.Step != null && state.Step.EditableParameters.Any(t => t.StartsWith("cost.", StringComparison.Ordinal)));

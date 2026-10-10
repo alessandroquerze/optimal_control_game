@@ -4,7 +4,7 @@ using UnityEngine;
 namespace OptCon.Content
 {
     public enum FormulaValueKind { Scalar, Vector, Matrix, ModelDescriptor }
-    public enum FormulaScope { CurrentTimestep, NextTimestep, Terminal, CurrentIteration }
+    public enum FormulaScope { CurrentTimestep, NextTimestep, Terminal, CurrentIteration, Snapshot }
 
     /// <summary>Describes a lookup only; it never evaluates an expression or offsets a sample.</summary>
     [Serializable]

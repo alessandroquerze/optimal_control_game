@@ -12,15 +12,16 @@ namespace OptCon.Application
         private readonly Dictionary<string, LessonDefinition> lessons = new Dictionary<string, LessonDefinition>(StringComparer.Ordinal);
         private readonly LessonLoader loader;
         private readonly string menuScenePath;
-        private readonly Func<NavigationTransition, Scene, SimulationSession> compose;
-        private readonly Action<NavigationTransition, Scene, SimulationSession> bind;
+        private readonly Func<NavigationTransition, Scene, IExperimentSession> compose;
+        private readonly Action<NavigationTransition, Scene, IExperimentSession> bind;
         private readonly Action release;
         private bool disposed, busy, dispatching;
         private long nextTransition;
         private NavigationTransition pendingTransition;
         public CourseDefinition Course { get; }
         public LessonDefinition ActiveLesson { get; private set; }
-        public SimulationSession ActiveSession { get; private set; }
+        public IExperimentSession ActiveExperiment { get; private set; }
+        public SimulationSession ActiveSession => ActiveExperiment as SimulationSession;
         public NavigationUpdate State { get; private set; }
         public bool IsReady => State != null && State.IsReady && !disposed && !IsTransitioning;
         public bool IsTransitioning => busy || pendingTransition != null;
@@ -29,8 +30,8 @@ namespace OptCon.Application
         public event Action<NavigationUpdate> LifecycleChanged;
 
         public CourseManager(CourseDefinition course, LessonLoader loader, string menuScenePath,
-            Func<NavigationTransition, Scene, SimulationSession> compose,
-            Action<NavigationTransition, Scene, SimulationSession> bind, Action release)
+            Func<NavigationTransition, Scene, IExperimentSession> compose,
+            Action<NavigationTransition, Scene, IExperimentSession> bind, Action release)
         {
             Course = course != null ? course : throw new ArgumentNullException(nameof(course));
             this.loader = loader != null ? loader : throw new ArgumentNullException(nameof(loader));
@@ -69,7 +70,7 @@ namespace OptCon.Application
         {
             if (!loader.CanNavigate(path, out string rejection)) return Reject(rejection);
             var transition = new NavigationTransition(++nextTransition, destination, path);
-            var source = ActiveSession;
+            var source = ActiveExperiment;
             if (source != null && source.Notifications.IsActive)
             {
                 // First accepted request wins. Keep its identity; teardown starts at the outermost synchronous boundary.
@@ -78,7 +79,7 @@ namespace OptCon.Application
                 {
                     if (disposed || !ReferenceEquals(pendingTransition, transition)) return;
                     pendingTransition = null;
-                    if (ReferenceEquals(ActiveSession, source) && !source.State.IsClosed) BeginNavigate(transition);
+                    if (ReferenceEquals(ActiveExperiment, source) && !source.Current.IsClosed) BeginNavigate(transition);
                 });
                 return true;
             }
@@ -90,7 +91,7 @@ namespace OptCon.Application
             string rejection;
             busy = true; StatusMessage = "Caricamento…";
             Publish(transition, NavigationPhase.Requested, default, null);
-            release(); ActiveSession = null;
+            release(); ActiveExperiment = null;
             if (!loader.TryNavigate(path, (success, error, scene) => Complete(transition, scene, success, error), out rejection))
             {
                 Complete(transition, loader.CurrentScene, false, rejection);
@@ -108,28 +109,28 @@ namespace OptCon.Application
                 Publish(transition, NavigationPhase.Composing, scene, null);
                 try
                 {
-                    ActiveSession = compose(transition, scene);
-                    if (transition.Destination != null && ActiveSession == null) throw new InvalidOperationException("Lesson composition did not provide a session.");
+                    ActiveExperiment = compose(transition, scene);
+                    if (transition.Destination != null && ActiveExperiment == null) throw new InvalidOperationException("Lesson composition did not provide a session.");
                     ActiveLesson = transition.Destination;
-                    Publish(transition, NavigationPhase.Binding, scene, ActiveSession);
-                    bind(transition, scene, ActiveSession);
+                    Publish(transition, NavigationPhase.Binding, scene, ActiveExperiment);
+                    bind(transition, scene, ActiveExperiment);
                 }
                 catch (Exception exception) when (exception is ArgumentException || exception is InvalidOperationException || exception is ArithmeticException || exception is RolloutException)
                 { success = false; error = exception.Message; }
             }
             if (!success)
             {
-                release(); ActiveSession = null;
+                release(); ActiveExperiment = null;
                 ActiveLesson = transition.Destination;
                 // Recovery UI is bound without claiming that a session is ready.
                 if (scene.IsValid() && scene.isLoaded) bind(transition, scene, null);
             }
             StatusMessage = success ? string.Empty : error;
             busy = false;
-            Publish(transition, success ? NavigationPhase.Ready : NavigationPhase.Failed, scene, ActiveSession);
+            Publish(transition, success ? NavigationPhase.Ready : NavigationPhase.Failed, scene, ActiveExperiment);
         }
 
-        private void Publish(NavigationTransition transition, NavigationPhase phase, Scene scene, SimulationSession session)
+        private void Publish(NavigationTransition transition, NavigationPhase phase, Scene scene, IExperimentSession session)
         {
             State = new NavigationUpdate(transition, phase, scene, session);
             Notify(() => { LifecycleChanged?.Invoke(State); Changed?.Invoke(); });
@@ -143,7 +144,7 @@ namespace OptCon.Application
         public void Dispose()
         {
             if (disposed) return;
-            disposed = true; pendingTransition = null; release(); ActiveSession = null; ActiveLesson = null;
+            disposed = true; pendingTransition = null; release(); ActiveExperiment = null; ActiveLesson = null;
             Changed = null; LifecycleChanged = null;
         }
     }

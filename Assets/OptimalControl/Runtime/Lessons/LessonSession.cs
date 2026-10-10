@@ -9,7 +9,8 @@ namespace OptCon.Application
     /// <summary>Educational orchestration only. The simulation remains the sole mathematical owner.</summary>
     public sealed class LessonSession : ILessonRuntime, IDisposable
     {
-        private readonly SimulationSession simulation;
+        private readonly IExperimentSession simulation;
+        private readonly IDisposable subscription;
         private readonly LessonPlan plan;
         private readonly IReadOnlyList<IReadOnlyList<ILessonConditionEvaluator>> evaluators;
         private readonly HashSet<string> facts = new HashSet<string>(StringComparer.Ordinal);
@@ -24,33 +25,34 @@ namespace OptCon.Application
         public LessonPresentationState Presentation { get; private set; }
         public event Action<LessonPresentationState> Changed;
         public event Action<LessonCompletion> CompletionValidated;
-        public LessonSession(LessonDefinition definition, SimulationSession simulation, LessonConditionRegistry registry = null, IReadOnlyList<string> availableLayers = null)
+        public LessonSession(LessonDefinition definition, IExperimentSession simulation, LessonConditionRegistry registry = null, IReadOnlyList<string> availableLayers = null)
         {
             this.simulation = simulation ?? throw new ArgumentNullException(nameof(simulation)); plan = new LessonPlan(definition);
             contentVersion = definition.ContentVersion; schemaVersion = definition.SchemaVersion;
-            var parameterTargets = simulation.State.Result.Configuration.Model.Parameters.Concat(simulation.State.Result.Configuration.Cost?.Parameters ?? Array.Empty<OptCon.Core.ModelParameterValue>()).Select(p => p.Target).ToArray();
+            var parameterTargets = simulation.Current.Result.Configuration.Parameters.Select(p => p.Target).ToArray();
             foreach (var step in plan.Steps)
             {
+                LessonCapabilityRequirements.Validate(step, simulation);
                 if (step.EditableParameters.Any(target => !parameterTargets.Contains(target))) throw new ArgumentException("Step requests an unknown parameter target.");
                 if (availableLayers != null && step.VisibleLayers.Any(layer => !availableLayers.Contains(layer))) throw new ArgumentException("Step requests an unknown visual layer.");
             }
             registry = registry ?? new LessonConditionRegistry();
-            evaluators = Array.AsReadOnly(plan.Steps.Select(s => (IReadOnlyList<ILessonConditionEvaluator>)Array.AsReadOnly(s.Conditions.Select(c => registry.Resolve(c.EvaluatorId)).ToArray())).ToArray());
+            evaluators = Array.AsReadOnly(plan.Steps.Select(s => (IReadOnlyList<ILessonConditionEvaluator>)Array.AsReadOnly(s.Conditions.Select(c => registry.Resolve(c.EvaluatorId, simulation.Capabilities)).ToArray())).ToArray());
             free = plan.Steps.Count == 0;
             // Initialization occurs before UI/input binding and before navigation Ready.
             if (!free) Enter(0, false);
             Refresh();
-            simulation.Changed += OnSimulation;
+            subscription = simulation.Subscribe(OnSimulation);
         }
         private bool Blocked => closed || busy || dispatching;
-        private void OnSimulation(SessionState state) { if (!busy && !closed) Publish(); }
+        private void OnSimulation(IExperimentSnapshot state) { if (!busy && !closed) Publish(); }
         private void Enter(int target, bool restorePreset)
         {
-            RequireEntry(SimulationCommand.Pause(), target);
+            if (simulation.Supports(SimulationCommandKind.Pause)) RequireEntry(SimulationCommand.Pause(), target);
             if (restorePreset)
             {
                 RequireEntry(SimulationCommand.Reset(), target);
-                RequireEntry(SimulationCommand.ClearComparison(), target);
+                if (simulation.Supports(SimulationCommandKind.ClearComparison)) RequireEntry(SimulationCommand.ClearComparison(), target);
             }
             foreach (var command in plan.Steps[target].EntryCommands) RequireEntry(command, target);
             // Commit educational identity only after every required action succeeds.
@@ -60,12 +62,12 @@ namespace OptCon.Application
         private void RequireEntry(SimulationCommand command, int target)
         {
             if (!simulation.Execute(command)) throw new EntryFailure("Step '" + plan.Steps[target].Id +
-                "' entry failed: " + command.Kind + ". " + (simulation.State.Error ?? "Command is outside the current simulation domain."));
+                "' entry failed: " + command.Kind + ". " + (simulation.Current.Error ?? "Command is outside the current simulation domain."));
         }
         private void Refresh()
         {
             var step = plan.Steps.Count == 0 ? null : plan.Steps[index];
-            var context = new LessonConditionContext(simulation.State, facts, answer);
+            var context = new LessonConditionContext(simulation.Current, facts, answer);
             bool[] met = step == null ? Array.Empty<bool>() : step.Conditions.Select((c, i) => evaluators[index][i].IsMet(c, context)).ToArray();
             Presentation = new LessonPresentationState(plan.LessonId, step, index, plan.Steps.Count, generation, free,
                 completed, entryError == null && !free && !completed && met.All(v => v), feedback, met, entryError);
@@ -102,7 +104,7 @@ namespace OptCon.Application
                 if (unexpected != null) System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(unexpected).Throw();
                 if (!wasCompleted && completed)
                 {
-                    var receipt = new LessonCompletion(this, plan.LessonId, contentVersion, schemaVersion, simulation.State.Result, generation);
+                    var receipt = new LessonCompletion(this, plan.LessonId, contentVersion, schemaVersion, simulation.Current.Result, generation);
                     dispatching = true;
                     try { CompletionValidated?.Invoke(receipt); }
                     catch { receipt.Cancelled = true; throw; }
@@ -113,8 +115,8 @@ namespace OptCon.Application
         }
         public bool Next()
         {
-            if (Blocked || !Presentation.CanAdvance || simulation.State.IsClosed || simulation.State.Error != null || simulation.LastPublicationFailure != null) return false;
-            return Transition(() => { if (index + 1 < plan.Steps.Count) Enter(index + 1, false); else { RequireEntry(SimulationCommand.Pause(), index); completed = true; } });
+            if (Blocked || !Presentation.CanAdvance || simulation.Current.IsClosed || simulation.Current.Error != null || simulation.LastPublicationFailure != null) return false;
+            return Transition(() => { if (index + 1 < plan.Steps.Count) Enter(index + 1, false); else { if (simulation.Supports(SimulationCommandKind.Pause)) RequireEntry(SimulationCommand.Pause(), index); completed = true; } });
         }
         public bool Previous()
         {
@@ -129,11 +131,11 @@ namespace OptCon.Application
         });
         private void ResetExploration()
         {
-            if (!simulation.Execute(SimulationCommand.Reset()) || !simulation.Execute(SimulationCommand.ClearComparison()))
-                throw new EntryFailure("Cannot restore exploration preset. " + simulation.State.Error);
+            if (!simulation.Execute(SimulationCommand.Reset()) || (simulation.Supports(SimulationCommandKind.ClearComparison) && !simulation.Execute(SimulationCommand.ClearComparison())))
+                throw new EntryFailure("Cannot restore exploration preset. " + simulation.Current.Error);
             entryError = null; completed = false; facts.Clear(); answer = feedback = null; generation++;
         }
-        public bool Explore() => entryError == null && Transition(() => { free = true; generation++; simulation.Execute(SimulationCommand.Pause()); });
+        public bool Explore() => entryError == null && Transition(() => { free = true; generation++; if (simulation.Supports(SimulationCommandKind.Pause)) simulation.Execute(SimulationCommand.Pause()); });
         public bool Answer(string answerId)
         {
             if (Blocked || entryError != null || free || completed) return false;
@@ -159,28 +161,32 @@ namespace OptCon.Application
             bool success = false;
             Transition(() =>
             {
-                var before = simulation.State;
+                var before = simulation.Current;
+                var beforeTrajectory = before as SessionState;
                 success = simulation.Execute(command);
                 if (!success || free) return;
-                var after = simulation.State;
-                if (command.Kind == SimulationCommandKind.SetInput && !before.Result.Configuration.Controls[command.Index].SequenceEqual(after.Result.Configuration.Controls[command.Index])) facts.Add("input.changed");
+                var after = simulation.Current;
+                var afterTrajectory = after as SessionState;
+                if (command.Kind == SimulationCommandKind.SetInput && beforeTrajectory != null && afterTrajectory != null && !beforeTrajectory.Result.Configuration.Controls[command.Index].SequenceEqual(afterTrajectory.Result.Configuration.Controls[command.Index])) facts.Add("input.changed");
                 if (command.Kind == SimulationCommandKind.SetParameter && before.Result.RevisionId != after.Result.RevisionId)
                 {
-                    var oldValue = before.Result.Configuration.Model.Parameters.Concat(before.Result.Configuration.Cost?.Parameters ?? Array.Empty<OptCon.Core.ModelParameterValue>()).FirstOrDefault(p => p.Target == command.Target);
+                    var oldValue = before.Result.Configuration.Parameters.FirstOrDefault(p => p.Target == command.Target);
                     if (oldValue != null && oldValue.Value != command.Value) facts.Add("parameter.changed:" + command.Target);
                 }
-                if (command.Kind == SimulationCommandKind.StepForward && after.Sample.Timestep > before.Sample.Timestep) facts.Add("time.advanced");
+                if (command.Kind == SimulationCommandKind.StepForward && beforeTrajectory != null && afterTrajectory != null && afterTrajectory.Sample.Timestep > beforeTrajectory.Sample.Timestep) facts.Add("time.advanced");
+                if (command.Kind == SimulationCommandKind.SetInitialState && beforeTrajectory != null && afterTrajectory != null &&
+                    !beforeTrajectory.Result.Configuration.InitialState.SequenceEqual(afterTrajectory.Result.Configuration.InitialState)) facts.Add("initial.changed");
                 if (command.Kind == SimulationCommandKind.CaptureComparison) facts.Add("comparison.saved");
             });
             return success;
         }
         public void Dispose()
         {
-            if (closed) return; closed = true; simulation.Changed -= OnSimulation; Changed = null; CompletionValidated = null; facts.Clear();
+            if (closed) return; closed = true; subscription.Dispose(); Changed = null; CompletionValidated = null; facts.Clear();
         }
         internal bool IsCurrentCompletion(LessonCompletion receipt) => !closed && completed && !free && entryError == null
             && Presentation.IsCompleted && Presentation.Error == null && Presentation.ConditionsMet.All(v => v)
-            && receipt.Generation == generation && ReferenceEquals(receipt.Result, simulation.State.Result)
-            && !simulation.State.IsClosed && simulation.State.Error == null && simulation.LastPublicationFailure == null;
+            && receipt.Generation == generation && ReferenceEquals(receipt.Result, simulation.Current.Result)
+            && !simulation.Current.IsClosed && simulation.Current.Error == null && simulation.LastPublicationFailure == null;
     }
 }

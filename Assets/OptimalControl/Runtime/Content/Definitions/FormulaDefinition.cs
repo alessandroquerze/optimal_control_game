@@ -8,6 +8,8 @@ namespace OptCon.Content
     public sealed class FormulaDefinition : ContentDefinition
     {
         [SerializeField, TextArea] private string expression;
+        [SerializeField] private FormulaLayout layout = new FormulaLayout();
+        public FormulaLayout Layout => layout;
         [SerializeField, TextArea] private string sourceTranscription;
         [SerializeField, TextArea] private string assumptions;
         [SerializeField] private FormulaTermDefinition[] terms = Array.Empty<FormulaTermDefinition>();

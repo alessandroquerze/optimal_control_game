@@ -76,6 +76,7 @@ namespace OptCon.Content
                 if (step.Answers.Any(a => a == null || string.IsNullOrWhiteSpace(a.Id) || string.IsNullOrWhiteSpace(a.Text)) || step.Answers.Select(a => a.Id).Distinct().Count() != step.Answers.Count)
                     throw new ArgumentException("Answer IDs/text must be present and unique.");
                 if (step.Conditions.Any(c => c.EvaluatorId == "answer" && !step.Answers.Any(a => a.Id == c.ExpectedAnswerId))) throw new ArgumentException("Expected answer does not belong to the step.");
+                if (step.Conditions.Any(c => c.EvaluatorId == "answer.selected") && step.Answers.Count == 0) throw new ArgumentException("Context selection requires choices.");
                 steps.Add(new LessonStepPlan(step, definition.Formulas.FirstOrDefault()?.Id));
             }
             Steps = steps.AsReadOnly();

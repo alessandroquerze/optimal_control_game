@@ -1,0 +1,125 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e039087c2f4e1ab6f8639bc051389d, type: 3}
+  m_Name: PendulumOutput
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.FormulaDefinition
+  id: output.pendulum.angle
+  schemaVersion: 1
+  contentVersion: '1'
+  title: Output del pendolo
+  description: h non dipende da u in questo pendolo. y_T è quindi disponibile anche senza u_T. I p.33; h generale
+    I p.8.
+  expression: y_t = h_t(x_t,u_t) = θ_t
+  sourceTranscription: y_t = h_t(x_t,u_t) = θ_t
+  assumptions: h non dipende da u in questo pendolo. y_T è quindi disponibile anche senza u_T. I p.33; h generale
+    I p.8.
+  terms:
+  - id: output.current
+    symbol: y_t
+    label: Output / angolo osservato
+    meaning: 'In questo modello h_t(x_t,u_t)=θ_t: un output scalare selezionato dallo stato. In generale y NON coincide
+      con x. Il corpo mostra lo stesso angolo osservato; il piano di fase mostra lo stato completo.'
+    rows: 1
+    columns: 1
+    componentUnits:
+    - rad
+    value:
+      metricId: output.current
+      kind: 0
+      scope: 0
+      component: 0
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: state.current
+    symbol: x_t
+    label: Stato completo
+    meaning: 'x_t=[θ_t,ω_t]ᵀ: angolo e velocità angolare. Il corpo mostra solo θ; il punto di fase mostra entrambe.'
+    rows: 2
+    columns: 1
+    componentUnits:
+    - rad
+    - rad/s
+    value:
+      metricId: state.current
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: state.current
+      scope: 0
+  - id: theta
+    symbol: θ_t
+    label: Angolo
+    meaning: Componente 0 dello stato, zero verso il basso, positivo antiorario.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - rad
+    value:
+      metricId: state.current
+      kind: 0
+      scope: 0
+      component: 0
+      numericFormat: G6
+    highlight:
+      semanticRole: state.current
+      scope: 0
+  sources:
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 2
+    lastPhysicalPage: 10
+    firstSlide: 1
+    lastSlide: 9
+    section: Motivazioni, stato/input/output, tempo e notazione
+    usage: 0
+    note: ''
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 27
+    lastPhysicalPage: 27
+    firstSlide: 26
+    lastSlide: 26
+    section: Forward Euler
+    usage: 1
+    note: 'Euler del drone applicato al pendolo: adattamento dichiarato.'
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 33
+    lastPhysicalPage: 33
+    firstSlide: 32
+    lastSlide: 32
+    section: 'Pendolo: x₁=θ, x₂=ω, y=θ'
+    usage: 0
+    note: ''
+  layout:
+    rootId: out
+    nodes:
+    - id: out
+      kind: 2
+      children:
+      - y
+      - eq
+      - h
+      - th
+    - id: y
+      kind: 1
+      termId: output.current
+    - id: eq
+      kind: 0
+      text: '='
+    - id: h
+      kind: 0
+      text: h_t(x_t,u_t) =
+    - id: th
+      kind: 1
+      termId: theta

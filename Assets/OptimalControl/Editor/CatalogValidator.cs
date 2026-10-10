@@ -75,55 +75,88 @@ namespace OptCon.Editor
                 .SelectMany(c => c.Lessons).Where(l => l != null)
                 .Select(l => l.Experiment).Where(e => e != null).Distinct())
             {
-                if (!experiment.UsesDiscreteTime)
-                    result.Add(experiment, "UnsupportedRuntimeCapability", "usesDiscreteTime", "Current host requires discrete dynamics. Static experiments require the F10 contract.");
-                if (experiment.Model == null)
-                    result.Add(experiment, "MissingModelProvider", "model", "No concrete mathematical provider is assigned.");
-                else if (experiment.UsesDiscreteTime)
+                if (experiment.HasConflictingProviders) result.Add(experiment, "ConflictingProviders", "provider", "Assign only one experiment provider.");
+                if (experiment.Provider == null)
+                    result.Add(experiment, "MissingModelProvider", "provider", "No concrete experiment provider is assigned.");
+                else
                 {
-                    try
+                    bool trajectory = (experiment.Provider.Capabilities & ExperimentCapabilities.Trajectory) != 0;
+                    if (trajectory != experiment.UsesDiscreteTime)
+                        result.Add(experiment, "UnsupportedRuntimeCapability", "usesDiscreteTime", "Declared transitions differ from provider capabilities.");
+                    if (experiment.Provider is ModelDefinition dynamics && trajectory)
                     {
-                        var expected = experiment.GetModelDimensions();
-                        var actual = experiment.Model.Dimensions;
-                        if (actual.State != expected.State || actual.Control != expected.Control || actual.Output != expected.Output)
-                            result.Add(experiment, "ProviderDimensions", "model", "Provider dimensions differ from the declared experiment dimensions.");
-                        experiment.Model.CreateConfiguration(experiment);
-                    }
-                    catch (Exception exception) when (exception is ArgumentException || exception is InvalidOperationException)
-                    {
-                        result.Add(experiment, "ProviderConfiguration", "model", exception.Message);
+                        try
+                        {
+                            var expected = experiment.GetModelDimensions(); var actual = dynamics.Dimensions;
+                            if (actual.State != expected.State || actual.Control != expected.Control || actual.Output != expected.Output)
+                                result.Add(experiment, "ProviderDimensions", "provider", "Provider dimensions differ from declared dimensions.");
+                            dynamics.CreateConfiguration(experiment);
+                        }
+                        catch (Exception exception) when (exception is ArgumentException || exception is InvalidOperationException)
+                        { result.Add(experiment, "ProviderConfiguration", "provider", exception.Message); }
                     }
                 }
                 if (experiment.ScenarioPrefab == null || !PrefabUtility.IsPartOfPrefabAsset(experiment.ScenarioPrefab))
                     result.Add(experiment, "MissingScenarioPrefab", "scenarioPrefab", "A scenario prefab asset is required for execution.");
-                else if (experiment.ScenarioPrefab.GetComponent<ExperimentHost>() == null)
-                    result.Add(experiment, "MissingScenarioHost", "scenarioPrefab", "Scenario root requires ExperimentHost.");
+                else
+                {
+                    if (experiment.ScenarioPrefab.GetComponent<ExperimentHost>() == null)
+                        result.Add(experiment, "MissingScenarioHost", "scenarioPrefab", "Scenario root requires ExperimentHost.");
+                    var views = experiment.ScenarioPrefab.GetComponents<MonoBehaviour>().OfType<IExperimentPresentation>().ToArray();
+                    if (views.Length != 1) result.Add(experiment, "MissingScenarioPresentation", "scenarioPrefab", "Scenario root requires exactly one experiment presentation.");
+                    else if (experiment.Provider != null && (experiment.Provider.Capabilities & views[0].RequiredCapabilities) != views[0].RequiredCapabilities)
+                        result.Add(experiment, "PresentationCapability", "scenarioPrefab", "Presentation requires unavailable experiment capabilities.");
+                }
             }
             // Validate bindings against an actual immutable provider result, using the same resolver as the HUD.
             foreach (var lesson in course.Chapters.Where(c => c != null).SelectMany(c => c.Lessons).Where(l => l != null).Distinct())
             {
                 var experiment = lesson.Experiment;
-                if (experiment == null || experiment.Model == null || !experiment.UsesDiscreteTime) continue;
+                if (experiment == null || experiment.Provider == null) continue;
                 try
                 {
-                    using (var session = experiment.Model.CreateSession(experiment))
+                    using (var session = experiment.Provider.CreateExperimentSession(experiment))
                     {
-                        ValidateEntryDomains(lesson, session.State.Result.Configuration, result);
-                        var configuration = session.State.Result.Configuration;
-                        var targets = configuration.Model.Parameters.Concat(configuration.Cost?.Parameters ?? Array.Empty<OptCon.Core.ModelParameterValue>()).Select(p => p.Target).ToArray();
+                        if (session.Capabilities != experiment.Provider.Capabilities) throw new ArgumentException("Session/provider capability mismatch.");
+                        BindingValidator.Validate(lesson, session.Current, services.Metrics, result);
+                        if (session.Current is OptCon.Simulation.SessionState trajectory) ValidateEntryDomains(lesson, trajectory.Result.Configuration, result);
+                        else ValidateParameterEntryDomains(lesson, session.Current.Result.Configuration.Parameters, result);
+                        var targets = session.Current.Result.Configuration.Parameters.Select(p => p.Target).ToArray();
+                        var plan = new LessonPlan(lesson);
+                        foreach (var step in plan.Steps)
+                        {
+                            LessonCapabilityRequirements.Validate(step, session);
+                            foreach (var condition in step.Conditions) services.Conditions.Resolve(condition.EvaluatorId, session.Capabilities);
+                        }
                         var layers = experiment.ScenarioPrefab == null ? Array.Empty<string>() : experiment.ScenarioPrefab.GetComponent<LayerController>()?.Ids ?? Array.Empty<string>();
                         foreach (var step in lesson.Steps.Where(s => s != null))
                         {
                             foreach (var target in step.EditableParameterTargets.Where(t => !targets.Contains(t))) result.Add(lesson, "UnknownStepParameter", "steps." + step.Id + ".editableParameterTargets", "Unknown provider target: " + target);
                             foreach (var layer in step.VisibleLayerIds.Where(l => !layers.Contains(l))) result.Add(lesson, "UnknownStepLayer", "steps." + step.Id + ".visibleLayerIds", "Unknown scenario layer: " + layer);
                         }
-                        BindingValidator.Validate(lesson, session.State.Result, services.Metrics, result);
                     }
                 }
                 catch (Exception exception) when (exception is ArgumentException || exception is InvalidOperationException || exception is RolloutException || exception is ArithmeticException)
                 { result.Add(experiment, "ProviderResult", "model", exception.Message); }
             }
             return result;
+        }
+
+        private static void ValidateParameterEntryDomains(LessonDefinition lesson, IReadOnlyList<OptCon.Core.ModelParameterValue> parameters, CatalogValidationResult result)
+        {
+            foreach (var step in lesson.Steps.Where(s => s != null)) foreach (var action in step.EntryActions.Where(a => a != null))
+            {
+                var command = action.CreateCommand();
+                if (command.Kind != SimulationCommandKind.SetParameter) continue;
+                try
+                {
+                    if (!parameters.Any(p => p.Target == command.Target)) throw new ArgumentException("Unknown provider parameter: " + command.Target);
+                    var declared = lesson.Experiment.Parameters.Single(p => p.ModelTarget == command.Target);
+                    new ParameterRule(command.Target, declared.Minimum, declared.Maximum, declared.ValueKind != ParameterValueKind.Real).Validate(command.Value);
+                }
+                catch (Exception exception) when (exception is ArgumentException || exception is InvalidOperationException)
+                { result.Add(lesson, "LessonEntryDomain", "steps." + step.Id + ".entryActions", exception.Message); }
+            }
         }
 
         private static void ValidateEntryDomains(LessonDefinition lesson, SimulationConfiguration preset, CatalogValidationResult result)
@@ -334,7 +367,7 @@ namespace OptCon.Editor
                 Units(experiment, "stateUnits", experiment.StateUnits, experiment.StateDimension);
                 Units(experiment, "controlUnits", experiment.ControlUnits, experiment.ControlDimension);
                 Units(experiment, "outputUnits", experiment.OutputUnits, experiment.OutputDimension);
-                if (experiment.Model != null) Visit(experiment.Model);
+                if (experiment.Provider != null) Visit(experiment.Provider);
                 if (experiment.Cost != null) Visit(experiment.Cost);
                 if (experiment.UsesDiscreteTime)
                 {
@@ -380,6 +413,8 @@ namespace OptCon.Editor
 
             private void Formula(FormulaDefinition formula)
             {
+                try { formula.Layout?.Validate(formula.Terms); }
+                catch (ArgumentException exception) { Error(formula, "FormulaLayout", "layout", exception.Message); }
                 Required(formula, "expression", formula.Expression);
                 Required(formula, "sourceTranscription", formula.SourceTranscription);
                 Required(formula, "assumptions", formula.Assumptions);

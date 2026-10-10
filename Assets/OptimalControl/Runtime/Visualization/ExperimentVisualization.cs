@@ -5,7 +5,7 @@ using UnityEngine;
 namespace OptCon.Presentation
 {
     /// <summary>One session subscription fans a coherent publication out to configured visual consumers.</summary>
-    public sealed class ExperimentVisualization : MonoBehaviour, IVisualizationStatus
+    public sealed class ExperimentVisualization : MonoBehaviour, IExperimentPresentation
     {
         [SerializeField] private StateTrajectoryView[] plots;
         [SerializeField] private AngularStateView[] angularBodies;
@@ -27,6 +27,13 @@ namespace OptCon.Presentation
         public VisualizationStatus Status { get; private set; }
         public event System.Action<VisualizationStatus> StatusChanged;
         public SimulationSession BoundSession => session;
+        public IExperimentSession BoundExperiment => session;
+        public ExperimentCapabilities RequiredCapabilities => ExperimentCapabilities.Trajectory;
+        public void BindExperiment(IExperimentSession value, ILessonRuntime runtime, RuntimeMetricResolver metrics)
+        {
+            if (value != null && !(value is SimulationSession)) throw new System.ArgumentException("Trajectory presentation requires a trajectory session.");
+            Bind(value as SimulationSession, runtime);
+        }
         public SessionState DisplayedState { get; private set; }
         public void Bind(SimulationSession value, ILessonRuntime runtime = null)
         {

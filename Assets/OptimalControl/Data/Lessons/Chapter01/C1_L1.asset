@@ -1,0 +1,530 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2447a3f1440a48128f99dcbb8f745af5, type: 3}
+  m_Name: C1_L1
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.LessonDefinition
+  id: C1.L1
+  schemaVersion: 1
+  contentVersion: '1'
+  title: Stato, input, output e tempo
+  description: 'Prima lezione di produzione: motivazioni I pp.2–7, notazione I pp.8–10, pendolo I p.33 ed Euler
+    adattato da I p.27. Nessun costo o solver.'
+  objective: Distinguere x, u e y; prevedere un passo Euler e leggere t, δ e τ senza confondere posa, stato e tempo.
+  prerequisiteLessonIds: []
+  workspace:
+    assetPath: Assets/OptimalControl/Scenes/LessonWorkspace.unity
+  experiment: {fileID: 11400000, guid: ed2a42910ae35c8e82b498d870e22ff4, type: 2}
+  formulas:
+  - {fileID: 11400000, guid: b27faf8225eb5d398cdf3923c8f86c70, type: 2}
+  - {fileID: 11400000, guid: 906a1a1e6c9459dda603b64f864256fe, type: 2}
+  - {fileID: 11400000, guid: aaa37528d6f853b8afd60166bb2995f3, type: 2}
+  - {fileID: 11400000, guid: 1c6f0cf7619706840865029829233386, type: 2}
+  - {fileID: 11400000, guid: 77e4f810f2dd50b3bea044ca24d2f8d1, type: 2}
+  - {fileID: 11400000, guid: d3c6d63f381c582e8e4fb4616a46b0bb, type: 2}
+  - {fileID: 11400000, guid: 4609bb85c15055ebb7460d944b77029c, type: 2}
+  sources:
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 2
+    lastPhysicalPage: 10
+    firstSlide: 1
+    lastSlide: 9
+    section: Motivazioni, stato/input/output, tempo e notazione
+    usage: 0
+    note: ''
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 27
+    lastPhysicalPage: 27
+    firstSlide: 26
+    lastSlide: 26
+    section: Forward Euler
+    usage: 1
+    note: 'Euler del drone applicato al pendolo: adattamento dichiarato.'
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 33
+    lastPhysicalPage: 33
+    firstSlide: 32
+    lastSlide: 32
+    section: 'Pendolo: x₁=θ, x₂=ω, y=θ'
+    usage: 0
+    note: ''
+  steps:
+  - id: context
+    title: Perché scegliere un controllo?
+    objective: Riconoscere obiettivi e limiti nelle applicazioni.
+    instruction: Un sistema riceve un input u, evolve nello stato x e rende disponibile un output y. Il tracking
+      cerca un output desiderato; il controllo ottimo considera anche un indice di prestazione e vincoli. Scegli
+      un dominio per leggere un esempio (I pp.2–7).
+    help: ''
+    formulaFocus: {fileID: 11400000, guid: b27faf8225eb5d398cdf3923c8f86c70, type: 2}
+    selectedTermId: state.current
+    visibleTermIds:
+    - state.current
+    - input.applied
+    - output.current
+    enabledControlIds: []
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    showCosts: 0
+    entryActions: []
+    question: Quale applicazione vuoi esplorare?
+    answers:
+    - id: aircraft
+      text: Aeronautica
+      feedback: 'Indice: consumo o comfort. Vincoli: spinta e assetto. Lo stesso tracking può richiedere consumi
+        diversi.'
+    - id: robotics
+      text: Robotica
+      feedback: 'Indice: distanza dal percorso o tempo. Vincoli: workspace e saturazione dei motori.'
+    - id: driving
+      text: Guida autonoma
+      feedback: 'Indice: distanza dalla corsia, comfort o consumo. Vincoli: ostacoli, sterzo e limiti interni.'
+    - id: drones
+      text: Droni
+      feedback: 'Indice: energia o esplorazione. Vincoli: edifici, assetto e spinte.'
+    - id: space
+      text: Spazio
+      feedback: 'Indice: energia o tempo. Vincoli: orbita, orientamento e spinta.'
+    conditions:
+    - evaluatorId: answer.selected
+      targetId: ''
+      expectedAnswerId: ''
+  - id: purpose
+    title: Tracking e scelta migliore
+    objective: Distinguere indice di prestazione e vincolo.
+    instruction: 'Una distanza dall’output desiderato misura una prestazione; un limite dell’attuatore restringe
+      ciò che puoi applicare. Raggiungere lo stesso output non dice quale input consumi meno energia. Qui esploriamo
+      input manuali: nessun ottimizzatore (I p.2).'
+    help: ''
+    formulaFocus: {fileID: 11400000, guid: b27faf8225eb5d398cdf3923c8f86c70, type: 2}
+    selectedTermId: input.applied
+    visibleTermIds:
+    - input.applied
+    - output.current
+    enabledControlIds: []
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    showCosts: 0
+    entryActions: []
+    question: Che cosa aggiunge il controllo ottimo al solo tracking?
+    answers:
+    - id: both
+      text: Un criterio di prestazione e vincoli espliciti.
+      feedback: Corretto. Il calcolo di costi e vincoli arriverà in C1.L3.
+    - id: only-output
+      text: Soltanto un output con un nome diverso.
+      feedback: L’output descrive ciò che osservi; non definisce da solo prestazione e limiti.
+    conditions:
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: both
+  - id: state
+    title: La posizione non è tutto lo stato
+    objective: Distinguere θ dalla coppia [θ,ω].
+    instruction: 'θ è l’angolo in rad; ω è la velocità angolare in rad/s. Seleziona x_t; apri Input e parametri
+      e cambia x₀[1] da 0 a 0.5 mantenendo x₀[0]=0.35. Il corpo resta alla stessa posa, il punto (θ,ω) cambia: due
+      velocità possono dare futuri diversi (I pp.8,33).'
+    help: ''
+    formulaFocus: {fileID: 11400000, guid: b27faf8225eb5d398cdf3923c8f86c70, type: 2}
+    selectedTermId: state.current
+    visibleTermIds:
+    - state.current
+    - theta
+    - omega
+    enabledControlIds:
+    - initial-state
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    showCosts: 0
+    entryActions:
+    - kind: 4
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale dato distingue i due stati alla stessa posa?
+    answers:
+    - id: full
+      text: La velocità ω, oltre all’angolo θ.
+      feedback: 'Corretto: lo stato contiene entrambe le componenti.'
+    - id: pose
+      text: 'Nessun dato: la posa determina tutto.'
+      feedback: Il corpo visualizza solo θ; osserva la seconda componente e il punto di fase.
+    conditions:
+    - evaluatorId: term
+      targetId: state.current
+      expectedAnswerId: ''
+    - evaluatorId: action
+      targetId: initial.changed
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: full
+  - id: output
+    title: Osservare y non equivale a conoscere x
+    objective: Riconoscere una funzione di output concreta.
+    instruction: 'Nel pendolo scegliamo h_t(x_t,u_t)=θ_t: y_t ha una componente in rad, x_t ne ha due con unità
+      diverse. Seleziona y_t e confrontalo con θ_t. La stessa y può corrispondere a velocità diverse. Non è una
+      regola y=x del framework (I pp.8,33).'
+    help: ''
+    formulaFocus: {fileID: 11400000, guid: 906a1a1e6c9459dda603b64f864256fe, type: 2}
+    selectedTermId: output.current
+    visibleTermIds:
+    - output.current
+    - state.current
+    - theta
+    enabledControlIds: []
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    showCosts: 0
+    entryActions: []
+    question: Che cosa contiene y_t in questo esperimento?
+    answers:
+    - id: angle
+      text: Solo θ_t, non ω_t né la coppia.
+      feedback: 'Corretto: è una componente dello stato scelta dal modello.'
+    - id: state
+      text: Sempre l’intero stato, per ogni sistema.
+      feedback: In generale h definisce l’output; qui y=θ ha dimensione 1 mentre x ha dimensione 2.
+    - id: torque
+      text: La coppia u_t.
+      feedback: La coppia è l’input [N·m]; l’output scelto è l’angolo [rad].
+    conditions:
+    - evaluatorId: term
+      targetId: output.current
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: angle
+  - id: continuous
+    title: Nel continuo cambia una funzione
+    objective: Distinguere derivata e transizione.
+    instruction: Nel modello continuo τ è tempo fisico reale; il punto sopra x indica la derivata rispetto a τ.
+      f fornisce un tasso istantaneo, h l’output. Il nostro laboratorio ne mostra un’approssimazione a campioni,
+      non una soluzione continua esatta (I p.8).
+    help: ''
+    formulaFocus: {fileID: 11400000, guid: aaa37528d6f853b8afd60166bb2995f3, type: 2}
+    selectedTermId: derivative
+    visibleTermIds:
+    - derivative
+    enabledControlIds: []
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    showCosts: 0
+    entryActions: []
+    question: Che cosa descrive ẋ(τ)=f(x(τ),u(τ),τ)?
+    answers:
+    - id: rate
+      text: La variazione istantanea per unità di tempo.
+      feedback: Corretto. Una transizione discreta, invece, restituisce direttamente il prossimo stato.
+    - id: sample
+      text: Il campione x_(t+1) senza discretizzazione.
+      feedback: ẋ è una derivata; per costruire campioni occorre una regola di discretizzazione.
+    conditions:
+    - evaluatorId: term
+      targetId: derivative
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: rate
+  - id: predict
+    title: 'Prima prevedi: Euler esplicito'
+    objective: Leggere la relazione concreta prima di agire.
+    instruction: 'Ripartiamo da θ₀=ω₀=0. Entrambe le righe Euler usano lo stato vecchio. m=1 kg, l=1 m, g=9.81 m/s²,
+      δ=0.02 s. Con u₀=1 N·m, sin(0)=0: prevedi θ₁ e ω₁ PRIMA di modificare l’input. Adattamento I p.27 → pendolo
+      I p.33.'
+    help: ''
+    formulaFocus: {fileID: 11400000, guid: 1c6f0cf7619706840865029829233386, type: 2}
+    selectedTermId: state.current
+    visibleTermIds:
+    - state.current
+    - omega.current
+    - input.applied
+    - theta.next
+    - omega.next
+    - time.step
+    enabledControlIds: []
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    showCosts: 0
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 8
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 0
+      - 0
+      scope: 0
+    question: Qual è il primo stato previsto con u₀=1?
+    answers:
+    - id: velocity
+      text: θ₁=0 rad; ω₁=0.02 rad/s.
+      feedback: 'Corretto: θ usa ω₀=0, ω aumenta di δ·u₀/(ml²).'
+    - id: angle
+      text: θ₁=0.02 rad; ω₁=0.
+      feedback: La prima riga usa la velocità vecchia, non l’input direttamente.
+    - id: both
+      text: θ₁=0.0004 rad; ω₁=0.02 rad/s.
+      feedback: Questo userebbe ω₁ nella prima riga; Euler esplicito usa ω₀.
+    conditions:
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: velocity
+  - id: intervene
+    title: Ora modifica la coppia
+    objective: Collegare input e previsione salvata.
+    instruction: Seleziona u_t. In Input e parametri imposta u[0]=1 N·m e conferma con Invio. Modifica indica solo
+      transizione oppure coda; per il primo passo entrambe includono u₀. Leggi θ_(t+1) e ω_(t+1) e confrontali con
+      la previsione. La freccia curva è una coppia, non una forza.
+    help: ''
+    formulaFocus: {fileID: 11400000, guid: 1c6f0cf7619706840865029829233386, type: 2}
+    selectedTermId: input.applied
+    visibleTermIds:
+    - input.applied
+    - theta.next
+    - omega.next
+    - state.current
+    - omega.current
+    - time.step
+    enabledControlIds:
+    - input
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - input
+    - next
+    showCosts: 0
+    entryActions: []
+    question: Quale velocità usa la prima riga Euler?
+    answers:
+    - id: old
+      text: ω_t, prima della transizione.
+      feedback: 'Corretto: cambiare u₀ non cambia θ₁ quando ω₀=0.'
+    - id: new
+      text: ω_(t+1), appena calcolata.
+      feedback: Le due righe usano entrambe lo stato precedente. Osserva θ₁=θ₀ quando ω₀=0.
+    conditions:
+    - evaluatorId: term
+      targetId: input.applied
+      expectedAnswerId: ''
+    - evaluatorId: action
+      targetId: input.changed
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: old
+  - id: transition
+    title: Dal next al current
+    objective: Verificare la transizione dalla storia.
+    instruction: f_t è la dinamica discreta. Seleziona x_(t+1), annota le due componenti, poi premi Step → una volta.
+      Il nuovo x_t deve coincidere col next precedente. Il ghost può sovrapporsi al corpo perché θ₁=θ₀; ω può essere
+      diversa. Step ← legge il campione salvato, senza integrare all’indietro.
+    help: ''
+    formulaFocus: {fileID: 11400000, guid: 77e4f810f2dd50b3bea044ca24d2f8d1, type: 2}
+    selectedTermId: state.current
+    visibleTermIds:
+    - state.current
+    - input.applied
+    - state.next
+    - time.index
+    enabledControlIds:
+    - step
+    - seek
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - input
+    - next
+    showCosts: 0
+    entryActions: []
+    question: Che cosa legge Step ←?
+    answers:
+    - id: saved
+      text: Lo stato già salvato nella stessa revisione.
+      feedback: 'Corretto: seek e rewind non rivalutano la dinamica.'
+    - id: negative
+      text: Una nuova integrazione con passo fisico negativo.
+      feedback: Il passo resta positivo; il cursore seleziona soltanto campioni salvati.
+    conditions:
+    - evaluatorId: term
+      targetId: state.next
+      expectedAnswerId: ''
+    - evaluatorId: action
+      targetId: time.advanced
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: saved
+  - id: time
+    title: Indice t, passo δ, tempo τ
+    objective: Leggere coordinate temporali distinte.
+    instruction: Qui δ=0.02 s e τ_t=tδ. Premi Step → da t=0 e leggi t=1, τ=0.02 s. Seleziona τ_t. In un sistema
+      index-only t esiste, δ e τ sono N/A. Play/Pausa e playback cambiano la velocità di osservazione, non δ né
+      i campioni.
+    help: ''
+    formulaFocus: {fileID: 11400000, guid: d3c6d63f381c582e8e4fb4616a46b0bb, type: 2}
+    selectedTermId: time.index
+    visibleTermIds:
+    - time.index
+    - time.physical
+    - time.step
+    enabledControlIds:
+    - step
+    - seek
+    - play
+    - playback-rate
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - next
+    - input
+    showCosts: 0
+    entryActions:
+    - kind: 4
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Nel pendolo, t=20 significa…
+    answers:
+    - id: index
+      text: Indice 20; τ=0.4 s con δ=0.02 s.
+      feedback: 'Corretto: non sono 20 secondi.'
+    - id: seconds
+      text: 20 secondi, qualunque sia δ.
+      feedback: t è un indice. Il tempo fisico deriva dalla discretizzazione dichiarata.
+    conditions:
+    - evaluatorId: action
+      targetId: time.advanced
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: time.physical
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: index
+  - id: spaces
+    title: Tre viste, significati diversi
+    objective: Separare posa fisica, fase e stato-tempo.
+    instruction: 'Premi Step → e seleziona x_t. Corpo: pendolo planare, posa da θ. Piano di fase: assi θ [rad],
+      ω [rad/s], nessuna posizione fisica XY. Grafico 3D: (θ,ω,τ), terzo asse tempo [s], non quota. Le linee guidano
+      fra campioni discreti; non sono interpolazione continua.'
+    help: ''
+    formulaFocus: {fileID: 11400000, guid: 77e4f810f2dd50b3bea044ca24d2f8d1, type: 2}
+    selectedTermId: state.current
+    visibleTermIds:
+    - state.current
+    - state.next
+    - time.index
+    enabledControlIds:
+    - step
+    - seek
+    - play
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - next
+    - input
+    showCosts: 0
+    entryActions: []
+    question: La terza coordinata della curva 3D rappresenta…
+    answers:
+    - id: time
+      text: Tempo fisico τ, accanto ad angolo e velocità.
+      feedback: 'Corretto: il pendolo resta un sistema a due stati e moto planare.'
+    - id: height
+      text: Una terza posizione spaziale del pendolo.
+      feedback: 'Leggi gli assi: θ, ω e τ appartengono al grafico stato-tempo.'
+    conditions:
+    - evaluatorId: term
+      targetId: state.current
+      expectedAnswerId: ''
+    - evaluatorId: action
+      targetId: time.advanced
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: time
+  - id: horizon
+    title: Che cosa rimane a T?
+    objective: Riconoscere i domini di stati, input e output.
+    instruction: 'T=100 transizioni: 100 input e 101 stati con x₀. x impilato esclude x₀ fissato. Porta il cursore
+      a 100; seleziona u_t e osserva N/A. Rimane x_T, non u_T o x_(T+1). Qui y_T=θ_T esiste perché h non richiede
+      input. Concludi solo dopo la risposta (I p.10).'
+    help: ''
+    formulaFocus: {fileID: 11400000, guid: 4609bb85c15055ebb7460d944b77029c, type: 2}
+    selectedTermId: time.index
+    visibleTermIds:
+    - time.index
+    - horizon
+    - states
+    - inputs
+    - state.current
+    - input.applied
+    - state.next
+    - output.current
+    enabledControlIds:
+    - seek
+    - step
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - next
+    - input
+    showCosts: 0
+    entryActions: []
+    question: Quali dati esistono al terminale di questo pendolo?
+    answers:
+    - id: terminal
+      text: x_T e y_T=θ_T; nessun u_T o next.
+      feedback: Corretto. Hai distinto stato, input, output e tempo.
+    - id: extra
+      text: u_T e x_(T+1), perché ci sono T+1 stati.
+      feedback: I T+1 stati includono x₀; le transizioni e gli input sono soltanto T.
+    conditions:
+    - evaluatorId: terminal
+      targetId: ''
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: input.applied
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: terminal
+  completionCriteria: 'Scelta contestuale e dieci verifiche guidate: risposte corrette, selezioni esplicite, modifica
+    iniziale/input, avanzamento e terminale. Credito esclusivamente C1.L1 v1/schema1 del corso optimal-control.'

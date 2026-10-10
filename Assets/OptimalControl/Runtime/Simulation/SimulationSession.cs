@@ -6,7 +6,7 @@ using OptCon.Core;
 namespace OptCon.Simulation
 {
     /// <summary>Single owner of requested configuration, complete results, revisions and playback cursor.</summary>
-    public sealed class SimulationSession : ICommandSink, IDisposable
+    public sealed class SimulationSession : IExperimentSession
     {
         private readonly SimulationConfiguration preset;
         private readonly Dictionary<string, ParameterRule> rules = new Dictionary<string, ParameterRule>(StringComparer.Ordinal);
@@ -20,6 +20,16 @@ namespace OptCon.Simulation
         private string error;
         public SessionState State { get; private set; }
         public event Action<SessionState> Changed;
+        public IExperimentSnapshot Current => State;
+        public ExperimentCapabilities Capabilities => State.Capabilities;
+        public bool Supports(SimulationCommandKind command) => Enum.IsDefined(typeof(SimulationCommandKind), command);
+        public IDisposable Subscribe(Action<IExperimentSnapshot> observer)
+        {
+            if (observer == null) throw new ArgumentNullException(nameof(observer));
+            if (closed) throw new ObjectDisposedException(nameof(SimulationSession));
+            Action<SessionState> callback = state => observer(state);
+            Changed += callback; return new ExperimentSubscription(() => Changed -= callback);
+        }
         public SessionNotificationScope Notifications { get; } = new SessionNotificationScope();
         public SessionPublicationException LastPublicationFailure { get; private set; }
 
