@@ -25,6 +25,63 @@ namespace OptCon.Tests
         private LessonSession Open(string steps, out SimulationSession simulation)
         { simulation = IndexOnlyConfiguration.CreateSession(); runtimes.Add(simulation); var lesson = new LessonSession(Definition(steps), simulation); runtimes.Add(lesson); return lesson; }
         private const string Plain = "{\"id\":\"one\",\"instruction\":\"Observe.\",\"enabledControlIds\":[\"step\",\"seek\",\"input\",\"comparison\"]}";
+        [Test] public void AF08_03_FailedEntryCannotAdvanceOrComplete()
+        {
+            var lesson = Open("[" + Plain + ",{\"id\":\"bad\",\"instruction\":\"Terminal.\",\"entryActions\":[{\"kind\":4,\"index\":2}],\"conditions\":[{\"evaluatorId\":\"terminal\"}]}]", out var simulation);
+            Assert.DoesNotThrow(() => Assert.That(lesson.Next(), Is.False));
+            Assert.That(lesson.Presentation.StepIndex, Is.Zero);
+            Assert.That(lesson.Presentation.CanAdvance, Is.False);
+            Assert.That(lesson.Next(), Is.False);
+            Assert.That(lesson.Presentation.IsCompleted, Is.False);
+            Assert.That(simulation.State.Sample.Timestep, Is.Zero);
+            Assert.That(lesson.Presentation.Error, Does.Contain("Seek"));
+            Assert.That(lesson.Explore(), Is.False);
+            Assert.That(lesson.Restart(), Is.True);
+            Assert.That(lesson.Presentation.Error, Is.Null);
+        }
+        [TestCase(false, false)] [TestCase(false, true)] [TestCase(true, false)] [TestCase(true, true)]
+        public void AF08_03_FailedIntermediateOrLastEntryKeepsCommittedIdentityAndSupportsRecovery(bool pendulum, bool intermediate)
+        {
+            var experiment = AssetDatabase.LoadAssetAtPath<ExperimentDefinition>("Assets/OptimalControl/Data/Experiments/PendulumPrototype.asset");
+            var simulation = pendulum ? experiment.Model.CreateSession(experiment) : IndexOnlyConfiguration.CreateSession(); runtimes.Add(simulation);
+            int invalid = simulation.State.Sample.Horizon + 1;
+            string bad = "{\"id\":\"bad\",\"instruction\":\"Invalid entry.\",\"entryActions\":[{\"kind\":4,\"index\":" + invalid + "}],\"conditions\":[{\"evaluatorId\":\"terminal\"}]}";
+            var lesson = new LessonSession(Definition("[" + Plain + "," + Plain.Replace("one", "two") + "," + bad + (intermediate ? "," + Plain.Replace("one", "four") : "") + "]"), simulation); runtimes.Add(lesson);
+            Assert.That(lesson.Next(), Is.True); var committed = lesson.Presentation.Step;
+            Assert.That(lesson.Next(), Is.False);
+            Assert.That(lesson.Presentation.StepIndex, Is.EqualTo(1)); Assert.That(lesson.Presentation.Step, Is.SameAs(committed));
+            Assert.That(lesson.Presentation.Error, Does.Contain("bad")); Assert.That(lesson.Presentation.CanAdvance, Is.False);
+            Assert.That(simulation.State.Sample.IsTerminal, Is.False);
+            for (int i = 0; i < 4; i++) Assert.That(lesson.Next(), Is.False);
+            Assert.That(lesson.Presentation.IsCompleted, Is.False); Assert.That(lesson.Execute(SimulationCommand.Seek(1)), Is.False);
+            Assert.That(lesson.Previous(), Is.True); Assert.That(lesson.Presentation.StepIndex, Is.Zero); Assert.That(lesson.Presentation.Error, Is.Null);
+            lesson.Next(); lesson.Next(); Assert.That(lesson.Restart(), Is.True); Assert.That(lesson.Presentation.StepIndex, Is.Zero);
+            Assert.That(lesson.Presentation.Error, Is.Null); Assert.That(lesson.Presentation.IsCompleted, Is.False);
+            Assert.That(simulation.State.Sample.DiscretizationStepSeconds, pendulum ? Is.EqualTo(.02) : Is.Null);
+        }
+        [Test] public void AF08_03_RuntimeDomainChangeAndPartialEntryDoNotAwardProgress()
+        {
+            var lesson = Open("[" + Plain + ",{\"id\":\"bad\",\"instruction\":\"Partial entry.\",\"entryActions\":[{\"kind\":6,\"index\":0,\"vector\":[4]},{\"kind\":4,\"index\":2}],\"conditions\":[{\"evaluatorId\":\"terminal\"}]}]", out var simulation);
+            Assert.That(lesson.Next(), Is.False);
+            Assert.That(simulation.State.Result.History.States[1][0], Is.EqualTo(6), "Successful mathematical edits are retained, not rolled back by the educational layer.");
+            Assert.That(lesson.Presentation.StepIndex, Is.Zero); Assert.That(lesson.Presentation.CanAdvance, Is.False);
+            Assert.That(lesson.Previous(), Is.False); Assert.That(lesson.Restart(), Is.True);
+            Assert.That(simulation.State.Result.History.States[1][0], Is.EqualTo(5));
+        }
+        [TestCase(false)] [TestCase(true)] public void AF08_03_StaticallyValidEntryCanFailAfterRuntimeHorizonEdit(bool pendulum)
+        {
+            var experiment = AssetDatabase.LoadAssetAtPath<ExperimentDefinition>("Assets/OptimalControl/Data/Experiments/PendulumPrototype.asset");
+            var simulation = pendulum ? experiment.Model.CreateSession(experiment) : IndexOnlyConfiguration.CreateSession(horizon: 3); runtimes.Add(simulation);
+            int presetT = simulation.State.Sample.Horizon;
+            string terminal = "{\"id\":\"terminal\",\"instruction\":\"Enter terminal.\",\"entryActions\":[{\"kind\":4,\"index\":" + presetT + "}],\"conditions\":[{\"evaluatorId\":\"terminal\"}]}";
+            var lesson = new LessonSession(Definition("[" + Plain + "," + terminal + "]"), simulation); runtimes.Add(lesson);
+            simulation.Execute(SimulationCommand.SetHorizon(1));
+            Assert.That(lesson.Next(), Is.False); Assert.That(lesson.Presentation.Error, Does.Contain("Seek"));
+            Assert.That(lesson.Next(), Is.False); Assert.That(lesson.Presentation.IsCompleted, Is.False);
+            Assert.That(lesson.Restart(), Is.True); Assert.That(simulation.State.Sample.Horizon, Is.EqualTo(presetT));
+            Assert.That(lesson.Next(), Is.True); Assert.That(simulation.State.Sample.IsTerminal, Is.True);
+            Assert.That(lesson.Presentation.CanAdvance, Is.True); Assert.That(lesson.Next(), Is.True); Assert.That(lesson.Presentation.IsCompleted, Is.True);
+        }
         [TearDown] public void Cleanup() { for (int i = runtimes.Count - 1; i >= 0; i--) runtimes[i].Dispose(); runtimes.Clear(); foreach (var asset in assets) Object.DestroyImmediate(asset); assets.Clear(); }
 
         [Test] public void ProductionLessonCompilesSevenFrozenStepsWithoutWritingAssets()

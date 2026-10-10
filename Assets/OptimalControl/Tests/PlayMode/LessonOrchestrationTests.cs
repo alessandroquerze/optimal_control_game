@@ -49,6 +49,86 @@ namespace OptCon.Tests
             while(bootstrap==null||bootstrap.Navigation==null||!bootstrap.Navigation.IsReady);
         }
         private IEnumerator Open(){Assert.That(bootstrap.Navigation.OpenLesson(bootstrap.Navigation.Course.Chapters[0].Lessons[0].Id),Is.True);yield return Ready();}
+        [UnityTest] public IEnumerator AF08_02_MenuRequestedBeforeHudWaitsForDispatchBoundary()
+        {
+            yield return Open(); Lesson.Explore();
+            var old = Session; var hud = Hud; var destination = bootstrap.Navigation.ActiveLesson;
+            hud.Bind(null, null, null);
+            old.Changed += _ =>
+            {
+                Assert.That(bootstrap.Navigation.ReturnToMenu(), Is.True);
+                Assert.That(old.State.IsClosed, Is.False, "Teardown must wait until consumers finish.");
+            };
+            hud.Bind(destination, old, bootstrap.ActiveHost.GetComponent<HighlightRegistry>(), Lesson);
+            Assert.DoesNotThrow(() => old.Execute(SimulationCommand.Seek(1)));
+            yield return Ready();
+            Assert.That(old.State.IsClosed, Is.True);
+            Assert.That(bootstrap.Navigation.ActiveLesson, Is.Null);
+        }
+        [UnityTest] public IEnumerator AF08_02_MenuAfterHudIsDeferredAcrossTheLessonOperation() { yield return NavigationDuringPublication(false, false); }
+        [UnityTest] public IEnumerator AF08_02_AnotherLessonBeforeHudKeepsDestinationIdentity() { yield return NavigationDuringPublication(true, true); }
+        [UnityTest] public IEnumerator AF08_02_AnotherLessonAfterHudKeepsDestinationIdentity() { yield return NavigationDuringPublication(false, true); }
+        private IEnumerator NavigationDuringPublication(bool beforeHud, bool anotherLesson)
+        {
+            LessonDefinition second = null;
+            if (anotherLesson)
+            {
+                var course = Object.Instantiate(AssetDatabase.LoadAssetAtPath<CourseDefinition>(A + "Data/Courses/PrototypeCourse.asset")); assets.Add(course);
+                var chapter = Object.Instantiate(course.Chapters[0]); assets.Add(chapter);
+                second = Object.Instantiate(chapter.Lessons[0]); assets.Add(second); Set(second, "id", p => p.stringValue = "fixture.dispatch.destination");
+                Set(chapter, "lessons", p => { p.arraySize = 2; p.GetArrayElementAtIndex(0).objectReferenceValue = chapter.Lessons[0]; p.GetArrayElementAtIndex(1).objectReferenceValue = second; });
+                Set(course, "chapters", p => p.GetArrayElementAtIndex(0).objectReferenceValue = chapter); yield return RestartBootstrap(course);
+            }
+            yield return Open(); Lesson.Explore();
+            var old = Session; var oldLesson = Lesson; var hud = Hud; var view = bootstrap.ActiveHost.GetComponent<ExperimentVisualization>();
+            var registry = bootstrap.ActiveHost.GetComponent<HighlightRegistry>(); var destination = bootstrap.Navigation.ActiveLesson;
+            if (beforeHud) hud.Bind(null, null, null);
+            bool requested = false, lessonFinishedBeforeClose = false; int callbacks = 0;
+            old.Changed += _ =>
+            {
+                callbacks++;
+                requested = anotherLesson ? bootstrap.Navigation.OpenLesson(second.Id) : bootstrap.Navigation.ReturnToMenu();
+                Assert.That(requested, Is.True); Assert.That(old.State.IsClosed, Is.False); Assert.That(bootstrap.Navigation.IsTransitioning, Is.True);
+                Assert.That(bootstrap.Navigation.ReturnToMenu(), Is.False, "First pending destination wins.");
+            };
+            if (beforeHud) hud.Bind(destination, old, registry, oldLesson, view);
+            oldLesson.Changed += _ => { lessonFinishedBeforeClose = true; Assert.That(old.State.IsClosed, Is.False); };
+            Assert.DoesNotThrow(() => Assert.That(oldLesson.Execute(SimulationCommand.Seek(1)), Is.True));
+            Assert.That(lessonFinishedBeforeClose, Is.True); Assert.That(old.State.IsClosed, Is.True);
+            yield return Ready();
+            Assert.That(requested, Is.True); Assert.That(callbacks, Is.EqualTo(1));
+            Assert.That(old.Notifications.IsActive, Is.False);
+            Assert.That(typeof(SimulationSession).GetField("Changed", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(old), Is.Null);
+            Assert.That(oldLesson.Execute(SimulationCommand.Reset()), Is.False);
+            if (anotherLesson)
+            {
+                Assert.That(bootstrap.Navigation.ActiveLesson.Id, Is.EqualTo(second.Id)); Assert.That(Session, Is.Not.SameAs(old));
+                Assert.That(Hud.BoundSession, Is.SameAs(Session)); Assert.That(Hud.DisplayedState.Result, Is.SameAs(Session.State.Result));
+                Assert.That(bootstrap.ActiveHost.GetComponent<ExperimentVisualization>().BoundSession, Is.SameAs(Session));
+                Assert.That(Lesson.Presentation.LessonId, Is.EqualTo(second.Id));
+            }
+            else { Assert.That(bootstrap.ActiveHost, Is.Null); Assert.That(bootstrap.Navigation.ActiveLesson, Is.Null); }
+        }
+        [UnityTest] public IEnumerator AF08_02_CapturedCallbacksCannotOverwriteAReboundConsumer()
+        {
+            yield return Open(); Lesson.Explore();
+            var old = Session; var hud = Hud; var view = bootstrap.ActiveHost.GetComponent<ExperimentVisualization>();
+            var diagnostics = Object.FindFirstObjectByType<SessionDiagnosticsPresenter>(); var destination = bootstrap.Navigation.ActiveLesson;
+            var registry = bootstrap.ActiveHost.GetComponent<HighlightRegistry>(); var education = Lesson;
+            using (var replacement = new SimulationSession(old.State.Result.Configuration))
+            {
+                replacement.Execute(SimulationCommand.Seek(2));
+                hud.Bind(null, null, null); view.Bind(null); diagnostics.Bind(null);
+                Action<OptCon.Simulation.SessionState> rebind = _ => { hud.Bind(destination, replacement, registry, visualStatus: view); view.Bind(replacement); diagnostics.Bind(replacement); };
+                old.Changed += rebind;
+                hud.Bind(destination, old, registry, education, view); view.Bind(old, education); diagnostics.Bind(old);
+                Assert.DoesNotThrow(() => old.Execute(SimulationCommand.Seek(1)));
+                Assert.That(hud.DisplayedState, Is.SameAs(replacement.State)); Assert.That(view.DisplayedState, Is.SameAs(replacement.State));
+                Assert.That(hud.Formula.DisplayedResult, Is.SameAs(replacement.State.Result));
+                Assert.That(diagnostics.GetComponent<UIDocument>().rootVisualElement.Q<Label>("session-diagnostic").text, Does.Contain("t=2/"));
+                old.Changed -= rebind; hud.Bind(destination, old, registry, education, view); view.Bind(old, education); diagnostics.Bind(old);
+            }
+        }
         [UnityTearDown] public IEnumerator Cleanup()
         {
             if(keyboard!=null&&keyboard.added)InputSystem.RemoveDevice(keyboard); keyboard=null;

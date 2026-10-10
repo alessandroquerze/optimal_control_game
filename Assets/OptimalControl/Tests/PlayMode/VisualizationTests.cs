@@ -11,6 +11,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using UnityEngine.UIElements;
 using Object = UnityEngine.Object;
 
 namespace OptCon.Tests
@@ -56,6 +57,32 @@ namespace OptCon.Tests
             Assert.That(bootstrap.Navigation.OpenLesson(bootstrap.Navigation.Course.Chapters[0].Lessons[0].Id), Is.True);
             yield return UntilReady();
             Host.Lesson.Explore();
+        }
+
+        [UnityTest] public IEnumerator AF08_01_DoubleResultOutsideFloatRangeStillReachesHud()
+        {
+            yield return Open();
+            var hud = Object.FindFirstObjectByType<LessonHudPresenter>();
+            Assert.DoesNotThrow(() => Assert.That(Host.Lesson.Execute(SimulationCommand.SetInput(0, new NumericVector(1e40), InputEditScope.Tail)), Is.True));
+            Assert.That(Session.State.Error, Is.Null);
+            Assert.That(hud.DisplayedState.Result, Is.SameAs(Session.State.Result));
+            Assert.That(Host.GetComponent<ExperimentVisualization>().DisplayedState.Result, Is.SameAs(Session.State.Result));
+            var view = Host.GetComponent<ExperimentVisualization>();
+            Assert.That(view.Status.Availability, Is.EqualTo(VisualizationAvailability.NonRepresentable));
+            Assert.That(view.Status.Source, Is.SameAs(Session.State)); Assert.That(view.Status.Diagnostic, Does.Contain("finite float"));
+            Assert.That(Session.State.Result.Configuration.Controls[0][0], Is.EqualTo(1e40));
+            Assert.That(Session.State.Result.History.States.Any(x => x.Any(v => System.Math.Abs(v) > float.MaxValue)), Is.True);
+            Assert.That(view.GetComponentsInChildren<Renderer>(true).All(r => !r.enabled), Is.True);
+            Assert.That(view.GetComponentsInChildren<HighlightTarget>(true).All(t => !t.SampleIndex.HasValue && !t.IsHighlighted), Is.True);
+            var root = hud.GetComponent<UnityEngine.UIElements.UIDocument>().rootVisualElement;
+            Assert.That(root.Q<UnityEngine.UIElements.Label>("visualization-diagnostic").text, Does.Contain("unavailable"));
+            Assert.That(Session.LastPublicationFailure, Is.Null, "Nonrepresentability is a handled presentation outcome.");
+            Assert.That(Host.Lesson.Execute(SimulationCommand.Reset()), Is.True);
+            Assert.That(view.Status.Availability, Is.EqualTo(VisualizationAvailability.Available));
+            Assert.That(hud.Formula.DisplayedResult, Is.SameAs(Session.State.Result));
+            Assert.That(view.DisplayedState, Is.SameAs(Session.State));
+            Assert.That(view.GetComponentsInChildren<Renderer>(true).Any(r => r.enabled), Is.True);
+            Assert.That(root.Q<UnityEngine.UIElements.Label>("visualization-diagnostic").text, Is.Empty);
         }
 
         [UnityTest]

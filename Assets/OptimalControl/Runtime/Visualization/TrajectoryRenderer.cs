@@ -11,9 +11,12 @@ namespace OptCon.Presentation
         public void Render(TrajectoryHistory history, StateProjection projection, int? lastSample = null)
         {
             var line = GetComponent<LineRenderer>();
+            var points = new Vector3[(lastSample ?? history.Horizon) + 1];
+            for (int i = 0; i < points.Length; i++) points[i] = projection.Project(history, i);
+            // Prepare the entire projection before changing any visible geometry or source identity.
             line.useWorldSpace = false;
-            line.positionCount = (lastSample ?? history.Horizon) + 1;
-            for (int i = 0; i < line.positionCount; i++) line.SetPosition(i, projection.Project(history, i));
+            line.positionCount = points.Length;
+            line.SetPositions(points);
             Source = history;
         }
     }

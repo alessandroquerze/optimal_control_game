@@ -25,6 +25,8 @@ namespace OptCon.Application
         private ICommandSink commands;
         private InputActionAsset runtimeActions;
         private Func<string, bool> blocksShortcut;
+        private long bindingGeneration;
+        private Action<LessonPresentationState> lessonCallback;
         public void SetFocusGuard(Func<string, bool> guard) => blocksShortcut = guard;
         private readonly List<KeyValuePair<InputAction, Action<InputAction.CallbackContext>>> handlers =
             new List<KeyValuePair<InputAction, Action<InputAction.CallbackContext>>>();
@@ -59,7 +61,12 @@ namespace OptCon.Application
                     (editScope == InputEditScope.Tail ? " sulla coda da t" : " sul campione t") + "   " + Key("ZeroControl") + ": azzera\n" +
                     Key("ToggleBody") + "/" + Key("TogglePhase") + "/" + Key("ToggleTrajectory") + ": layer corpo / fase / stato-tempo";
             }
-            if (lesson != null) { lesson.Changed += ApplyPresentation; ApplyPresentation(lesson.Presentation); }
+            if (lesson != null)
+            {
+                long generation = bindingGeneration; var education = lesson;
+                lessonCallback = state => { if (generation == bindingGeneration && ReferenceEquals(lesson, education)) ApplyPresentation(state); };
+                lesson.Changed += lessonCallback; ApplyPresentation(lesson.Presentation);
+            }
             if (isActiveAndEnabled) runtimeActions.Enable();
         }
         private void ToggleLayer(int index) { if (lesson == null || lesson.Presentation.Allows(LessonControls.Layers)) layers.Toggle(index); }
@@ -70,7 +77,8 @@ namespace OptCon.Application
         private void Hook(string name, Action<InputAction.CallbackContext> handler)
         {
             var command = handler;
-            handler = context => { if (blocksShortcut == null || !blocksShortcut(name)) command(context); };
+            long generation = bindingGeneration;
+            handler = context => { if (generation == bindingGeneration && (blocksShortcut == null || !blocksShortcut(name))) command(context); };
             var action = runtimeActions.FindAction(name, true);
             handlers.Add(new KeyValuePair<InputAction, Action<InputAction.CallbackContext>>(action, handler));
             action.performed += handler;
@@ -87,7 +95,9 @@ namespace OptCon.Application
         }
         private void Disconnect()
         {
-            if (lesson != null) lesson.Changed -= ApplyPresentation; lesson = null; commands = null;
+            bindingGeneration++;
+            if (lesson != null && lessonCallback != null) lesson.Changed -= lessonCallback;
+            lessonCallback = null; lesson = null; commands = null;
             if (runtimeActions != null) runtimeActions.Disable();
             foreach (var handler in handlers) handler.Key.performed -= handler.Value;
             handlers.Clear();

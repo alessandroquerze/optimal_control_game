@@ -15,6 +15,13 @@ namespace OptCon.Tests
 {
     public sealed class CatalogValidatorTests
     {
+        [TestCase(4, 101, "[]", "")] [TestCase(6, 100, "[0]", "")] [TestCase(8, 0, "[0]", "")] [TestCase(7, 0, "[]", "missing")]
+        public void AF08_03_ExecutionValidatorRejectsImpossibleEntryDomains(int kind, int index, string vector, string target)
+        {
+            JsonUtility.FromJsonOverwrite("{\"steps\":[{\"id\":\"bad\",\"instruction\":\"Invalid entry.\",\"entryActions\":[{\"kind\":" + kind + ",\"index\":" + index + ",\"vector\":" + vector + ",\"target\":\"" + target + "\"}]}]}", lesson);
+            var result = CatalogValidator.ValidateExecutionConfiguration(course);
+            Assert.That(result.Issues.Any(i => i.Code == "LessonEntryDomain" && i.Field.Contains("bad")), Is.True, string.Join("\n", result.Issues));
+        }
         private const string CoursePath = "Assets/OptimalControl/Data/Courses/PrototypeCourse.asset";
         private readonly List<ContentDefinition> owned = new List<ContentDefinition>();
         private CourseDefinition course;

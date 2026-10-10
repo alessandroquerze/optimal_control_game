@@ -11,6 +11,8 @@ namespace OptCon.Presentation
     {
         private SimulationSession session;
         private bool subscribed;
+        private long bindingGeneration;
+        private System.Action<SessionState> callback;
         public SimulationSession BoundSession => session;
         public void Bind(SimulationSession value)
         {
@@ -24,12 +26,15 @@ namespace OptCon.Presentation
         private void Subscribe()
         {
             if (session == null || subscribed) return;
-            session.Changed += Render; subscribed = true;
+            var source = session; long generation = bindingGeneration;
+            callback = state => { if (subscribed && generation == bindingGeneration && ReferenceEquals(session, source)) Render(state); };
+            session.Changed += callback; subscribed = true;
         }
         private void Unsubscribe()
         {
-            if (session != null && subscribed) session.Changed -= Render;
-            subscribed = false;
+            bindingGeneration++; subscribed = false;
+            if (session != null && callback != null) session.Changed -= callback;
+            callback = null;
         }
         private static string Number(double? value) => value.HasValue ? value.Value.ToString("G10", CultureInfo.InvariantCulture) : "N/A";
         private void Render(SessionState state)

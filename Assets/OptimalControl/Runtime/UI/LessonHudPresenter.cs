@@ -19,6 +19,12 @@ namespace OptCon.Presentation
         private ILessonRuntime lessonRuntime;
         private LessonStepPresenter steps;
         private long appliedGeneration = -1;
+        private long bindingGeneration;
+        private Action<SessionState> sessionCallback;
+        private Action<LessonPresentationState> lessonCallback;
+        private Action<VisualizationStatus> statusCallback;
+        private IVisualizationStatus visualization;
+        private Label visualizationDiagnostic;
         public ILessonRuntime BoundLesson => lessonRuntime;
         public FormulaPresenter Formula { get; private set; }
         public SimulationSession BoundSession => session;
@@ -42,9 +48,9 @@ namespace OptCon.Presentation
             for (var element = focus; element != null; element = element.parent) if (element is SliderInt) return true;
             return false;
         }
-        public void Bind(LessonDefinition destination, SimulationSession value, HighlightRegistry registry, ILessonRuntime runtime = null)
+        public void Bind(LessonDefinition destination, SimulationSession value, HighlightRegistry registry, ILessonRuntime runtime = null, IVisualizationStatus visualStatus = null)
         {
-            Disconnect(); lesson = destination; session = value; highlights = registry; lessonRuntime = runtime;
+            Disconnect(); lesson = destination; session = value; highlights = registry; lessonRuntime = runtime; visualization = visualStatus;
             if (isActiveAndEnabled) Connect();
         }
         private void Connect()
@@ -57,21 +63,38 @@ namespace OptCon.Presentation
             timeline = new TimelinePresenter(root, commands);
             parameters = new ParameterPanelPresenter(root, lesson.Experiment, commands, session.State);
             costs = new CostPanelPresenter(root, commands, session.State);
+            visualizationDiagnostic = root.Q<Label>("visualization-diagnostic");
+            if (visualizationDiagnostic == null) { visualizationDiagnostic = new Label { name = "visualization-diagnostic" }; root.Insert(0, visualizationDiagnostic); }
+            visualizationDiagnostic.AddToClassList("hud-note");
+            long generation = bindingGeneration; var source = session; var education = lessonRuntime; var visual = visualization;
+            bool Current() => subscribed && generation == bindingGeneration && ReferenceEquals(session, source);
+            sessionCallback = state => { if (Current()) Render(state); };
+            lessonCallback = state => { if (Current() && ReferenceEquals(lessonRuntime, education)) Render(source.State); };
+            statusCallback = state => { if (Current() && ReferenceEquals(visualization, visual)) RenderVisualizationStatus(); };
             if (lessonRuntime != null)
             {
-                steps = new LessonStepPresenter(root, lessonRuntime); lessonRuntime.Changed += OnLessonChanged;
+                steps = new LessonStepPresenter(root, lessonRuntime); lessonRuntime.Changed += lessonCallback;
                 Formula.TermSelected += lessonRuntime.RecordTermSelection;
             }
             else root.Q<VisualElement>("lesson-progress").style.display = DisplayStyle.None;
-            session.Changed += Render; subscribed = true; Render(session.State);
+            subscribed = true; session.Changed += sessionCallback;
+            if (visualization != null) visualization.StatusChanged += statusCallback;
+            Render(session.State);
         }
         private void Render(SessionState state)
         {
             DisplayedState = state; timeline.Render(state); parameters.Render(state); costs.Render(state);
             Formula.Render(state.Result, state.Sample.Timestep);
             ApplyLesson();
+            RenderVisualizationStatus();
         }
-        private void OnLessonChanged(LessonPresentationState state) { if (subscribed) Render(session.State); }
+        private void RenderVisualizationStatus()
+        {
+            var status = visualization?.Status;
+            bool unavailable = status != null && ReferenceEquals(status.Source.Result, session.State.Result) && status.Availability != VisualizationAvailability.Available;
+            visualizationDiagnostic.text = unavailable ? "3D unavailable · r" + status.Source.Result.RevisionId + ": " + status.Diagnostic + " I valori matematici restano validi." : "";
+            visualizationDiagnostic.style.display = unavailable ? DisplayStyle.Flex : DisplayStyle.None;
+        }
         private void ApplyLesson()
         {
             if (lessonRuntime == null) return;
@@ -88,8 +111,13 @@ namespace OptCon.Presentation
         }
         private void Disconnect()
         {
-            if (subscribed && session != null) session.Changed -= Render; subscribed = false;
-            if (lessonRuntime != null) lessonRuntime.Changed -= OnLessonChanged;
+            bindingGeneration++; subscribed = false;
+            if (session != null && sessionCallback != null) session.Changed -= sessionCallback;
+            if (lessonRuntime != null && lessonCallback != null) lessonRuntime.Changed -= lessonCallback;
+            if (visualization != null && statusCallback != null) visualization.StatusChanged -= statusCallback;
+            sessionCallback = null; lessonCallback = null; statusCallback = null;
+            if (visualizationDiagnostic != null) { visualizationDiagnostic.text = ""; visualizationDiagnostic.style.display = DisplayStyle.None; }
+            visualizationDiagnostic = null;
             steps?.Dispose(); steps = null; appliedGeneration = -1;
             Formula?.Dispose(); timeline?.Dispose(); parameters?.Dispose(); costs?.Dispose(); costs = null; Formula = null; timeline = null; parameters = null; DisplayedState = null;
         }

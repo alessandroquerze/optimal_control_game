@@ -20,6 +20,8 @@ namespace OptCon.Simulation
         private string error;
         public SessionState State { get; private set; }
         public event Action<SessionState> Changed;
+        public SessionNotificationScope Notifications { get; } = new SessionNotificationScope();
+        public SessionPublicationException LastPublicationFailure { get; private set; }
 
         public SimulationSession(SimulationConfiguration preset, IReadOnlyList<ParameterRule> parameterRules = null, double samplesPerSecond = 10)
         {
@@ -139,9 +141,32 @@ namespace OptCon.Simulation
         private void Refresh() => State = new SessionState(result, requested, cursor, attempt, error, playing, rate, closed, comparison);
         private void Publish()
         {
-            Refresh(); dispatching = true;
-            try { Changed?.Invoke(State); }
-            finally { dispatching = false; }
+            using (Notifications.Enter())
+            {
+                Refresh(); var publication = State; dispatching = true;
+                LastPublicationFailure = null;
+                var failures = new List<Exception>(); var consumers = new List<string>();
+                try
+                {
+                    var callbacks = Changed?.GetInvocationList();
+                    if (callbacks != null) foreach (Action<SessionState> callback in callbacks)
+                    {
+                        if (closed) break;
+                        try { callback(publication); }
+                        catch (Exception exception)
+                        {
+                            failures.Add(exception);
+                            consumers.Add(callback.Method.DeclaringType?.FullName + "." + callback.Method.Name);
+                        }
+                    }
+                }
+                finally { dispatching = false; }
+                if (failures.Count != 0)
+                {
+                    LastPublicationFailure = new SessionPublicationException(publication, consumers, failures);
+                    throw LastPublicationFailure;
+                }
+            }
         }
 
         public void Dispose()

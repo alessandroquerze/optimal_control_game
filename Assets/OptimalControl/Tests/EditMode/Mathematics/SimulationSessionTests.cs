@@ -9,6 +9,47 @@ namespace OptCon.Tests
 {
     public sealed class SimulationSessionTests
     {
+        [Test] public void AF08_01_FailingSubscriberDoesNotSkipLaterConsumers()
+        {
+            using (var session = new SimulationSession(Scalar()))
+            {
+                SessionState received = null;
+                session.Changed += _ => throw new InvalidOperationException("consumer probe");
+                session.Changed += state => received = state;
+                var failure = Assert.Throws<SessionPublicationException>(() => session.Execute(SimulationCommand.SetInput(0, new NumericVector(4))));
+                Assert.That(received, Is.SameAs(session.State));
+                Assert.That(session.State.Error, Is.Null);
+                Assert.That(failure.Publication, Is.SameAs(received)); Assert.That(failure.InnerExceptions.Single().Message, Is.EqualTo("consumer probe"));
+                Assert.That(failure.Consumers.Single(), Is.Not.Empty); Assert.That(session.LastPublicationFailure, Is.SameAs(failure));
+            }
+        }
+        [Test] public void AF08_01_AllConsumerFailuresAreReportedAfterDispatchAndClearOnRecovery()
+        {
+            using (var session = new SimulationSession(Scalar()))
+            {
+                Action<SessionState> first = _ => throw new InvalidOperationException("first");
+                Action<SessionState> second = _ => throw new ArgumentException("second");
+                var publications = new List<SessionState>(); session.Changed += first; session.Changed += publications.Add; session.Changed += second;
+                var failure = Assert.Throws<SessionPublicationException>(() => session.Execute(SimulationCommand.SetInput(0, new NumericVector(1e40))));
+                Assert.That(failure.InnerExceptions.Count, Is.EqualTo(2)); Assert.That(publications.Single(), Is.SameAs(session.State));
+                Assert.That(session.State.Result.Configuration.Controls[0][0], Is.EqualTo(1e40)); Assert.That(session.State.Error, Is.Null);
+                session.Changed -= first; session.Changed -= second; Assert.That(session.Execute(SimulationCommand.Reset()), Is.True);
+                Assert.That(session.LastPublicationFailure, Is.Null); Assert.That(publications.Last(), Is.SameAs(session.State));
+            }
+        }
+        [Test] public void AF08_02_DeferralRunsAfterOutermostScopeWithoutAFrameDelay()
+        {
+            using (var session = new SimulationSession(Scalar()))
+            {
+                var order = new List<string>();
+                session.Changed += _ => { order.Add("observer"); session.Notifications.Defer(() => order.Add("deferred")); };
+                session.Changed += _ => order.Add("consumer");
+                using (session.Notifications.Enter()) { session.Execute(SimulationCommand.Seek(1)); order.Add("lesson finished"); }
+                Assert.That(order, Is.EqualTo(new[] { "observer", "consumer", "lesson finished", "deferred" }));
+                Assert.That(session.Notifications.IsActive, Is.False);
+                Assert.Throws<InvalidOperationException>(() => session.Notifications.Defer(() => { }));
+            }
+        }
         private static SimulationConfiguration Scalar(int horizon = 4, ScalarConfiguration model = null) =>
             new SimulationConfiguration("fixture.scalar", model ?? new ScalarConfiguration(), new NumericVector(2),
                 Enumerable.Repeat(new NumericVector(3), horizon).ToArray());

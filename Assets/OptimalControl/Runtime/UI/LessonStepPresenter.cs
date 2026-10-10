@@ -36,12 +36,12 @@ namespace OptCon.Presentation
             root.Q<Label>("lesson-help").text = step?.Help;
             root.Q<VisualElement>("lesson-help-panel").style.display = !state.IsFreeExploration && !string.IsNullOrEmpty(step?.Help) ? DisplayStyle.Flex : DisplayStyle.None;
             root.Q<Label>("lesson-question").text = state.IsFreeExploration || state.IsCompleted ? "" : step?.Question;
-            root.Q<Label>("lesson-feedback").text = state.Feedback ?? "";
+            root.Q<Label>("lesson-feedback").text = state.Error == null ? state.Feedback ?? "" : state.Error + " Recupera con Ricomincia o Indietro.";
             root.Q<Label>("lesson-checks").text = state.IsFreeExploration || state.IsCompleted ? "" : string.Join(" · ", state.ConditionsMet.Select((met, i) => (met ? "✓" : "○") + " " + (i + 1))) + (state.CanAdvance ? " · Puoi proseguire." : " · Completa le azioni indicate.");
             next.text = state.StepIndex + 1 == state.StepCount ? "Concludi verifica" : "Avanti →";
             next.SetEnabled(state.CanAdvance); previous.SetEnabled(!state.IsFreeExploration && state.StepIndex > 0);
             next.style.display = previous.style.display = state.IsFreeExploration || state.IsCompleted ? DisplayStyle.None : DisplayStyle.Flex;
-            explore.SetEnabled(!state.IsFreeExploration);
+            explore.SetEnabled(!state.IsFreeExploration && state.Error == null);
             if (generation != state.Generation)
             {
                 generation = state.Generation; ClearAnswers();

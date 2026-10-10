@@ -96,7 +96,7 @@ namespace OptCon.Presentation
         public static float ToFloat(double value)
         {
             if (!NumericValidation.IsFinite(value) || value > float.MaxValue || value < -float.MaxValue)
-                throw new ArgumentException("Display coordinate is not representable as a finite float.");
+                throw new NonRepresentableDisplayException();
             return (float)value;
         }
     }

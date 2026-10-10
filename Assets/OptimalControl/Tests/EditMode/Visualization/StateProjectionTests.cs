@@ -12,6 +12,24 @@ namespace OptCon.Tests
         private StateProjection projection;
         [SetUp] public void SetUp() => projection = ScriptableObject.CreateInstance<StateProjection>();
         [TearDown] public void TearDown() => UnityEngine.Object.DestroyImmediate(projection);
+        [Test] public void AF08_01_TrajectoryProjectionIsPreparedBeforeVisibleCommit()
+        {
+            Axis(projection.X, ProjectionCoordinate.StateComponent, 0, "1");
+            Axis(projection.Y, ProjectionCoordinate.Constant, 0, "1"); Axis(projection.Z, ProjectionCoordinate.DiscreteIndex, 0, "1");
+            var root = new GameObject("atomic trajectory", typeof(LineRenderer), typeof(TrajectoryRenderer));
+            try
+            {
+                var renderer = root.GetComponent<TrajectoryRenderer>(); var line = root.GetComponent<LineRenderer>();
+                var valid = RolloutEngine.Rollout(new Addition(), new NumericVector(2), new[] { new NumericVector(3) }, "valid", 0);
+                var huge = RolloutEngine.Rollout(new Addition(), new NumericVector(2), new[] { new NumericVector(1e40), new NumericVector(0) }, "huge", 1);
+                renderer.Render(valid, projection); var before = new Vector3[line.positionCount]; line.GetPositions(before);
+                Assert.Throws<NonRepresentableDisplayException>(() => renderer.Render(huge, projection));
+                Assert.That(renderer.Source, Is.SameAs(valid)); Assert.That(line.positionCount, Is.EqualTo(before.Length));
+                var after = new Vector3[line.positionCount]; line.GetPositions(after); Assert.That(after, Is.EqualTo(before));
+                Assert.That(huge.States[1][0], Is.EqualTo(1e40));
+            }
+            finally { UnityEngine.Object.DestroyImmediate(root); }
+        }
         private void Axis(ProjectionAxis axis, ProjectionCoordinate coordinate, int component, string unit, double scale = 1)
         { axis.coordinate = coordinate; axis.component = component; axis.label = coordinate.ToString(); axis.unit = unit; axis.scale = scale; }
 
@@ -65,7 +83,7 @@ namespace OptCon.Tests
         [TestCase(double.PositiveInfinity)]
         [TestCase(double.MaxValue)]
         public void RenderingBoundaryRejectsNonRepresentableCoordinates(double value) =>
-            Assert.Throws<ArgumentException>(() => StateProjection.ToFloat(value));
+            Assert.Throws<NonRepresentableDisplayException>(() => StateProjection.ToFloat(value));
 
         [Test]
         public void HigherDimensionalStateIsAnExplicitProjectionAndAnglesAreNotWrapped()

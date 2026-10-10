@@ -17,12 +17,13 @@ namespace OptCon.Application
         private readonly Action release;
         private bool disposed, busy, dispatching;
         private long nextTransition;
+        private NavigationTransition pendingTransition;
         public CourseDefinition Course { get; }
         public LessonDefinition ActiveLesson { get; private set; }
         public SimulationSession ActiveSession { get; private set; }
         public NavigationUpdate State { get; private set; }
-        public bool IsReady => State != null && State.IsReady && !disposed;
-        public bool IsTransitioning => busy;
+        public bool IsReady => State != null && State.IsReady && !disposed && !IsTransitioning;
+        public bool IsTransitioning => busy || pendingTransition != null;
         public string StatusMessage { get; private set; } = string.Empty;
         public event Action Changed;
         public event Action<NavigationUpdate> LifecycleChanged;
@@ -53,7 +54,7 @@ namespace OptCon.Application
             }
         }
 
-        private bool Blocked => disposed || busy || dispatching;
+        private bool Blocked => disposed || IsTransitioning || dispatching;
         public bool OpenLesson(string lessonId)
         {
             if (Blocked) return false;
@@ -68,6 +69,25 @@ namespace OptCon.Application
         {
             if (!loader.CanNavigate(path, out string rejection)) return Reject(rejection);
             var transition = new NavigationTransition(++nextTransition, destination, path);
+            var source = ActiveSession;
+            if (source != null && source.Notifications.IsActive)
+            {
+                // First accepted request wins. Keep its identity; teardown starts at the outermost synchronous boundary.
+                pendingTransition = transition;
+                source.Notifications.Defer(() =>
+                {
+                    if (disposed || !ReferenceEquals(pendingTransition, transition)) return;
+                    pendingTransition = null;
+                    if (ReferenceEquals(ActiveSession, source) && !source.State.IsClosed) BeginNavigate(transition);
+                });
+                return true;
+            }
+            return BeginNavigate(transition);
+        }
+        private bool BeginNavigate(NavigationTransition transition)
+        {
+            string path = transition.ScenePath;
+            string rejection;
             busy = true; StatusMessage = "Caricamento…";
             Publish(transition, NavigationPhase.Requested, default, null);
             release(); ActiveSession = null;
@@ -123,7 +143,7 @@ namespace OptCon.Application
         public void Dispose()
         {
             if (disposed) return;
-            disposed = true; release(); ActiveSession = null; ActiveLesson = null;
+            disposed = true; pendingTransition = null; release(); ActiveSession = null; ActiveLesson = null;
             Changed = null; LifecycleChanged = null;
         }
     }

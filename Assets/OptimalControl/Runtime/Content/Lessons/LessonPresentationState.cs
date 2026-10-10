@@ -43,15 +43,17 @@ namespace OptCon.Content
         public bool IsCompleted { get; }
         public bool CanAdvance { get; }
         public string Feedback { get; }
+        public string Error { get; }
         public IReadOnlyList<bool> ConditionsMet { get; }
         public LessonPresentationState(string lessonId, LessonStepPlan step, int index, int count, long generation,
-            bool free, bool completed, bool canAdvance, string feedback, IEnumerable<bool> conditions)
+            bool free, bool completed, bool canAdvance, string feedback, IEnumerable<bool> conditions, string error = null)
         {
             LessonId = lessonId; Step = step; StepIndex = index; StepCount = count; Generation = generation;
             IsFreeExploration = free; IsCompleted = completed; CanAdvance = canAdvance; Feedback = feedback;
             ConditionsMet = Array.AsReadOnly(conditions.ToArray());
+            Error = error;
         }
-        public bool Allows(string control) => IsFreeExploration || Step == null || Step.EnabledControls.Contains(control);
+        public bool Allows(string control) => Error == null && (IsFreeExploration || Step == null || Step.EnabledControls.Contains(control));
         public bool AllowsParameter(string target) => Allows(LessonControls.Parameter) &&
             (IsFreeExploration || Step == null || Step.EditableParameters.Contains(target));
         public bool Allows(SimulationCommand command)

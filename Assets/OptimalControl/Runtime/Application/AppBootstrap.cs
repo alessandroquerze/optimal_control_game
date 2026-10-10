@@ -70,7 +70,8 @@ namespace OptCon.Application
                 foreach (var diagnostic in root.GetComponentsInChildren<SessionDiagnosticsPresenter>(true)) diagnostic.Bind(session);
                 foreach (var hud in root.GetComponentsInChildren<LessonHudPresenter>(true))
                 {
-                    hud.Bind(transition.Destination, session, ActiveHost == null ? null : ActiveHost.GetComponent<HighlightRegistry>(), ActiveHost?.Lesson);
+                    hud.Bind(transition.Destination, session, ActiveHost == null ? null : ActiveHost.GetComponent<HighlightRegistry>(), ActiveHost?.Lesson,
+                        ActiveHost == null ? null : ActiveHost.GetComponent<ExperimentVisualization>());
                     if (ActiveHost != null)
                         foreach (var input in ActiveHost.GetComponentsInChildren<LessonInputRouter>(true)) input.SetFocusGuard(hud.BlocksLessonShortcut);
                 }

@@ -96,17 +96,48 @@ namespace OptCon.Editor
                 try
                 {
                     using (var session = experiment.Model.CreateSession(experiment))
+                    {
+                        ValidateEntryDomains(lesson, session.State.Result.Configuration, result);
                         foreach (var formula in lesson.Formulas.Where(f => f != null))
                             foreach (var term in formula.Terms.Where(t => t != null))
                             {
                                 var binding = new RuntimeMetricResolver().Resolve(term, session.State.Result, 0);
                                 if (binding.Validity == MetricValidity.Invalid) result.Add(formula, "RuntimeBinding", "terms." + term.Id, binding.Diagnostic);
                             }
+                    }
                 }
                 catch (Exception exception) when (exception is ArgumentException || exception is InvalidOperationException || exception is RolloutException || exception is ArithmeticException)
                 { result.Add(experiment, "ProviderResult", "model", exception.Message); }
             }
             return result;
+        }
+
+        private static void ValidateEntryDomains(LessonDefinition lesson, SimulationConfiguration preset, CatalogValidationResult result)
+        {
+            foreach (var step in lesson.Steps.Where(s => s != null)) foreach (var action in step.EntryActions)
+            {
+                try
+                {
+                    if (action == null) throw new ArgumentException("Missing entry action.");
+                    var command = action.CreateCommand();
+                    switch (command.Kind)
+                    {
+                        case SimulationCommandKind.Seek:
+                            if (command.Index < 0 || command.Index > preset.Horizon) throw new ArgumentException("Seek index is outside preset [0,T].");
+                            break;
+                        case SimulationCommandKind.SetInput: preset.WithInput(command.Index, command.Vector, command.Scope); break;
+                        case SimulationCommandKind.SetInitialState: preset.WithInitialState(command.Vector); break;
+                        case SimulationCommandKind.SetParameter:
+                            var declared = lesson.Experiment.Parameters.FirstOrDefault(p => p.ModelTarget == command.Target);
+                            if (declared != null) new ParameterRule(command.Target, declared.Minimum, declared.Maximum, declared.ValueKind != ParameterValueKind.Real).Validate(command.Value);
+                            if (preset.Cost != null && preset.Cost.Parameters.Any(p => p.Target == command.Target)) preset.Cost.WithParameter(command.Target, command.Value);
+                            else preset.Model.WithParameter(command.Target, command.Value);
+                            break;
+                    }
+                }
+                catch (Exception exception) when (exception is ArgumentException || exception is InvalidOperationException || exception is ArithmeticException)
+                { result.Add(lesson, "LessonEntryDomain", "steps." + step.Id + ".entryActions", exception.Message); }
+            }
         }
 
         [MenuItem("Tools/Optimal Control/Validate Selected Course/Catalog")]
