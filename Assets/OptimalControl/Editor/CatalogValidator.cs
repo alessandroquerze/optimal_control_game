@@ -288,6 +288,7 @@ namespace OptCon.Editor
                 Units(experiment, "controlUnits", experiment.ControlUnits, experiment.ControlDimension);
                 Units(experiment, "outputUnits", experiment.OutputUnits, experiment.OutputDimension);
                 if (experiment.Model != null) Visit(experiment.Model);
+                if (experiment.Cost != null) Visit(experiment.Cost);
                 if (experiment.UsesDiscreteTime)
                 {
                     var preset = experiment.DiscreteTime;
@@ -370,6 +371,13 @@ namespace OptCon.Editor
 
             private void Steps(LessonDefinition lesson)
             {
+                try
+                {
+                    var plan = new LessonPlan(lesson);
+                    var registry = new OptCon.Application.LessonConditionRegistry();
+                    foreach (var step in plan.Steps) foreach (var condition in step.Conditions) registry.Resolve(condition.EvaluatorId);
+                }
+                catch (ArgumentException exception) { Error(lesson, "LessonPlan", "steps", exception.Message); }
                 var ids = new HashSet<string>(StringComparer.Ordinal);
                 foreach (var step in lesson.Steps)
                 {

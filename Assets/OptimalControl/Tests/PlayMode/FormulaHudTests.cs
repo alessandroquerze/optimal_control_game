@@ -37,7 +37,7 @@ namespace OptCon.Tests
             do { Assert.That(Time.realtimeSinceStartup, Is.LessThan(deadline)); yield return null; bootstrap = Object.FindFirstObjectByType<AppBootstrap>(); }
             while (bootstrap == null || bootstrap.Navigation == null || !bootstrap.Navigation.IsReady);
         }
-        private IEnumerator Open() { Assert.That(bootstrap.Navigation.OpenLesson(bootstrap.Navigation.Course.Chapters[0].Lessons[0].Id), Is.True); yield return Ready(); }
+        private IEnumerator Open() { Assert.That(bootstrap.Navigation.OpenLesson(bootstrap.Navigation.Course.Chapters[0].Lessons[0].Id), Is.True); yield return Ready(); bootstrap.ActiveHost.Lesson.Explore(); }
         [UnityTearDown]
         public IEnumerator TearDown()
         {
@@ -64,7 +64,7 @@ namespace OptCon.Tests
                 InputSystem.QueueStateEvent(mouse, new MouseState { position = point }); yield return null; yield return null;
                 InputSystem.QueueStateEvent(mouse, new MouseState { position = point }.WithButton(UnityEngine.InputSystem.LowLevel.MouseButton.Left)); yield return null; yield return null;
                 InputSystem.QueueStateEvent(mouse, new MouseState { position = point }); yield return null; yield return null;
-                Assert.That(Root.Q<Label>("term-detail-title").text, Does.StartWith("x_(t+1)"));
+                Assert.That(Root.Q<Label>("term-detail-title").text, Does.StartWith("x_(t+1)"), $"button={button.worldBound}, viewport={Root.Q<ScrollView>("lesson-panel").contentViewport.worldBound}, point={point}, screen={Screen.width}x{Screen.height}, root={Root.worldBound}");
                 Assert.That(bootstrap.ActiveHost.GetComponentsInChildren<HighlightTarget>(true).Where(t => t.SemanticRole == "state.next").All(t => t.IsHighlighted && t.SampleIndex == 1), Is.True);
             }
             finally { if (mouse != null && mouse.added) InputSystem.RemoveDevice(mouse); view.position = previous; }

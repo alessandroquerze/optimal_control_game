@@ -13,11 +13,13 @@ namespace OptCon.Simulation
         public ModelConfiguration Model { get; }
         public NumericVector InitialState { get; }
         public IReadOnlyList<NumericVector> Controls { get; }
-        public NumericVector ReferenceState { get; }
+        private readonly NumericVector referenceState;
+        public CostConfiguration Cost { get; }
+        public NumericVector ReferenceState => Cost?.ReferenceState ?? referenceState;
         public int Horizon => Controls.Count;
 
         public SimulationConfiguration(string experimentId, ModelConfiguration model, NumericVector initialState,
-            IReadOnlyList<NumericVector> controls, NumericVector referenceState = null)
+            IReadOnlyList<NumericVector> controls, NumericVector referenceState = null, CostConfiguration cost = null)
         {
             if (string.IsNullOrWhiteSpace(experimentId)) throw new ArgumentException("Experiment ID is required.", nameof(experimentId));
             Model = model ?? throw new ArgumentNullException(nameof(model));
@@ -30,11 +32,20 @@ namespace OptCon.Simulation
                 copy[t] = controls[t];
             }
             if (referenceState != null) NumericValidation.RequireDimension(referenceState, model.Descriptor.Dimensions.State, nameof(referenceState));
-            ExperimentId = experimentId; InitialState = initialState; Controls = Array.AsReadOnly(copy); ReferenceState = referenceState;
+            cost?.Validate(model.Descriptor); Cost = cost;
+            ExperimentId = experimentId; InitialState = initialState; Controls = Array.AsReadOnly(copy); this.referenceState = referenceState;
         }
 
-        public SimulationConfiguration WithModel(ModelConfiguration model) => new SimulationConfiguration(ExperimentId, model, InitialState, Controls, ReferenceState);
-        public SimulationConfiguration WithInitialState(NumericVector state) => new SimulationConfiguration(ExperimentId, Model, state, Controls, ReferenceState);
+        public SimulationConfiguration WithModel(ModelConfiguration model) => new SimulationConfiguration(ExperimentId, model, InitialState, Controls, referenceState, Cost);
+        public SimulationConfiguration WithInitialState(NumericVector state) => new SimulationConfiguration(ExperimentId, Model, state, Controls, referenceState, Cost);
+        public SimulationConfiguration WithCost(CostConfiguration cost) => new SimulationConfiguration(ExperimentId, Model, InitialState, Controls, referenceState, cost);
+        public SimulationConfiguration WithHorizon(int horizon)
+        {
+            if (horizon < 1 || horizon > 10000) throw new ArgumentOutOfRangeException(nameof(horizon), "Runtime horizon must be in [1,10000].");
+            var controls = new NumericVector[horizon];
+            for (int t = 0; t < horizon; t++) controls[t] = Controls[Math.Min(t, Horizon - 1)];
+            return new SimulationConfiguration(ExperimentId, Model, InitialState, controls, referenceState, Cost);
+        }
         public SimulationConfiguration WithInput(int timestep, NumericVector input, InputEditScope scope)
         {
             if (timestep < 0 || timestep >= Horizon) throw new ArgumentOutOfRangeException(nameof(timestep));
@@ -42,7 +53,7 @@ namespace OptCon.Simulation
             NumericValidation.RequireDimension(input, Model.Descriptor.Dimensions.Control, nameof(input));
             var copy = new NumericVector[Horizon];
             for (int t = 0; t < Horizon; t++) copy[t] = t == timestep || (scope == InputEditScope.Tail && t > timestep) ? input : Controls[t];
-            return new SimulationConfiguration(ExperimentId, Model, InitialState, copy, ReferenceState);
+            return new SimulationConfiguration(ExperimentId, Model, InitialState, copy, referenceState, Cost);
         }
     }
 

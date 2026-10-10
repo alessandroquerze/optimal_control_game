@@ -38,7 +38,7 @@ namespace OptCon.Content
             for (int t = 0; t < horizon; t++) controls[t] = input;
             var reference = experiment.DiscreteTime.CopyReferenceState();
             return new SimulationConfiguration(experiment.Id, model, new NumericVector(experiment.DiscreteTime.CopyInitialState()),
-                controls, reference.Length == 0 ? null : new NumericVector(reference));
+                controls, reference.Length == 0 ? null : new NumericVector(reference), experiment.Cost?.CreateConfiguration(experiment));
         }
 
         public SimulationSession CreateSession(ExperimentDefinition experiment) =>

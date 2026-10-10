@@ -1,12 +1,12 @@
 # Optimal Control — roadmap operativa
 
-Data della revisione: 9 ottobre 2026. **31 fasi, da F00 a F30.** **F00–F06 completate e verificate il 9 ottobre 2026.** F07–F30 restano pianificate e non avviate. La revisione documentale iniziale è conservata; l'implementazione corrente comprende foundation, catalogo, navigazione, core matematico/simulativo puro, sessione runtime, primitive visuali, controlli della dinamica e Formula/HUD live con binding tipizzati.
+Data della revisione: 10 ottobre 2026. **31 fasi, da F00 a F30.** **F00–F07 completate e verificate il 9 ottobre 2026; F08 completata e verificata il 10 ottobre 2026.** F09–F30 restano pianificate e non avviate. La revisione documentale iniziale è conservata; l'implementazione corrente comprende foundation, catalogo, navigazione, core matematico/simulativo puro, sessione runtime, primitive visuali, controlli della dinamica, Formula/HUD live con binding tipizzati, costi discreti, target, confronto A/B e primo vertical slice didattico con Lesson Logic.
 
 ## Specifica, fonti e risultato della revisione
 
 La specifica principale è costituita da [visione](OPTCON_PROJECT_VISION.md), [curriculum](OPTCON_CURRICULUM.md), [architettura](OPTCON_ARCHITECTURE.md) e questa roadmap. La roadmap sostituisce la precedente suddivisione D0 / Foundation F1 / Prototype P1 / Foundation F2 / Content production / Polish, mantenendone obiettivi e perimetro. Le precisazioni operative qui riportate risolvono i punti aperti senza modificare gli altri tre documenti.
 
-Il progetto usa Unity `6000.3.8f1`, URP `17.3.0`, Input System `1.18.0`, UI Toolkit disponibile tramite i moduli Unity e Test Framework `1.6.0`. F00 aggiunge `Bootstrap`, `LessonWorkspace` e `AppBootstrap` al template, conservando `SampleScene` e gli asset URP. F01 aggiunge definizioni e catalogo dati con validazione editor. F02 aggiunge il menu e il caricamento del workspace con titolo/obiettivo dagli asset. F03 aggiunge pendolo Euler, rollout e snapshot puri. F04 collega provider, sessione, comandi e clock al lifecycle runtime e risolve A03/A04; A01 resta verificato. F05 aggiunge corpo/ghost, piano di fase, traiettoria stato-tempo 3D, coppia, marker, assi, layer/highlight e router da tastiera. F06 risolve A02 tramite un resolver puro tipizzato e aggiunge formule/termini live, highlight, timeline e pannello input/parametri dalla stessa revisione immutabile. Costi/confronto e Lesson Logic restano a F07/F08.
+Il progetto usa Unity `6000.3.8f1`, URP `17.3.0`, Input System `1.18.0`, UI Toolkit disponibile tramite i moduli Unity e Test Framework `1.6.0`. F00 aggiunge `Bootstrap`, `LessonWorkspace` e `AppBootstrap` al template, conservando `SampleScene` e gli asset URP. F01 aggiunge definizioni e catalogo dati con validazione editor. F02 aggiunge il menu e il caricamento del workspace con titolo/obiettivo dagli asset. F03 aggiunge pendolo Euler, rollout e snapshot puri. F04 collega provider, sessione, comandi e clock al lifecycle runtime e risolve A03/A04; A01 resta verificato. F05 aggiunge corpo/ghost, piano di fase, traiettoria stato-tempo 3D, coppia, marker, assi, layer/highlight e router da tastiera. F06 risolve A02 tramite un resolver puro tipizzato e aggiunge formule/termini live, highlight, timeline e pannello input/parametri dalla stessa revisione immutabile. F07 aggiunge costo quadratico discreto, contributi/cumulativo/terminale/J, target e confronto A/B immutabile usando lo stesso resolver e risultato. F08 aggiunge Lesson Logic data-driven, disclosure, controlli filtrati, condizioni/risposte, reset deterministico e percorso didattico completo del prototipo.
 
 | Fonte | Percorso effettivo | Pagine fisiche | Riferimenti ricontrollati |
 | --- | --- | --- | --- |
@@ -35,9 +35,9 @@ Il DAG da rispettare è: `Core → nessuna dipendenza Unity`; `Simulation → Co
 
 ## Come eseguire una fase
 
-Nel seguito **A = `Assets/OptimalControl`**. I percorsi `A/...` sono relativi a questa root. «Creare» e «modificare» descrivono il lavoro della relativa fase; lo stato e i rapporti di verifica di F00–F06 distinguono il lavoro eseguito da quello ancora pianificato.
+Nel seguito **A = `Assets/OptimalControl`**. I percorsi `A/...` sono relativi a questa root. «Creare» e «modificare» descrivono il lavoro della relativa fase; lo stato e i rapporti di verifica di F00–F07 distinguono il lavoro eseguito da quello ancora pianificato.
 
-Una fase è conclusa quando i suoi criteri passano e il risultato è riproducibile partendo da Bootstrap o dalla verifica dichiarata per quella fase (editoriale per F01, numerica per il Core). Le dipendenze elencate sono dirette; i loro prerequisiti si intendono transitivi. L'ordine F00 → F30 è quello raccomandato. I test elencati sono da eseguire durante l'implementazione; per F00–F06 le verifiche Unity eseguite sono registrate sotto la fase.
+Una fase è conclusa quando i suoi criteri passano e il risultato è riproducibile partendo da Bootstrap o dalla verifica dichiarata per quella fase (editoriale per F01, numerica per il Core). Le dipendenze elencate sono dirette; i loro prerequisiti si intendono transitivi. L'ordine F00 → F30 è quello raccomandato. I test elencati sono da eseguire durante l'implementazione; per F00–F07 le verifiche Unity eseguite sono registrate sotto la fase.
 
 Per ogni fase di contenuto: mantenere ID stabili, fonte/pagina/slide, obiettivo, formule selezionabili, esperimento, spiegazione delle unità/spazi e verifica concettuale. Un candidato numerico viene chiamato «ottimo» soltanto con una giustificazione adeguata alla classe di problema. I test numerici hanno tolleranze assolute/relative dichiarate; i controlli grafici restano manuali quando non richiedono test automatici significativi.
 
@@ -578,7 +578,7 @@ Evidenze locali: `C:/Users/querz/AppData/Local/Temp/OptCon-F05-b35a9c53a4fe48239
 
 ## F06 — Formula System e HUD live
 
-- **Stato:** **completata**, 9 ottobre 2026; tutti i criteri sotto verificati. A02 risolto, A01/A03/A04 preservati. F07 non avviata.
+- **Stato:** **completata**, 9 ottobre 2026; tutti i criteri sotto verificati. A02 risolto, A01/A03/A04 preservati. F07 non avviata nella consegna originale F06.
 - **Obiettivo:** collegare formula, termini, numeri e target 3D alla stessa revisione/timestep.
 - **Prerequisiti:** binding editoriali, metriche e registry dei target; primo esperimento visibile.
 - **Dipendenze:** F01, F05.
@@ -616,10 +616,11 @@ Rapporto completo, inventario di **37 file creati e 14 modificati**, contratto A
 
 **Modalità e decisioni di perimetro:** automazione nativa su copia isolata con ispezione manuale delle catture; Editor dell'utente preservato. Resolver nel layer superiore Content e template HUD condiviso, senza refactor delle API Core/Simulation. Il fixture index-only è editor/test-only; la conservazione A/B verifica il contratto e non introduce il confronto utente. Nessun costo, target F07, solver, layout matematico complesso o Lesson Logic anticipato. Nessun problema bloccante rimasto; precisione mostrata G6 e inquadratura F05 fissa sono limiti dichiarati.
 
-Evidenze: `C:/Users/querz/AppData/Local/Temp/OptCon-F06-cea2f2e7b0f842608fb60bb30be99819/`, XML/log finali, risultati runtime/smoke e manifest. Due catture sono conservate in `Docs/REVIEWS/F06_FORMULA_HUD.png` e `F06_INDEX_ONLY_HUD.png`. **F07–F30 non avviate.**
+Evidenze: `C:/Users/querz/AppData/Local/Temp/OptCon-F06-cea2f2e7b0f842608fb60bb30be99819/`, XML/log finali, risultati runtime/smoke e manifest. Due catture sono conservate in `Docs/REVIEWS/F06_FORMULA_HUD.png` e `F06_INDEX_ONLY_HUD.png`. **F07–F30 non avviate nella consegna originale F06.**
 
 ## F07 — Costo, target e confronto limitati al slice
 
+- **Stato:** **completata**, 9 ottobre 2026; tutti i criteri sotto verificati. A01–A04 preservati; F08 non avviata.
 - **Obiettivo:** aggiungere le anteprime di stage/terminal cost e il confronto A/B previsti dalla visione, usando gli stessi dati della dinamica.
 - **Prerequisiti:** HUD live, parametri validati e selezione semantica funzionanti.
 - **Dipendenze:** F06.
@@ -629,8 +630,34 @@ Evidenze: `C:/Users/querz/AppData/Local/Temp/OptCon-F06-cea2f2e7b0f842608fb60bb3
 - **Criteri di completamento:** terminale contato una volta; costo discreto identificato; parametri e orizzonti di A/B visibili; cambiando pesi, i costi sono attribuiti ai rispettivi obiettivi o ricalcolati sotto un obiettivo comune esplicito. Anteprima limitata a un solo preset matematico.
 - **Test:** EditMode su somma dei contributi, cumulativo e terminale/T=1; immutabilità di A; PlayMode su highlight terminale mentre il cursore è altrove e modifica dei pesi senza alterare la dinamica.
 
+### Consegna e verifica effettiva di F07
+
+Costo opzionale data-driven, configurazione matematica pura immutabile, stage tracking/effort, terminale, prefissi C_t e J conservati nel medesimo `SimulationResult` della traiettoria. Il resolver F06 espone i valori senza ricalcolo nel HUD o nei renderer. Target, diamanti terminali e grafici riusano le primitive F05; selezionare ℓ_T/x_T evidenzia @T anche con cursore altrove. Controlli runtime per pesi/target/T e salvataggio A; ciascun confronto conserva modello, orizzonte, passo e obiettivo propri. Nessuna modifica alle equazioni del pendolo o al rollout, nessun solver o Lesson Logic.
+
+| Criterio / verifica | Esito |
+| --- | --- |
+| Unity 6000.3.8f1, compilazione finale senza helper temporanei | **Exit 0**, zero errori/warning C# |
+| Tutti gli EditMode | **180/180 PASS**, inclusi **30 nuovi test costi**; zero falliti/skipped |
+| Tutti i PlayMode | **38/38 PASS**, inclusi **8 nuovi test costo/presentazione**; zero falliti/skipped |
+| Stage, terminale e prefissi | Index-only x0=2, u0=3, T=1: stage=13, terminale=25, J=38, C=[0,13]; T=2: J=111, C=[0,13,47] |
+| Termini e terminale | Formula data-driven selezionabile; x_T/ℓ_T @T, stage e u_T N/A al terminale; C_T esclude il terminale, J lo conta una volta |
+| Costo discreto e A01 | Nessun fattore δ; pendolo δ=.02 s preservato; index-only senza δ/τ artificiali |
+| Revisione e A04 | A mantiene configurazione/campioni/costi dopo B; errori conservano l'ultimo risultato valido completo |
+| Modifica pesi, target e T | Pesi/target rivalutano i costi senza chiamare la dinamica; UI mostra parametri/orizzonti/obiettivi propri di A/B; T ricostruisce il rollout |
+| Confronto e semantica | A viola spessa/B blu sottile; overlay sull'intervallo comune, anche con δ diversi; highlight terminale corretto con cursore altrove |
+| A02 / A03 e regressioni | Resolver tipizzato e lifecycle precedenti passati; **3/3 cicli nativi menu/workspace/menu**, incluso uno senza domain reload |
+| Runtime e verifica visiva | Pendolo/A-B/terminale e index-only stage+terminale concordi tra HUD, costo e grafico; **sei Game View 1440×979 ispezionate**, zero errori runtime |
+| Identità della consegna | **308 file applicativi**, zero differenze SHA-256 rispetto alla copia verificata |
+
+Report completo, inventario di **39 file creati e 17 modificati**, architettura, test, catture e procedura manuale: [F07_IMPLEMENTATION.md](REVIEWS/F07_IMPLEMENTATION.md). Nessun file preesistente eliminato o `.meta` preesistente cambiato. Altre specifiche/report, PDF, scene, asset URP, pacchetti e ProjectSettings invariati. Le API costo opzionale/risultato/comandi sono estensioni minime necessarie, documentate e testate; nessuna deviazione funzionale da F07.
+
+**Modalità e limiti:** esecuzioni native su copia isolata e ispezione manuale delle catture; Editor dell'utente preservato. Preview con pesi diagonali, target costante e un solo preset; confronto esplicitamente sotto i rispettivi obiettivi, senza attribuzioni di ottimalità. T=1…10000, estensione ripetendo l'ultimo input; formato G6 e viewport F05 fisso. Nessun problema bloccante rimasto.
+
+Evidenze: `C:/Users/querz/AppData/Local/Temp/OptCon-F07-8f89939fb9ab4940a05b9d63578afc04/`, XML/log finali, risultati runtime/smoke, sei Game View e manifest SHA-256. Quattro catture conservate in `Docs/REVIEWS/F07_*.png`. **F08–F30 non avviate.**
+
 ## F08 — Lesson Logic e completamento del primo vertical slice
 
+- **Stato:** **completata**, 10 ottobre 2026; tutti i criteri sotto verificati. A01–A04 preservati; F09 non avviata.
 - **Obiettivo:** validare l'intera pipeline attraverso un esperimento guidato con verifica concettuale, non soltanto una demo tecnica.
 - **Prerequisiti:** dinamica, 3D, formula, HUD, costo/confronto e navigazione disponibili.
 - **Dipendenze:** F02, F07.
@@ -639,6 +666,31 @@ Evidenze: `C:/Users/querz/AppData/Local/Temp/OptCon-F06-cea2f2e7b0f842608fb60bb3
 - **Risultato verificabile:** da Bootstrap lo studente prevede una transizione, cambia u, avanza, legge i valori e spiega i termini; poi esplora, confronta A/B e conclude una verifica. Questo è il primo vertical slice completo.
 - **Criteri di completamento:** tutti i requisiti della matrice del slice passano; play/pause/step/reset più rewind; pipeline Model→Simulation→Visualization→Formula→HUD→Lesson Logic osservabile; nessun completamento automatico di C1.L2/L3; catalogo prototipo separato dal corso di produzione.
 - **Test:** PlayMode end-to-end su modifica input e propagazione della stessa revisione a tutti i consumer; current/next/terminal; chiusura/riapertura; controllo manuale dell'intero percorso didattico e confronto con risultati Core.
+
+### Consegna e verifica di F08
+
+Prerequisiti verificati prima dell'implementazione: navigazione, sessione, dinamica, 3D, Formula/HUD, costi e confronto disponibili; **308 file applicativi identici alla consegna F07**. Il prototipo contiene ora sette step editoriali: stato → previsione/input → transizione/current-next → traiettoria → costo/peso → A/B → terminale/verifica concettuale.
+
+`LessonPlan` congela i metadati, `LessonSession` orchestra i comandi esistenti, `LessonConditionRegistry` valuta azioni/selezioni/risposte/terminale/confronto. `LessonPresentationState` e `ILessonRuntime` sono contratti Content, senza dipendenza Presentation→Application. La stessa politica limita i comandi UI/tastiera e i controlli mostrati. Formule e highlight riusano resolver/semantic registry F06/F05; costi e risultati rimangono F07. **Core e Simulation invariati**, nessuna seconda source of truth o nuova dipendenza esterna.
+
+| Criterio / verifica | Esito |
+| --- | --- |
+| Compilazione finale Unity | **PASS**, `6000.3.8f1`, exit code 0; zero errori e warning C#, dopo rimozione dei verificatori temporanei |
+| Tutti gli EditMode | **206/206 PASS**, zero falliti/saltati; 26 nuovi casi Lesson Logic |
+| Tutti i PlayMode | **50/50 PASS**, zero falliti/saltati; 12 nuovi casi di orchestrazione |
+| Pipeline completa | Percorso nativo di tutti i sette step attraverso UI, dati reali e revisioni comuni; dieci Game View ispezionate |
+| Play/pause/step/reset/rewind | Step di esplorazione e suite strumenti liberi; input/parametri consentiti per step, nessun bypass da tastiera |
+| Current/next/terminal | Il nuovo current coincide con il precedente next; highlight con SampleIndex corretto; al terminale nessun input/stage/next fittizio |
+| Costo e A/B | Modifica Q[0] cambia J senza cambiare stati; A conserva configurazione/campioni/costi propri dopo modifica B o fallimento successivo |
+| A01–A04 | Suite precedenti rieseguite; pendolo δ=.02 s, τ_T=2 s; index-only 2+3=5/J=38 senza δ/τ; resolver tipizzato e lifecycle Ready preservati |
+| Reset/back/lifecycle | Preset e condizioni ripristinati, A rimosso dalla lesson, selezioni/controlli/layer riapplicati; dispose e nuova sessione su riapertura/cambio lesson |
+| Completamento | Soltanto prototipo corrente, dopo verifica esplicita; nessuna progressione persistente o completamento C1.L2/L3 |
+| Smoke/regressioni | Tre cicli nativi menu/workspace/menu, due con domain reload e uno senza; scene, URP e asset matematici preservati |
+| Identità sorgenti | **329 file applicativi, zero differenze SHA-256**, nessun file extra rispetto alla copia Unity verificata |
+
+Report completo: [F08_IMPLEMENTATION.md](REVIEWS/F08_IMPLEMENTATION.md), con inventario di **29 file creati e 20 modificati**, test, catture e procedura manuale. Nessun file preesistente eliminato. **Decisioni:** Indietro riparte dal preset del passo; Reset guidato torna al primo step; esplorazione libera sblocca gli strumenti senza attribuire completamento e Reset ne conserva la modalità. Persistenza e validazione generale restano F09. Limiti F07 conservati: diagonali, target costante, viewport fisso; la Lesson Logic non li assume universali.
+
+Evidenze: `C:/Users/querz/AppData/Local/Temp/OptCon-F08-ec9d91964e83410993697f4884d3ecac/`, XML/log finali, runtime/smoke, dieci Game View e manifest. Sette catture conservate in `Docs/REVIEWS/F08_*.png`. **F09–F30 non avviate.**
 
 ## F09 — Stabilizzazione, validazione e progressione persistente
 
@@ -884,6 +936,6 @@ Evidenze: `C:/Users/querz/AppData/Local/Temp/OptCon-F06-cea2f2e7b0f842608fb60bb3
 
 ## Prossimo passo e limite di questa consegna
 
-**F00–F06 sono completate; il prossimo intervento pianificato è F07, non avviato in questa consegna.** Il percorso fino a F08 valida la pipeline completa prima di produrre il corso; F09–F10 consolidano quanto emerge; F11–F27 producono i capitoli nell'ordine richiesto; F28 chiude le dipendenze applicative; F29–F30 completano polish e consegna.
+**F00–F08 sono completate; il prossimo intervento pianificato è F09, non avviato in questa consegna.** Il percorso fino a F08 valida la pipeline completa prima di produrre il corso; F09–F10 consolidano quanto emerge; F11–F27 producono i capitoli nell'ordine richiesto; F28 chiude le dipendenze applicative; F29–F30 completano polish e consegna.
 
-La consegna corrente comprende esclusivamente F06: contratto tipizzato delle metriche, Formula/HUD live, termini/spiegazioni, selezione semantica, timeline e input/parametri. Risolve A02 e conserva A01/A03/A04; nessuna modifica a Core/Simulation, altre specifiche e review precedenti, PDF, SampleScene, asset URP, ProjectSettings e pacchetti. Costi/confronto restano F07, Lesson Logic F08. Il lavoro termina con F06.
+La consegna corrente comprende esclusivamente F08: Lesson Logic data-driven, controlli/disclosure, formule/layer, condizioni/risposte e primo percorso didattico completo, attraverso F04–F07 esistenti. Conserva A01–A04; Core e Simulation invariati. Altre specifiche e review precedenti, PDF, scene, asset URP, ProjectSettings e pacchetti invariati. Nessuna persistenza, produzione dei capitoli o polish finale. Il lavoro termina con F08.

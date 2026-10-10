@@ -20,6 +20,8 @@ namespace OptCon.Presentation
         private readonly DropdownField choice;
         private int formulaIndex;
         private string selected;
+        private IReadOnlyList<string> disclosedTerms;
+        public event Action<string, string> TermSelected;
         public SimulationResult DisplayedResult { get; private set; }
         public int Cursor { get; private set; }
         public IReadOnlyDictionary<string, MetricResolution> Resolutions { get; private set; }
@@ -34,10 +36,25 @@ namespace OptCon.Presentation
         }
         private void ChangeFormula(ChangeEvent<string> evt)
         {
+            if (!choice.enabledSelf) { choice.SetValueWithoutNotify(choice.choices[formulaIndex]); return; }
             int index = choice.choices.IndexOf(evt.newValue);
             if (index < 0) { choice.SetValueWithoutNotify(choice.choices[formulaIndex]); return; }
-            formulaIndex = index; selected = null; registry?.Clear(); Build();
+            SetFormula(formulas[index].Id);
+        }
+        public void SetFormula(string id)
+        {
+            int index = -1;
+            for (int i = 0; i < formulas.Count; i++) if (formulas[i].Id == id) { index = i; break; }
+            if (index < 0) throw new ArgumentException("Formula does not belong to the lesson: " + id);
+            formulaIndex = index; selected = null; disclosedTerms = null; registry?.Clear(); Build();
+            choice.SetValueWithoutNotify(choice.choices[index]);
             if (DisplayedResult != null) Render(DisplayedResult, Cursor);
+        }
+        public void SetDisclosedTerms(IReadOnlyList<string> terms)
+        {
+            disclosedTerms = terms;
+            foreach (var button in buttons) button.Value.style.display = terms == null || terms.Count == 0 || terms.Contains(button.Key) ? DisplayStyle.Flex : DisplayStyle.None;
+            if (terms != null && terms.Count > 0 && !terms.Contains(selected)) selected = terms[0];
         }
         private void Build()
         {
@@ -67,12 +84,12 @@ namespace OptCon.Presentation
                 buttons[term.Id].EnableInClassList("unavailable", resolved.Validity != MetricValidity.Available);
             }
             Resolutions = new System.Collections.ObjectModel.ReadOnlyDictionary<string, MetricResolution>(resolutions);
-            SelectTerm(selected);
+            SelectTerm(selected, false);
         }
-        public void SelectTerm(string id)
+        public void SelectTerm(string id, bool notify = true)
         {
             var term = Formula.Terms.FirstOrDefault(t => t.Id == id);
-            if (term == null || Resolutions == null) return;
+            if (term == null || Resolutions == null || (disclosedTerms != null && disclosedTerms.Count > 0 && !disclosedTerms.Contains(id))) return;
             selected = id; var resolved = Resolutions[id];
             foreach (var button in buttons) button.Value.EnableInClassList("selected", button.Key == id);
             root.Q<Label>("term-detail-title").text = term.Symbol + " · " + term.Label;
@@ -90,6 +107,7 @@ namespace OptCon.Presentation
                     (registry == null ? " · nessun registry nello scenario" : registry.DescribeSelection());
             }
             else { registry?.Clear(); root.Q<Label>("term-detail-world").text = "Nessun elemento 3D applicabile."; }
+            if (notify) TermSelected?.Invoke(Formula.Id, id);
         }
         public static string Format(MetricResolution resolved, string numericFormat = "G6", bool detailed = true)
         {
@@ -112,6 +130,6 @@ namespace OptCon.Presentation
             }
             catch (FormatException) { return "Formato numerico non valido: " + numericFormat; }
         }
-        public void Dispose() { choice.UnregisterValueChangedCallback(ChangeFormula); registry?.Clear(); root.Q<VisualElement>("formula-terms").Clear(); DisplayedResult = null; Resolutions = null; }
+        public void Dispose() { choice.UnregisterValueChangedCallback(ChangeFormula); registry?.Clear(); root.Q<VisualElement>("formula-terms").Clear(); TermSelected = null; DisplayedResult = null; Resolutions = null; }
     }
 }

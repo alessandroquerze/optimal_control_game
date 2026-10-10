@@ -8,10 +8,12 @@ namespace OptCon.Simulation
         public SimulationConfiguration Configuration { get; }
         public TrajectoryHistory History { get; }
         public long RevisionId => History.RevisionId;
+        public CostEvaluation Costs { get; }
         internal SimulationResult(SimulationConfiguration configuration, TrajectoryHistory history)
         {
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             History = history ?? throw new ArgumentNullException(nameof(history));
+            Costs = configuration.Cost == null ? null : new CostEvaluation(configuration.Cost, history);
         }
     }
 
@@ -20,6 +22,7 @@ namespace OptCon.Simulation
     {
         public SimulationResult Result { get; }
         public SimulationSnapshot Sample { get; }
+        public ComparisonSnapshot Comparison { get; }
         public SimulationConfiguration RequestedConfiguration { get; }
         public long AttemptRevisionId { get; }
         public string Error { get; }
@@ -27,9 +30,9 @@ namespace OptCon.Simulation
         public bool IsClosed { get; }
         public double SamplesPerSecond { get; }
         internal SessionState(SimulationResult result, SimulationConfiguration requested, int cursor,
-            long attempt, string error, bool playing, double samplesPerSecond, bool closed)
+            long attempt, string error, bool playing, double samplesPerSecond, bool closed, ComparisonSnapshot comparison = null)
         {
-            Result = result; Sample = result.History.GetSnapshot(cursor); RequestedConfiguration = requested;
+            Comparison = comparison; Result = result; Sample = result.History.GetSnapshot(cursor); RequestedConfiguration = requested;
             AttemptRevisionId = attempt; Error = error; IsPlaying = playing; SamplesPerSecond = samplesPerSecond; IsClosed = closed;
         }
     }

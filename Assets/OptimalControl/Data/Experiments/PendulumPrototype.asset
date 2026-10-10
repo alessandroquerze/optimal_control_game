@@ -21,6 +21,7 @@ MonoBehaviour:
     fasi successive.
   model: {fileID: 11400000, guid: d530c3ca2a285504a8a0e09f5bbd5c7b, type: 2}
   scenarioPrefab: {fileID: 1050434337462004145, guid: c2b6424b63be3b74c990525f34d81f24, type: 3}
+  cost: {fileID: 11400000, guid: de2523c08ec932c48847bce139e544fd, type: 2}
   stateDimension: 2
   controlDimension: 1
   outputDimension: 1

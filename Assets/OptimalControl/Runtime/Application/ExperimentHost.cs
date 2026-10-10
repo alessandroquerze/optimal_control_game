@@ -1,6 +1,7 @@
 using System;
 using OptCon.Simulation;
 using OptCon.Presentation;
+using OptCon.Content;
 using UnityEngine;
 
 namespace OptCon.Application
@@ -10,13 +11,15 @@ namespace OptCon.Application
     public sealed class ExperimentHost : MonoBehaviour
     {
         public SimulationSession Session { get; private set; }
-        public ICommandSink Commands => Session;
-        public void Initialize(SimulationSession session)
+        public LessonSession Lesson { get; private set; }
+        public ICommandSink Commands => Lesson ?? (ICommandSink)Session;
+        public void Initialize(SimulationSession session, LessonSession lesson = null)
         {
             if (Session != null) throw new InvalidOperationException("Host already owns a session.");
             Session = session ?? throw new ArgumentNullException(nameof(session));
-            foreach (var view in GetComponentsInChildren<ExperimentVisualization>(true)) view.Bind(session);
-            foreach (var input in GetComponentsInChildren<LessonInputRouter>(true)) input.Bind(session);
+            Lesson = lesson;
+            foreach (var view in GetComponentsInChildren<ExperimentVisualization>(true)) view.Bind(session, lesson);
+            foreach (var input in GetComponentsInChildren<LessonInputRouter>(true)) input.Bind(session, lesson);
             GetComponent<PlaybackController>().Bind(session);
         }
         public void Close()
@@ -24,6 +27,7 @@ namespace OptCon.Application
             GetComponent<PlaybackController>()?.Bind(null);
             foreach (var input in GetComponentsInChildren<LessonInputRouter>(true)) input.Bind(null);
             foreach (var view in GetComponentsInChildren<ExperimentVisualization>(true)) view.Bind(null);
+            Lesson?.Dispose(); Lesson = null;
             Session?.Dispose(); Session = null;
         }
         private void OnDestroy() => Close();

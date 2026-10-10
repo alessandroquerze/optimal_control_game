@@ -9,6 +9,8 @@ namespace OptCon.Content
     public static class RuntimeMetricIds
     {
         public const string Index = "time.index", PhysicalTime = "time.physical", PhysicalStep = "time.step", Model = "dynamics.model";
+        public const string StageCost = "cost.stage", TrackingCost = "cost.tracking", EffortCost = "cost.effort",
+            TerminalCost = "cost.terminal", TotalCost = "cost.total", CumulativeCost = "cost.cumulative", ReferenceState = "state.reference";
         public const string ParameterPrefix = "parameter.";
     }
 
@@ -35,11 +37,11 @@ namespace OptCon.Content
             Units = Array.AsReadOnly(units.ToArray()); SampleIndex = index; Scalar = scalar; Vector = vector; Model = model;
             Validity = validity; Diagnostic = diagnostic;
         }
-        public static RuntimeMetric Number(string id, double? value, string unit, int? index, string unavailable = "Dato non disponibile.")
+        public static RuntimeMetric Number(string id, double? value, string unit, int? index, string unavailable = "Dato non disponibile.", FormulaScope scope = FormulaScope.CurrentTimestep)
         {
             if (string.IsNullOrWhiteSpace(unit)) throw new ArgumentException("A scalar requires a unit; use 1 for dimensionless values.");
             if (value.HasValue) NumericValidation.RequireFinite(value.Value, nameof(value));
-            return new RuntimeMetric(id, FormulaValueKind.Scalar, FormulaScope.CurrentTimestep, 1, 1, new[] { unit },
+            return new RuntimeMetric(id, FormulaValueKind.Scalar, scope, 1, 1, new[] { unit },
                 value.HasValue ? index : null, value, null, null, value.HasValue ? MetricValidity.Available : MetricValidity.NotApplicable, value.HasValue ? null : unavailable);
         }
         public static RuntimeMetric FromVector(string id, NumericVector value, IReadOnlyList<string> units, int? index, FormulaScope scope)
@@ -74,10 +76,30 @@ namespace OptCon.Content
             else if (id == RuntimeMetricIds.PhysicalTime) metric = RuntimeMetric.Number(id, sample.PhysicalTimeSeconds, "s", sample.Timestep, "Il modello non dichiara tempo fisico τ.");
             else if (id == RuntimeMetricIds.PhysicalStep) metric = RuntimeMetric.Number(id, sample.DiscretizationStepSeconds, "s", sample.Timestep, "Il modello non dichiara passo fisico δ.");
             else if (id == RuntimeMetricIds.Model) metric = RuntimeMetric.Descriptor(id, result.Configuration.Model, sample.IsTerminal ? (int?)null : sample.Timestep);
+            else if (id == RuntimeMetricIds.ReferenceState) metric = RuntimeMetric.FromVector(id, result.Configuration.ReferenceState, result.History.Model.StateUnits, sample.Timestep, FormulaScope.CurrentTimestep);
+            else if (id == RuntimeMetricIds.StageCost || id == RuntimeMetricIds.TrackingCost || id == RuntimeMetricIds.EffortCost
+                || id == RuntimeMetricIds.TerminalCost || id == RuntimeMetricIds.TotalCost || id == RuntimeMetricIds.CumulativeCost)
+            {
+                var costs = result.Costs;
+                double? value = null; int? index = sample.Timestep;
+                var scope = id == RuntimeMetricIds.TerminalCost ? FormulaScope.Terminal : FormulaScope.CurrentTimestep;
+                if (costs != null)
+                {
+                    var stage = costs.StageAt(sample.Timestep);
+                    if (id == RuntimeMetricIds.StageCost) value = stage?.Total;
+                    else if (id == RuntimeMetricIds.TrackingCost) value = stage?.Tracking;
+                    else if (id == RuntimeMetricIds.EffortCost) value = stage?.Effort;
+                    else if (id == RuntimeMetricIds.CumulativeCost) value = costs.Cumulative[sample.Timestep];
+                    else if (id == RuntimeMetricIds.TotalCost) { value = costs.Total; index = null; }
+                    else { value = costs.Terminal.Total; index = result.History.Horizon; }
+                }
+                metric = RuntimeMetric.Number(id, value, costs?.Configuration.CostUnit ?? "1", index,
+                    costs == null ? "Nessun modello di costo configurato." : "Al terminale non esistono stage cost ne input u_T.", scope);
+            }
             else if (id.StartsWith(RuntimeMetricIds.ParameterPrefix, StringComparison.Ordinal))
             {
                 string target = id.Substring(RuntimeMetricIds.ParameterPrefix.Length);
-                var parameter = result.Configuration.Model.Parameters.FirstOrDefault(p => p.Target == target);
+                var parameter = result.Configuration.Model.Parameters.Concat(result.Configuration.Cost?.Parameters ?? Array.Empty<ModelParameterValue>()).FirstOrDefault(p => p.Target == target);
                 if (parameter != null) metric = RuntimeMetric.Number(id, parameter.Value, parameter.Unit, sample.Timestep);
             }
             return metric != null;

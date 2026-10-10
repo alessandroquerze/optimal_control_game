@@ -27,6 +27,7 @@ MonoBehaviour:
   formulas:
   - {fileID: 11400000, guid: 327f576e442d479eaea09f7f087dfb1a, type: 2}
   - {fileID: 11400000, guid: 1c6f0cf7619706840865029829233386, type: 2}
+  - {fileID: 11400000, guid: 869e10fe4621aa74e8c0eb4aded3028e, type: 2}
   sources:
   - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
     firstPhysicalPage: 2
@@ -53,7 +54,321 @@ MonoBehaviour:
     usage: 1
     note: "La procedura Euler illustrata per il drone \xE8 applicata al pendolo:
       adattamento progettuale, non formula discreta del PDF del pendolo."
-  steps: []
-  completionCriteria: "In F08: previsione \u2192 modifica della coppia \u2192 avanzamento
-    \u2192 osservazione \u2192 spiegazione dei termini \u2192 verifica concettuale.
-    L\u2019asset F01 \xE8 editoriale e non attiva completamenti."
+  steps:
+  - id: observe-state
+    title: Leggi lo stato corrente
+    objective: Distinguere lo stato dalla sola posizione.
+    instruction: "Seleziona x_t e leggi angolo e velocit\xE0. Poi rispondi: due pendoli
+      nella stessa posizione hanno necessariamente lo stesso futuro?"
+    help: "Clicca il termine x_t nella formula sotto il trasporto. Il numero t \xE8
+      un indice discreto."
+    formulaFocus: {fileID: 11400000, guid: 327f576e442d479eaea09f7f087dfb1a, type: 2}
+    selectedTermId: state.current
+    visibleTermIds:
+    - state.current
+    - time.index
+    enabledControlIds: []
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    showCosts: 0
+    entryActions: []
+    question: Quale informazione serve nello stato?
+    answers:
+    - id: angle-only
+      text: "Basta conoscere l\u2019angolo."
+      feedback: "Riprova: la stessa posizione pu\xF2 avere velocit\xE0 diverse."
+    - id: angle-speed
+      text: "Servono angolo e velocit\xE0 angolare."
+      feedback: 'Corretto: x_t contiene entrambe le componenti, non soltanto la posizione.'
+    conditions:
+    - evaluatorId: term
+      targetId: state.current
+      expectedAnswerId: 
+    - evaluatorId: answer
+      targetId: 
+      expectedAnswerId: angle-speed
+  - id: predict-input
+    title: Prevedi prima di avanzare
+    objective: "Collegare l\u2019input alla transizione."
+    instruction: "Apri Input e parametri e cambia u[0], per esempio da 0 a 1. Siamo
+      a t=0, con velocit\xE0 iniziale nulla. Prevedi quale componente cambia al primo
+      passo Euler."
+    help: "La coppia non \xE8 una forza lineare. Il campo Modifica sceglie singola
+      transizione o coda."
+    formulaFocus: {fileID: 11400000, guid: 327f576e442d479eaea09f7f087dfb1a, type: 2}
+    selectedTermId: input.applied
+    visibleTermIds:
+    - input.applied
+    - state.current
+    - dynamics.model
+    enabledControlIds:
+    - input
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - input
+    showCosts: 0
+    entryActions:
+    - kind: 4
+      index: 0
+      target: 
+      value: 0
+      vector: []
+      scope: 0
+    question: "Rispetto allo stato iniziale, che cosa pu\xF2 cambiare nel primo passo?"
+    answers:
+    - id: theta
+      text: "Solo l\u2019angolo cambia immediatamente."
+      feedback: "Nel passo Euler esplicito l\u2019angolo usa la velocit\xE0 vecchia,
+        qui nulla."
+    - id: omega
+      text: "Pu\xF2 cambiare la velocit\xE0; l\u2019angolo resta quello iniziale."
+      feedback: Corretto. Ora osserva la previsione prodotta dal modello reale.
+    conditions:
+    - evaluatorId: action
+      targetId: input.changed
+      expectedAnswerId: 
+    - evaluatorId: answer
+      targetId: 
+      expectedAnswerId: omega
+  - id: observe-transition
+    title: Confronta corrente e successivo
+    objective: Leggere x_(t+1)=f_t(x_t,u_t) e un passo salvato.
+    instruction: "Seleziona x_(t+1): il ghost arancio \xE8 il prossimo campione.
+      Premi Step \u2192 una volta e confronta il nuovo x_t con il precedente x_(t+1).
+      Puoi tornare indietro."
+    help: "Se l\u2019angolo non cambia al primo passo non \xE8 un errore: leggi anche
+      la velocit\xE0. Il ghost \xE8 una previsione discreta, non un\u2019interpolazione."
+    formulaFocus: {fileID: 11400000, guid: 327f576e442d479eaea09f7f087dfb1a, type: 2}
+    selectedTermId: state.next
+    visibleTermIds:
+    - state.next
+    - state.current
+    - input.applied
+    - dynamics.model
+    - time.index
+    - time.physical
+    - time.step
+    enabledControlIds:
+    - step
+    - seek
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - input
+    - next
+    showCosts: 0
+    entryActions: []
+    question: 
+    answers: []
+    conditions:
+    - evaluatorId: term
+      targetId: state.next
+      expectedAnswerId: 
+    - evaluatorId: action
+      targetId: time.advanced
+      expectedAnswerId: 
+  - id: explore-trajectory
+    title: Una modifica cambia il futuro
+    objective: Osservare la traiettoria nello spazio dello stato.
+    instruction: "Modifica ancora u[0], poi avanza almeno un passo. Osserva la curva
+      nel piano di fase e nel grafico (angolo, velocit\xE0, tempo): il terzo asse
+      \xE8 tempo fisico, non posizione."
+    help: Play/Pausa, Step e rewind leggono campioni della stessa storia. Cambiare
+      playback non cambia il passo fisico.
+    formulaFocus: {fileID: 11400000, guid: 327f576e442d479eaea09f7f087dfb1a, type: 2}
+    selectedTermId: state.current
+    visibleTermIds:
+    - state.current
+    - state.next
+    - input.applied
+    - dynamics.model
+    - time.index
+    - time.physical
+    - time.step
+    enabledControlIds:
+    - input
+    - step
+    - seek
+    - play
+    - playback-rate
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - input
+    - next
+    - PhasePlane
+    - StateTime
+    - trajectory
+    showCosts: 0
+    entryActions: []
+    question: 
+    answers: []
+    conditions:
+    - evaluatorId: action
+      targetId: input.changed
+      expectedAnswerId: 
+    - evaluatorId: action
+      targetId: time.advanced
+      expectedAnswerId: 
+  - id: introduce-cost
+    title: Quanto costa questa traiettoria?
+    objective: Separare tracking, effort, stage, accumulo e terminale.
+    instruction: "Apri il pannello costo e Pesi, target e orizzonte. Cambia soltanto
+      Q[0], per esempio da 10 a 30, e osserva J e la curva. Il costo \xE8 discreto
+      per campione, non un integrale."
+    help: 
+    formulaFocus: {fileID: 11400000, guid: 869e10fe4621aa74e8c0eb4aded3028e, type: 2}
+    selectedTermId: cost.total
+    visibleTermIds:
+    - cost.total
+    - cost.stage
+    - cost.tracking
+    - cost.effort
+    - cost.cumulative
+    - state.current
+    - input.applied
+    - cost.terminal
+    - state.terminal
+    - state.reference
+    enabledControlIds:
+    - parameter
+    - step
+    - seek
+    editableParameterTargets:
+    - cost.q.0
+    visibleLayerIds:
+    - PhysicalBody
+    - input
+    - next
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - cost
+    - target
+    showCosts: 1
+    entryActions:
+    - kind: 4
+      index: 0
+      target: 
+      value: 0
+      vector: []
+      scope: 0
+    question: Cambiare solo un peso del costo che cosa modifica?
+    answers:
+    - id: dynamics
+      text: Modifica automaticamente la dinamica e la traiettoria.
+      feedback: Il peso appartiene al criterio, non alla legge di transizione.
+    - id: criterion
+      text: Modifica il criterio e J; gli stessi input producono gli stessi stati.
+      feedback: 'Corretto: i campioni sono riusati e il costo viene rivalutato.'
+    conditions:
+    - evaluatorId: action
+      targetId: parameter.changed:cost.q.0
+      expectedAnswerId: 
+    - evaluatorId: answer
+      targetId: 
+      expectedAnswerId: criterion
+  - id: compare-ab
+    title: Conserva A, poi modifica B
+    objective: Confrontare risultati con configurazioni proprie.
+    instruction: 'Nel pannello costo salva B come A. Cambia poi u[0] e seleziona
+      J. La linea viola conserva A; B usa i nuovi input. Apri le configurazioni A/B:
+      i costi appartengono ai rispettivi obiettivi.'
+    help: "Se salvi A dopo aver cambiato B, cambia di nuovo l\u2019input. Costo minore
+      non significa automaticamente soluzione ottima."
+    formulaFocus: {fileID: 11400000, guid: 869e10fe4621aa74e8c0eb4aded3028e, type: 2}
+    selectedTermId: cost.total
+    visibleTermIds:
+    - cost.total
+    - cost.stage
+    - cost.cumulative
+    - cost.terminal
+    - state.current
+    - input.applied
+    - state.terminal
+    - state.reference
+    enabledControlIds:
+    - input
+    - comparison
+    - step
+    - seek
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - input
+    - next
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - cost
+    - target
+    - comparison
+    showCosts: 1
+    entryActions: []
+    question: 
+    answers: []
+    conditions:
+    - evaluatorId: comparison.changed
+      targetId: 
+      expectedAnswerId: 
+    - evaluatorId: term
+      targetId: cost.total
+      expectedAnswerId: 
+  - id: verify-terminal
+    title: Verifica al terminale
+    objective: Spiegare che cosa esiste a t=T.
+    instruction: "Porta la timeline a T=100 e seleziona il costo terminale. Leggi
+      x_T, C_T e J. Rispondi, poi concludi la verifica. Potrai continuare con l\u2019esplorazione
+      libera."
+    help: "Il terminale \xE8 disponibile anche come previsione mentre il cursore
+      \xE8 altrove. t e tempo fisico non sono sinonimi."
+    formulaFocus: {fileID: 11400000, guid: 869e10fe4621aa74e8c0eb4aded3028e, type: 2}
+    selectedTermId: cost.terminal
+    visibleTermIds:
+    - cost.terminal
+    - state.terminal
+    - cost.total
+    - cost.cumulative
+    - cost.stage
+    - input.applied
+    - state.current
+    enabledControlIds:
+    - step
+    - seek
+    - comparison
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - input
+    - next
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - cost
+    - target
+    - comparison
+    showCosts: 1
+    entryActions: []
+    question: A t=T come si ottiene il costo totale?
+    answers:
+    - id: extra-input
+      text: Si applica u_T e si aggiunge un nuovo stage.
+      feedback: 'Non esiste una transizione oltre T: u_T e stage a T sono N/A.'
+    - id: terminal
+      text: J = C_T + costo terminale; nessun u_T o stage ulteriore.
+      feedback: "Corretto: il terminale \xE8 contato una volta, separato dagli stage."
+    conditions:
+    - evaluatorId: terminal
+      targetId: 
+      expectedAnswerId: 
+    - evaluatorId: term
+      targetId: cost.terminal
+      expectedAnswerId: 
+    - evaluatorId: answer
+      targetId: 
+      expectedAnswerId: terminal
+  completionCriteria: 'Completamento locale del prototipo: previsione, intervento,
+    osservazione, lettura della formula e verifica concettuale. Non completa C1.L2/C1.L3
+    e non viene persistito.'

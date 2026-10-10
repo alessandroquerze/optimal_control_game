@@ -19,11 +19,11 @@ namespace OptCon.Presentation
         public double scale = 1;
         public double offset;
 
-        public double Read(TrajectoryHistory history, int sample)
+        public double Read(TrajectoryHistory history, int sample, NumericVector state = null)
         {
             switch (coordinate)
             {
-                case ProjectionCoordinate.StateComponent: return history.States[sample][component];
+                case ProjectionCoordinate.StateComponent: return (state ?? history.States[sample])[component];
                 case ProjectionCoordinate.PhysicalTime:
                     return history.PhysicalTimeAt(sample) ?? throw new ArgumentException("Projection requires physical time; use an explicit index axis for index-only models.");
                 case ProjectionCoordinate.DiscreteIndex: return sample;
@@ -82,9 +82,16 @@ namespace OptCon.Presentation
         {
             if (history == null) throw new ArgumentNullException(nameof(history));
             if (sample < 0 || sample > history.Horizon) throw new ArgumentOutOfRangeException(nameof(sample));
+            return ProjectState(history, sample, history.States[sample]);
+        }
+        public Vector3 ProjectState(TrajectoryHistory history, int sample, NumericVector state)
+        {
+            if (history == null) throw new ArgumentNullException(nameof(history));
+            NumericValidation.RequireDimension(state, history.Model.Dimensions.State, nameof(state));
+            if (sample < 0 || sample > history.Horizon) throw new ArgumentOutOfRangeException(nameof(sample));
             Validate(history.Model);
-            return new Vector3(ToFloat(x.offset + x.scale * x.Read(history, sample)),
-                ToFloat(y.offset + y.scale * y.Read(history, sample)), ToFloat(z.offset + z.scale * z.Read(history, sample)));
+            return new Vector3(ToFloat(x.offset + x.scale * x.Read(history, sample, state)),
+                ToFloat(y.offset + y.scale * y.Read(history, sample, state)), ToFloat(z.offset + z.scale * z.Read(history, sample, state)));
         }
         public static float ToFloat(double value)
         {

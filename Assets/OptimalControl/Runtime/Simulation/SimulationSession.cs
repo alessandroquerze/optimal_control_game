@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using OptCon.Core;
 
 namespace OptCon.Simulation
@@ -11,6 +12,7 @@ namespace OptCon.Simulation
         private readonly Dictionary<string, ParameterRule> rules = new Dictionary<string, ParameterRule>(StringComparer.Ordinal);
         private SimulationConfiguration requested;
         private SimulationResult result;
+        private ComparisonSnapshot comparison;
         private int cursor;
         private long attempt;
         private bool playing, dispatching, closed;
@@ -40,11 +42,14 @@ namespace OptCon.Simulation
             switch (command.Kind)
             {
                 case SimulationCommandKind.Reset: return Revise(() => preset, true);
+                case SimulationCommandKind.SetHorizon: return Revise(() => requested.WithHorizon(command.Index));
                 case SimulationCommandKind.SetInput: return Revise(() => requested.WithInput(command.Index, command.Vector, command.Scope));
                 case SimulationCommandKind.SetParameter: return Revise(() =>
                 {
                     if (rules.TryGetValue(command.Target ?? string.Empty, out var rule)) rule.Validate(command.Value);
-                    return requested.WithModel(requested.Model.WithParameter(command.Target, command.Value));
+                    return requested.Cost != null && requested.Cost.Parameters.Any(p => p.Target == command.Target)
+                        ? requested.WithCost(requested.Cost.WithParameter(command.Target, command.Value))
+                        : requested.WithModel(requested.Model.WithParameter(command.Target, command.Value));
                 });
                 case SimulationCommandKind.SetInitialState: return Revise(() => requested.WithInitialState(command.Vector));
                 case SimulationCommandKind.SetPhysicalStep: return Revise(() => requested.WithModel(requested.Model.WithPhysicalStep(command.PhysicalStep)));
@@ -53,6 +58,8 @@ namespace OptCon.Simulation
             {
                 switch (command.Kind)
                 {
+                    case SimulationCommandKind.CaptureComparison: comparison = new ComparisonSnapshot(result); break;
+                    case SimulationCommandKind.ClearComparison: comparison = null; break;
                     case SimulationCommandKind.Play: playing = cursor < result.History.Horizon && error == null; break;
                     case SimulationCommandKind.Pause: playing = false; accumulator = 0; break;
                     case SimulationCommandKind.StepForward: Select(Math.Min(cursor + 1, result.History.Horizon)); break;
@@ -129,7 +136,7 @@ namespace OptCon.Simulation
             Publish();
         }
 
-        private void Refresh() => State = new SessionState(result, requested, cursor, attempt, error, playing, rate, closed);
+        private void Refresh() => State = new SessionState(result, requested, cursor, attempt, error, playing, rate, closed, comparison);
         private void Publish()
         {
             Refresh(); dispatching = true;
@@ -140,7 +147,7 @@ namespace OptCon.Simulation
         public void Dispose()
         {
             if (closed) return;
-            closed = true; playing = false; accumulator = 0; Changed = null; Refresh();
+            comparison = null; closed = true; playing = false; accumulator = 0; Changed = null; Refresh();
         }
     }
 }

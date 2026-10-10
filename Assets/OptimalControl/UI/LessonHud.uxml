@@ -1,6 +1,18 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements">
     <Style src="LessonHud.uss" />
     <ui:VisualElement name="lesson-hud" class="lesson-hud">
+        <ui:VisualElement name="lesson-progress" class="lesson-progress">
+            <ui:Label name="lesson-step-title" class="term-name" />
+            <ui:Label name="lesson-step-objective" class="lesson-objective" />
+            <ui:Label name="lesson-instruction" class="hud-note" />
+            <ui:Foldout name="lesson-help-panel" text="Suggerimento" value="false"><ui:Label name="lesson-help" class="hud-note" /></ui:Foldout>
+            <ui:Label name="lesson-question" class="hud-note" />
+            <ui:VisualElement name="lesson-answers" />
+            <ui:Label name="lesson-feedback" class="hud-note" />
+            <ui:Label name="lesson-checks" class="hud-note" />
+            <ui:VisualElement class="transport"><ui:Button name="lesson-previous" text="← Indietro" /><ui:Button name="lesson-next" text="Avanti →" /></ui:VisualElement>
+            <ui:VisualElement class="transport"><ui:Button name="lesson-restart" text="Ricomincia" /><ui:Button name="lesson-explore" text="Esplorazione libera" /></ui:VisualElement>
+        </ui:VisualElement>
         <ui:Label name="timeline-status" class="hud-note" />
         <ui:VisualElement class="transport">
             <ui:Button name="step-back" text="← Step" />
@@ -17,6 +29,23 @@
             <ui:Label name="parameter-status" class="hud-note" />
             <ui:DoubleField name="playback-rate" label="Playback [campioni/s]" value="10" is-delayed="true" />
             <ui:Label text="Il playback regola la presentazione: non modifica δ né il risultato matematico." class="hud-note" />
+        </ui:Foldout>
+        <ui:Foldout text="Costo discreto e confronto A/B" value="false" name="cost-panel">
+            <ui:Label text="Costo per campione [1], non integrale. Q, QT ≥ 0; R > 0. Pesi con unità inverse al quadrato." class="hud-note" />
+            <ui:Label text="Sfera ciano: target; diamante viola: x_T e costo terminale. Barre/curve di costo usano t, non secondi. A: linea viola spessa; B: blu sottile." class="hud-note" />
+            <ui:Label name="cost-live" class="hud-note" />
+            <ui:Foldout text="Pesi, target e orizzonte" value="false" name="cost-configuration">
+            <ui:IntegerField name="horizon" label="T [1…10000]" is-delayed="true" />
+            <ui:Label text="Estendere T ripete l'ultimo input; ridurlo tronca la sequenza." class="hud-note" />
+            <ui:VisualElement name="cost-parameters" />
+            </ui:Foldout>
+            <ui:VisualElement name="comparison-controls" class="transport">
+                <ui:Button name="comparison-save" text="Salva B come A" />
+                <ui:Button name="comparison-clear" text="Rimuovi A" />
+            </ui:VisualElement>
+            <ui:Foldout text="Configurazioni A/B e rispettivi obiettivi" value="false" name="comparison-configuration">
+                <ui:Label name="comparison-status" class="hud-note" />
+            </ui:Foldout>
         </ui:Foldout>
         <ui:Label text="MATEMATICA LIVE · seleziona un termine" class="eyebrow" />
         <ui:DropdownField name="formula-choice" />

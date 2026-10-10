@@ -4,6 +4,7 @@ using System.Globalization;
 using OptCon.Core;
 using OptCon.Presentation;
 using OptCon.Simulation;
+using OptCon.Content;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -20,6 +21,8 @@ namespace OptCon.Application
         [SerializeField] private LayerController layers;
         [SerializeField] private TextMesh controlHint;
         private SimulationSession session;
+        private ILessonRuntime lesson;
+        private ICommandSink commands;
         private InputActionAsset runtimeActions;
         private Func<string, bool> blocksShortcut;
         public void SetFocusGuard(Func<string, bool> guard) => blocksShortcut = guard;
@@ -28,9 +31,9 @@ namespace OptCon.Application
         public SimulationSession BoundSession => session;
         public InputActionAsset RuntimeActions => runtimeActions;
 
-        public void Bind(SimulationSession value)
+        public void Bind(SimulationSession value, ILessonRuntime runtime = null)
         {
-            Disconnect(); session = value;
+            Disconnect(); session = value; lesson = runtime; commands = runtime ?? (ICommandSink)value;
             if (value == null) return;
             NumericValidation.RequirePositive(controlIncrement, nameof(controlIncrement));
             var model = value.State.Result.Configuration.Model.Descriptor;
@@ -38,16 +41,16 @@ namespace OptCon.Application
                 throw new ArgumentException("Input adapter component/unit does not match the model.");
             if (actions == null) throw new ArgumentException("Dedicated lesson input actions are required.");
             runtimeActions = Instantiate(actions);
-            Hook("TogglePlayback", _ => session.Execute(session.State.IsPlaying ? SimulationCommand.Pause() : SimulationCommand.Play()));
-            Hook("StepForward", _ => session.Execute(SimulationCommand.StepForward()));
-            Hook("StepBackward", _ => session.Execute(SimulationCommand.StepBackward()));
-            Hook("Reset", _ => session.Execute(SimulationCommand.Reset()));
+            Hook("TogglePlayback", _ => commands.Execute(session.State.IsPlaying ? SimulationCommand.Pause() : SimulationCommand.Play()));
+            Hook("StepForward", _ => commands.Execute(SimulationCommand.StepForward()));
+            Hook("StepBackward", _ => commands.Execute(SimulationCommand.StepBackward()));
+            Hook("Reset", _ => commands.Execute(SimulationCommand.Reset()));
             Hook("IncreaseControl", _ => ChangeControl(1));
             Hook("DecreaseControl", _ => ChangeControl(-1));
             Hook("ZeroControl", _ => ChangeControl(0));
-            Hook("ToggleBody", _ => layers.Toggle(0));
-            Hook("TogglePhase", _ => layers.Toggle(1));
-            Hook("ToggleTrajectory", _ => layers.Toggle(2));
+            Hook("ToggleBody", _ => ToggleLayer(0));
+            Hook("TogglePhase", _ => ToggleLayer(1));
+            Hook("ToggleTrajectory", _ => ToggleLayer(2));
             if (controlHint != null)
             {
                 string Key(string name) => runtimeActions.FindAction(name, true).GetBindingDisplayString();
@@ -56,7 +59,13 @@ namespace OptCon.Application
                     (editScope == InputEditScope.Tail ? " sulla coda da t" : " sul campione t") + "   " + Key("ZeroControl") + ": azzera\n" +
                     Key("ToggleBody") + "/" + Key("TogglePhase") + "/" + Key("ToggleTrajectory") + ": layer corpo / fase / stato-tempo";
             }
+            if (lesson != null) { lesson.Changed += ApplyPresentation; ApplyPresentation(lesson.Presentation); }
             if (isActiveAndEnabled) runtimeActions.Enable();
+        }
+        private void ToggleLayer(int index) { if (lesson == null || lesson.Presentation.Allows(LessonControls.Layers)) layers.Toggle(index); }
+        private void ApplyPresentation(LessonPresentationState state)
+        {
+            if (controlHint != null) controlHint.gameObject.SetActive(state.IsFreeExploration);
         }
         private void Hook(string name, Action<InputAction.CallbackContext> handler)
         {
@@ -74,10 +83,11 @@ namespace OptCon.Application
             var values = state.RequestedConfiguration.Controls[state.Sample.Timestep].ToArray();
             values[controlComponent] = direction == 0 ? 0 : values[controlComponent] + direction * controlIncrement;
             if (NumericValidation.IsFinite(values[controlComponent]))
-                session.Execute(SimulationCommand.SetInput(state.Sample.Timestep, new NumericVector(values), editScope));
+                commands.Execute(SimulationCommand.SetInput(state.Sample.Timestep, new NumericVector(values), editScope));
         }
         private void Disconnect()
         {
+            if (lesson != null) lesson.Changed -= ApplyPresentation; lesson = null; commands = null;
             if (runtimeActions != null) runtimeActions.Disable();
             foreach (var handler in handlers) handler.Key.performed -= handler.Value;
             handlers.Clear();

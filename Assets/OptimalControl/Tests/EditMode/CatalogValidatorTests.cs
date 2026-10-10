@@ -42,6 +42,8 @@ namespace OptCon.Tests
             References(chapter, "lessons", lesson);
             Reference(lesson, "experiment", experiment);
             References(lesson, "formulas", formula);
+            // These legacy fixtures replace the experiment/formula graph; they test catalog contracts, not the production guided sequence.
+            Edit(lesson, "steps", p => p.arraySize = 0);
             foreach (var asset in new ContentDefinition[] { chapter, lesson, experiment, formula }) RewireSources(asset);
         }
 

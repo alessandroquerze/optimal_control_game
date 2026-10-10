@@ -11,6 +11,7 @@ namespace OptCon.Content
         [SerializeField, Tooltip("May remain unassigned in an editorial draft. No runtime model is fabricated.")]
         private ModelDefinition model;
         [SerializeField] private GameObject scenarioPrefab;
+        [SerializeField] private CostDefinition cost;
         [SerializeField] private int stateDimension;
         [SerializeField] private int controlDimension;
         [SerializeField] private int outputDimension;
@@ -24,6 +25,7 @@ namespace OptCon.Content
         [SerializeField] private SourceReference[] sources = Array.Empty<SourceReference>();
 
         public ModelDefinition Model => model;
+        public CostDefinition Cost => cost;
         public GameObject ScenarioPrefab => scenarioPrefab;
         public int StateDimension => stateDimension;
         public int ControlDimension => controlDimension;

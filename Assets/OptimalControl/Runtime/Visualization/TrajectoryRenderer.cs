@@ -8,12 +8,12 @@ namespace OptCon.Presentation
     public sealed class TrajectoryRenderer : MonoBehaviour
     {
         public TrajectoryHistory Source { get; private set; }
-        public void Render(TrajectoryHistory history, StateProjection projection)
+        public void Render(TrajectoryHistory history, StateProjection projection, int? lastSample = null)
         {
             var line = GetComponent<LineRenderer>();
             line.useWorldSpace = false;
-            line.positionCount = history.States.Count;
-            for (int i = 0; i < history.States.Count; i++) line.SetPosition(i, projection.Project(history, i));
+            line.positionCount = (lastSample ?? history.Horizon) + 1;
+            for (int i = 0; i < line.positionCount; i++) line.SetPosition(i, projection.Project(history, i));
             Source = history;
         }
     }

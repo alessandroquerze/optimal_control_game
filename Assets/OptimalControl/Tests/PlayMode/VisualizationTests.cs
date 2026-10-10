@@ -55,6 +55,7 @@ namespace OptCon.Tests
         {
             Assert.That(bootstrap.Navigation.OpenLesson(bootstrap.Navigation.Course.Chapters[0].Lessons[0].Id), Is.True);
             yield return UntilReady();
+            Host.Lesson.Explore();
         }
 
         [UnityTest]
@@ -151,7 +152,7 @@ namespace OptCon.Tests
             var asset = bootstrap.Navigation.ActiveLesson.Experiment;
             string before = UnityEditor.EditorJsonUtility.ToJson(asset);
             yield return Press(Key.D);
-            Assert.That(Session.State.Result.History.Controls.All(u => u[0] == 0.5), Is.True);
+            Assert.That(Session.State.Result.History.Controls.All(u => u[0] == 0.5), Is.True, "focus="+Object.FindFirstObjectByType<LessonHudPresenter>().GetComponent<UnityEngine.UIElements.UIDocument>().rootVisualElement.focusController.focusedElement);
             var torque = Host.GetComponentInChildren<CurvedTorqueRenderer>().GetComponent<LineRenderer>();
             Assert.That(torque.positionCount, Is.GreaterThan(0));
             Vector3 positiveEnd = torque.GetPosition(24);

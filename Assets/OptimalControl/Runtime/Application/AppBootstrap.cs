@@ -43,18 +43,20 @@ namespace OptCon.Application
                 throw new InvalidOperationException("Lesson requires a model provider and scenario prefab.");
             var session = experiment.Model.CreateSession(experiment);
             GameObject scenario = null;
+            LessonSession lessonSession = null;
             try
             {
                 scenario = Instantiate(experiment.ScenarioPrefab);
                 SceneManager.MoveGameObjectToScene(scenario, scene);
                 var host = scenario.GetComponent<ExperimentHost>();
                 if (host == null) throw new InvalidOperationException("Scenario root requires an ExperimentHost.");
-                host.Initialize(session); ActiveHost = host;
+                lessonSession = new LessonSession(transition.Destination, session, availableLayers: scenario.GetComponent<LayerController>()?.Ids ?? Array.Empty<string>());
+                host.Initialize(session, lessonSession); ActiveHost = host;
                 return session;
             }
             catch
             {
-                session.Dispose();
+                lessonSession?.Dispose(); session.Dispose();
                 if (scenario != null) { scenario.SetActive(false); Destroy(scenario); }
                 throw;
             }
@@ -68,7 +70,7 @@ namespace OptCon.Application
                 foreach (var diagnostic in root.GetComponentsInChildren<SessionDiagnosticsPresenter>(true)) diagnostic.Bind(session);
                 foreach (var hud in root.GetComponentsInChildren<LessonHudPresenter>(true))
                 {
-                    hud.Bind(transition.Destination, session, ActiveHost == null ? null : ActiveHost.GetComponent<HighlightRegistry>());
+                    hud.Bind(transition.Destination, session, ActiveHost == null ? null : ActiveHost.GetComponent<HighlightRegistry>(), ActiveHost?.Lesson);
                     if (ActiveHost != null)
                         foreach (var input in ActiveHost.GetComponentsInChildren<LessonInputRouter>(true)) input.SetFocusGuard(hud.BlocksLessonShortcut);
                 }

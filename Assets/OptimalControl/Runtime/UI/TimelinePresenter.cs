@@ -38,6 +38,7 @@ namespace OptCon.Presentation
         }
         public void Render(SessionState state)
         {
+            seek.SetEnabled(true); rate.SetEnabled(true);
             playing = state.IsPlaying; play.text = playing ? "Pausa" : "Play";
             play.SetEnabled(playing || (!state.Sample.IsTerminal && state.Error == null));
             back.SetEnabled(state.Sample.Timestep > 0); next.SetEnabled(!state.Sample.IsTerminal);

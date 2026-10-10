@@ -1,0 +1,206 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e039087c2f4e1ab6f8639bc051389d, type: 3}
+  m_Name: AdditiveCost
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.FormulaDefinition
+  id: cost.additive
+  schemaVersion: 1
+  contentVersion: 1
+  title: Costo additivo discreto
+  description: "J \xE8 un alias esplicito di \u2113(x,u). Costi effettivamente valutati
+    dal risultato immutabile."
+  expression: "J \u2261 \u2113(x,u) = \u03A3_(t=0)^(T\u22121) \u2113_t(x_t,u_t) +
+    \u2113_T(x_T)"
+  sourceTranscription: "\u2113_t = \xBD\u2016x_t\u2212x^des\u2016\xB2_Q + \xBD\u2016u_t\u2212u^des\u2016\xB2_R;
+    \u2113_T = \xBD\u2016x_T\u2212x^des\u2016\xB2_QT"
+  assumptions: "Anteprima diagonale: Q, QT >= 0, R > 0. Costo per campione adimensionale
+    [1], pesi con unit\xE0 inverse al quadrato. Nessun fattore \u03B4; non \xE8 una
+    quadratura continua. Target costante, non necessariamente ammissibile. I pp.20-22."
+  terms:
+  - id: cost.total
+    symbol: "J \u2261 \u2113(x,u)"
+    label: Costo totale
+    meaning: "Somma degli stage t=0...T-1 pi\xF9 un solo terminale. Intero rollout,
+      non costo istantaneo."
+    rows: 1
+    columns: 1
+    componentUnits:
+    - 1
+    value:
+      metricId: cost.total
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: 
+      scope: 0
+  - id: cost.stage
+    symbol: "\u2113_t"
+    label: Stage corrente
+    meaning: "Tracking pi\xF9 effort per la transizione corrente; assente a t=T."
+    rows: 1
+    columns: 1
+    componentUnits:
+    - 1
+    value:
+      metricId: cost.stage
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: cost.stage
+      scope: 0
+  - id: cost.tracking
+    symbol: "\u2113_t^x"
+    label: Tracking
+    meaning: Contributo di errore di stato valutato dal modello di costo.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - 1
+    value:
+      metricId: cost.tracking
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: 
+      scope: 0
+  - id: cost.effort
+    symbol: "\u2113_t^u"
+    label: Effort
+    meaning: Contributo di errore input valutato dallo stesso modello.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - 1
+    value:
+      metricId: cost.effort
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: 
+      scope: 0
+  - id: cost.cumulative
+    symbol: C_t
+    label: Accumulo degli stage
+    meaning: 'Somma degli stage prima di t: C_0=0. Esclude sempre il terminale.'
+    rows: 1
+    columns: 1
+    componentUnits:
+    - 1
+    value:
+      metricId: cost.cumulative
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: 
+      scope: 0
+  - id: state.current
+    symbol: x_t
+    label: Stato corrente
+    meaning: Stato salvato della stessa revisione.
+    rows: -1
+    columns: 1
+    componentUnits: []
+    value:
+      metricId: state.current
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: state.current
+      scope: 0
+  - id: input.applied
+    symbol: u_t
+    label: Input applicato
+    meaning: Controllo salvato sulla transizione corrente. Nessun u_T.
+    rows: -1
+    columns: 1
+    componentUnits: []
+    value:
+      metricId: input.applied
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: input.applied
+      scope: 0
+  - id: cost.terminal
+    symbol: "\u2113_T(x_T)"
+    label: Costo terminale
+    meaning: Contributo finale @T, visibile anche con cursore altrove; contato una
+      sola volta.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - 1
+    value:
+      metricId: cost.terminal
+      kind: 0
+      scope: 2
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: state.terminal
+      scope: 2
+  - id: state.terminal
+    symbol: x_T
+    label: Stato finale
+    meaning: Stato salvato @T della revisione, senza spostare il cursore.
+    rows: -1
+    columns: 1
+    componentUnits: []
+    value:
+      metricId: state.current
+      kind: 1
+      scope: 2
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: state.terminal
+      scope: 2
+  - id: state.reference
+    symbol: x^des
+    label: Target di stato
+    meaning: "Riferimento della configurazione di costo: non certifica equilibrio
+      o fattibilit\xE0 dinamica."
+    rows: -1
+    columns: 1
+    componentUnits: []
+    value:
+      metricId: state.reference
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: state.reference
+      scope: 0
+  sources:
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 20
+    lastPhysicalPage: 22
+    firstSlide: 19
+    lastSlide: 21
+    section: Discrete cost and quadratic tracking
+    usage: 0
+    note: Anteprima diagonale con pesi dimensionali e target costante; J alias esplicito.

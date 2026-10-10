@@ -1,0 +1,7 @@
+{
+    "name": "OptCon.Lessons.EditModeTests",
+    "references": ["OptCon.Application", "OptCon.Content", "OptCon.Core", "OptCon.Simulation", "OptCon.TestFixtures", "OptCon.Editor"],
+    "includePlatforms": ["Editor"],
+    "autoReferenced": false,
+    "optionalUnityReferences": ["TestAssemblies"]
+}
