@@ -1,0 +1,208 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e039087c2f4e1ab6f8639bc051389d, type: 3}
+  m_Name: ConstraintResiduals
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.FormulaDefinition
+  id: c1.constraint-residuals
+  schemaVersion: 1
+  contentVersion: '1'
+  title: Uguaglianze e disuguaglianze
+  description: Diagnostica di un problema vincolato, nessun solver. h è una uguaglianza dinamica; g un limite duro
+    di percorso; r un’uguaglianza end-point. Reference e pesi non sono vincoli. Qui attuatore non abilitato, nessun
+    clamp nascosto.
+  expression: 'h_t=f_t(x_t,u_t)−x_(t+1)=0
+
+    g_t=|u_t|−u_max≤0, t=0,…,T−1
+
+    r(x₀,x_T)=θ_T−θ₀=0'
+  sourceTranscription: 'h_t=f_t(x_t,u_t)−x_(t+1)=0
+
+    g_t=|u_t|−u_max≤0, t=0,…,T−1
+
+    r(x₀,x_T)=θ_T−θ₀=0'
+  assumptions: Diagnostica di un problema vincolato, nessun solver. h è una uguaglianza dinamica; g un limite duro
+    di percorso; r un’uguaglianza end-point. Reference e pesi non sono vincoli. Qui attuatore non abilitato, nessun
+    clamp nascosto.
+  terms:
+  - id: h
+    symbol: h_t
+    label: Residuo dinamico reale
+    meaning: f_t(x_t,u_t)−x_(t+1). Zero in ogni transizione del rollout; non è lo scarto dal desiderato.
+    rows: 2
+    columns: 1
+    componentUnits:
+    - rad
+    - rad/s
+    value:
+      metricId: constraint.h
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: g
+    symbol: g_t
+    label: Disuguaglianza di percorso
+    meaning: '|u_t|−u_max ≤ 0. Dentro negativo, bordo zero, fuori positivo. Nessuna saturazione automatica.'
+    rows: 1
+    columns: 1
+    componentUnits:
+    - N·m
+    value:
+      metricId: constraint.g.torque
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: constraint.path
+      scope: 0
+  - id: limit
+    symbol: u_max
+    label: Limite duro
+    meaning: Valore positivo dell’insieme ammissibile. Cambiarlo modifica g, non il costo o la dinamica.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - N·m
+    value:
+      metricId: parameter.constraint.torque.limit
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: r
+    symbol: r
+    label: Vincolo end-point
+    meaning: 'r(x0,xT)=θ_T−θ_0=0: ritorno all’angolo iniziale. È una richiesta dura, distinta dal target θ_des=0.'
+    rows: 1
+    columns: 1
+    componentUnits:
+    - rad
+    value:
+      metricId: constraint.r.return-angle
+      kind: 0
+      scope: 2
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 2
+  - id: feasible
+    symbol: ammissibile?
+    label: Ammissibilità
+    meaning: 1 se tutti h, g, r rispettano la tolleranza 1e−9 nelle rispettive unità; 0 altrimenti. Non certifica
+      ottimalità.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: constraint.feasible
+      kind: 0
+      scope: 4
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 4
+  - id: input.applied
+    symbol: u_t
+    label: Controllo applicato
+    meaning: 'T input, nessun u_T. Nessun attuatore/saturazione abilitato: richiesta e applicazione coincidono;
+      il limite viene diagnosticato.'
+    rows: 1
+    columns: 1
+    componentUnits:
+    - N·m
+    value:
+      metricId: input.applied
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: input.applied
+      scope: 0
+  - id: total
+    symbol: J
+    label: Indice di prestazione
+    meaning: Somma di T stage + un terminale; sotto il proprio criterio immutabile.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: cost.total
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: time.index
+    symbol: t
+    label: Indice discreto
+    meaning: Numero del campione 0…T, non secondi. Esiste anche in una dinamica index-only.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: time.index
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  sources:
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 14
+    lastPhysicalPage: 25
+    firstSlide: 13
+    lastSlide: 24
+    section: Decisioni, costi, vincoli, reference e generazione di traiettorie
+    usage: 0
+    note: ''
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 35
+    lastPhysicalPage: 35
+    firstSlide: 34
+    lastSlide: 34
+    section: Riferimento a gradino fra equilibri
+    usage: 1
+    note: Campionamento discreto t=0…T; θ_des cambia al campione 10 su T=20; ω_des=0; u_des=mgl sin θ_des. La curva
+      desiderata non soddisfa la dinamica al salto. Nessuna quadratura continua.
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 27
+    lastPhysicalPage: 27
+    firstSlide: 26
+    lastSlide: 26
+    section: Euler
+    usage: 1
+    note: Pendolo discreto già usato in C1.L1/L2, δ=.02 s.
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 33
+    lastPhysicalPage: 34
+    firstSlide: 32
+    lastSlide: 33
+    section: Pendolo ed equilibrio
+    usage: 1
+    note: 'Errata p.34: ω_e=0. Righe/colonne del Core invariati.'

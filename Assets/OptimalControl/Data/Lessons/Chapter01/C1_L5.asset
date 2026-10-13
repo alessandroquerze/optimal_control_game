@@ -1,0 +1,1309 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2447a3f1440a48128f99dcbb8f745af5, type: 3}
+  m_Name: C1_L5
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.LessonDefinition
+  id: C1.L5
+  schemaVersion: 1
+  contentVersion: '1'
+  title: 'Drone planare: sei stati e due spinte'
+  description: Produzione F14, fonte I pp.26–30. Test multidimensionale con esiti numerici verificati e input manuali,
+    nessun solver.
+  objective: Leggere stato 6D, spinte Vector(2), output 2D; prevedere somma/differenza, hover ed Euler; distinguere
+    reference, costo e limiti.
+  prerequisiteLessonIds:
+  - C1.L4
+  workspace:
+    assetPath: Assets/OptimalControl/Scenes/LessonWorkspace.unity
+  experiment: {fileID: 11400000, guid: 95acaff46baa5afb9e5662ee1017b928, type: 2}
+  formulas:
+  - {fileID: 11400000, guid: a49095362ece5ae4936a91da5f15909a, type: 2}
+  - {fileID: 11400000, guid: 9759c54309ed579697f81c8eb26d6bd3, type: 2}
+  - {fileID: 11400000, guid: ef511aa66dd555699c47751904764989, type: 2}
+  - {fileID: 11400000, guid: 427acc0dedd15c758c90022c988b2428, type: 2}
+  - {fileID: 11400000, guid: a037264ccb425ecfb487e12440227a36, type: 2}
+  - {fileID: 11400000, guid: 04c4177c74c75f74b6de1f780bb354c2, type: 2}
+  - {fileID: 11400000, guid: 53823cfe9d95529e9c34d00cea992bc4, type: 2}
+  sources:
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 26
+    lastPhysicalPage: 30
+    firstSlide: 25
+    lastSlide: 29
+    section: Drone planare, Euler, costo e limiti
+    usage: 1
+    note: 'Fonte chiamata 3D, equazioni planari. Stato ordinato [px,vx,py,vy,θ,ω]. J è il momento d’inerzia. Costo
+      diagonale discreto, input desiderato zero. Vincoli t=0…T−1 coerenti con I p.21: nessun input a T.'
+  steps:
+  - id: state
+    title: Sei stati, due spinte, due output
+    objective: Sei stati, due spinte, due output
+    instruction: 'Seleziona x_t, u_t e y_t. Stato: [px,vx,py,vy,θ,ω], unità per componente. Output: posizione [px,py].
+      Body e linea XY omettono le velocità; i sei grafici separati le rendono osservabili. Il drone resta nel piano
+      XY del viewport 3D.'
+    help: 'Componenti 0-based: px=0,vx=1,py=2,vy=3,θ=4,ω=5; u₁=0,u₂=1. Formula e controllo richiesto sono nel pannello.
+      Ogni attività riparte dal proprio preset; Indietro lo ripristina.'
+    formulaFocus: {fileID: 11400000, guid: a49095362ece5ae4936a91da5f15909a, type: 2}
+    selectedTermId: state.current
+    visibleTermIds:
+    - state.current
+    - input.applied
+    - output.current
+    - u1
+    - u2
+    enabledControlIds: []
+    editableParameterTargets: []
+    visibleInitialStateComponents: []
+    visibleInputComponents: []
+    visibleLayerIds:
+    - PhysicalBody
+    - Position
+    - Components
+    - trajectory
+    - input
+    - next
+    - desired
+    showCosts: 0
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale lettura descrive il fenomeno?
+    answers:
+    - id: wrong
+      text: Ogni spinta controlla una coordinata indipendente.
+      feedback: Controlla formula, componenti e segni; questa risposta non descrive il risultato richiesto.
+    - id: state-ok
+      text: Output 2D di posizione; stato 6D e input Vector(2).
+      feedback: 'Corretto: la verifica usa campioni e metriche della stessa revisione.'
+    conditions:
+    - evaluatorId: term
+      targetId: state.current
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: input.applied
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: output.current
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: state-ok
+  - id: same-position
+    title: Stessa posizione, futuro diverso
+    objective: Stessa posizione, futuro diverso
+    instruction: 'Simboli: M massa [kg], L distanza rotori [m], g gravità [m/s²], J momento d’inerzia [kg·m²], δ=.02
+      s. Apri Input e parametri: cambia solo x₀[3]=v_y da 0 a .5 m/s. px,py restano uguali; p_y,next cresce da 1
+      a 1.01 m perché usa la velocità vecchia. Il costo cambia: velocità e futuro contano, non solo y₀.'
+    help: 'Componenti 0-based: px=0,vx=1,py=2,vy=3,θ=4,ω=5; u₁=0,u₂=1. Formula e controllo richiesto sono nel pannello.
+      Ogni attività riparte dal proprio preset; Indietro lo ripristina.'
+    formulaFocus: {fileID: 11400000, guid: 9759c54309ed579697f81c8eb26d6bd3, type: 2}
+    selectedTermId: x2
+    visibleTermIds:
+    - x2
+    - x3
+    - next2
+    - state.current
+    - total
+    enabledControlIds:
+    - initial-state
+    editableParameterTargets: []
+    visibleInitialStateComponents:
+    - 3
+    visibleInputComponents: []
+    visibleLayerIds:
+    - PhysicalBody
+    - Position
+    - Components
+    - trajectory
+    - input
+    - next
+    - desired
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale lettura descrive il fenomeno?
+    answers:
+    - id: same-position-ok
+      text: La velocità verticale distingue stati alla stessa posizione.
+      feedback: 'Corretto: la verifica usa campioni e metriche della stessa revisione.'
+    - id: wrong
+      text: La stessa posizione determina sempre lo stesso futuro.
+      feedback: Controlla formula, componenti e segni; questa risposta non descrive il risultato richiesto.
+    conditions:
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.current
+        component: 0
+        scope: 0
+        sampleIndex: 0
+        unit: m
+        comparison: 0
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.current
+        component: 2
+        scope: 0
+        sampleIndex: 0
+        unit: m
+        comparison: 0
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.current
+        component: 3
+        scope: 0
+        sampleIndex: 0
+        unit: m/s
+        comparison: 2
+        expectedValue: 0.5
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.next
+        component: 2
+        scope: 1
+        sampleIndex: 0
+        unit: m
+        comparison: 5
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: same-position-ok
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: cost.total
+        component: -1
+        scope: 0
+        sampleIndex: 0
+        unit: '1'
+        comparison: 1
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+  - id: hover
+    title: Ricavare hover dalla dinamica
+    objective: Ricavare hover dalla dinamica
+    instruction: Si parte qui da spinte zero. M=1 kg, g=9.81 m/s². Da somma=Mg e differenza=0 ricava 4.905 N per
+      ciascuna. Imposta u[0]=u[1]=4.905 con Coda da t. Controlla che il prossimo stato resti quello iniziale; peso
+      e gravità non sono velocità di playback.
+    help: 'Componenti 0-based: px=0,vx=1,py=2,vy=3,θ=4,ω=5; u₁=0,u₂=1. Formula e controllo richiesto sono nel pannello.
+      Ogni attività riparte dal proprio preset; Indietro lo ripristina.'
+    formulaFocus: {fileID: 11400000, guid: ef511aa66dd555699c47751904764989, type: 2}
+    selectedTermId: u1
+    visibleTermIds:
+    - u1
+    - u2
+    - state.next
+    - mass
+    - gravity
+    - inertia
+    enabledControlIds:
+    - input
+    editableParameterTargets: []
+    visibleInitialStateComponents: []
+    visibleInputComponents:
+    - 0
+    - 1
+    visibleLayerIds:
+    - PhysicalBody
+    - Position
+    - Components
+    - trajectory
+    - input
+    - next
+    - desired
+    showCosts: 0
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 6
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 0
+      - 0
+      scope: 1
+    question: Quale lettura descrive il fenomeno?
+    answers:
+    - id: wrong
+      text: Spinte uguali bastano anche se la somma è diversa da Mg.
+      feedback: Controlla formula, componenti e segni; questa risposta non descrive il risultato richiesto.
+    - id: hover-ok
+      text: 'Spinte uguali Mg/2: nessuna accelerazione, hover.'
+      feedback: 'Corretto: la verifica usa campioni e metriche della stessa revisione.'
+    conditions:
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: input.applied
+        component: 0
+        scope: 0
+        sampleIndex: 0
+        unit: N
+        comparison: 2
+        expectedValue: 4.905
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: input.applied
+        component: 1
+        scope: 0
+        sampleIndex: 0
+        unit: N
+        comparison: 2
+        expectedValue: 4.905
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.next
+        component: 0
+        scope: 1
+        sampleIndex: 0
+        unit: m
+        comparison: 2
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.next
+        component: 1
+        scope: 1
+        sampleIndex: 0
+        unit: m/s
+        comparison: 2
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.next
+        component: 2
+        scope: 1
+        sampleIndex: 0
+        unit: m
+        comparison: 2
+        expectedValue: 1
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.next
+        component: 3
+        scope: 1
+        sampleIndex: 0
+        unit: m/s
+        comparison: 2
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.next
+        component: 4
+        scope: 1
+        sampleIndex: 0
+        unit: rad
+        comparison: 2
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.next
+        component: 5
+        scope: 1
+        sampleIndex: 0
+        unit: rad/s
+        comparison: 2
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: hover-ok
+    - evaluatorId: trajectory.constant
+      targetId: ''
+      expectedAnswerId: ''
+  - id: collective
+    title: Aumentare entrambe le spinte
+    objective: Aumentare entrambe le spinte
+    instruction: 'Dal preset hover aumenta ENTRAMBE le spinte di 1 N: u[0]=u[1]=5.905. Leggi v_y,next positivo,
+      ω_next invariato. p_y,next resta 1 al primo passo Euler perché v_y,0=0. Formula visibile: somma agisce sulla
+      spinta totale, differenza sul momento.'
+    help: 'Componenti 0-based: px=0,vx=1,py=2,vy=3,θ=4,ω=5; u₁=0,u₂=1. Formula e controllo richiesto sono nel pannello.
+      Ogni attività riparte dal proprio preset; Indietro lo ripristina.'
+    formulaFocus: {fileID: 11400000, guid: 9759c54309ed579697f81c8eb26d6bd3, type: 2}
+    selectedTermId: u1
+    visibleTermIds:
+    - u1
+    - u2
+    - next3
+    - next5
+    - next2
+    enabledControlIds:
+    - input
+    editableParameterTargets: []
+    visibleInitialStateComponents: []
+    visibleInputComponents:
+    - 0
+    - 1
+    visibleLayerIds:
+    - PhysicalBody
+    - Position
+    - Components
+    - trajectory
+    - input
+    - next
+    - desired
+    showCosts: 0
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale lettura descrive il fenomeno?
+    answers:
+    - id: collective-ok
+      text: La somma maggiore aumenta v_y; differenza nulla non ruota.
+      feedback: 'Corretto: la verifica usa campioni e metriche della stessa revisione.'
+    - id: wrong
+      text: u₁ agisce solo su px e u₂ solo su py.
+      feedback: Controlla formula, componenti e segni; questa risposta non descrive il risultato richiesto.
+    conditions:
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: input.applied
+        component: 0
+        scope: 0
+        sampleIndex: 0
+        unit: N
+        comparison: 5
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: input.applied
+        component: 1
+        scope: 0
+        sampleIndex: 0
+        unit: N
+        comparison: 5
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.next
+        component: 3
+        scope: 1
+        sampleIndex: 0
+        unit: m/s
+        comparison: 5
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.next
+        component: 5
+        scope: 1
+        sampleIndex: 0
+        unit: rad/s
+        comparison: 0
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.next
+        component: 2
+        scope: 1
+        sampleIndex: 0
+        unit: m
+        comparison: 0
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: collective-ok
+  - id: differential
+    title: Stessa somma, momento diverso
+    objective: Stessa somma, momento diverso
+    instruction: 'Dal preset: u[0]=5.905 e u[1]=3.905 N. Somma ancora Mg, differenza positiva. Osserva ω_next>0
+      mentre v_y,next resta zero. θ_next resta zero al primo passo perché usa ω₀; nei passi successivi assetto e
+      accelerazione orizzontale si accoppiano. J è il momento d’inerzia.'
+    help: 'Componenti 0-based: px=0,vx=1,py=2,vy=3,θ=4,ω=5; u₁=0,u₂=1. Formula e controllo richiesto sono nel pannello.
+      Ogni attività riparte dal proprio preset; Indietro lo ripristina.'
+    formulaFocus: {fileID: 11400000, guid: 9759c54309ed579697f81c8eb26d6bd3, type: 2}
+    selectedTermId: u1
+    visibleTermIds:
+    - u1
+    - u2
+    - next5
+    - next3
+    - inertia
+    - next4
+    enabledControlIds:
+    - input
+    editableParameterTargets: []
+    visibleInitialStateComponents: []
+    visibleInputComponents:
+    - 0
+    - 1
+    visibleLayerIds:
+    - PhysicalBody
+    - Position
+    - Components
+    - trajectory
+    - input
+    - next
+    - desired
+    showCosts: 0
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale lettura descrive il fenomeno?
+    answers:
+    - id: wrong
+      text: Ogni spinta è già una coppia in N·m.
+      feedback: Controlla formula, componenti e segni; questa risposta non descrive il risultato richiesto.
+    - id: differential-ok
+      text: u₁>u₂ produce ω_next positivo; somma invariata mantiene v_y,next.
+      feedback: 'Corretto: la verifica usa campioni e metriche della stessa revisione.'
+    conditions:
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: input.applied
+        component: 0
+        scope: 0
+        sampleIndex: 0
+        unit: N
+        comparison: 5
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: input.applied
+        component: 1
+        scope: 0
+        sampleIndex: 0
+        unit: N
+        comparison: 4
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.next
+        component: 5
+        scope: 1
+        sampleIndex: 0
+        unit: rad/s
+        comparison: 5
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.next
+        component: 3
+        scope: 1
+        sampleIndex: 0
+        unit: m/s
+        comparison: 0
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.next
+        component: 4
+        scope: 1
+        sampleIndex: 0
+        unit: rad
+        comparison: 0
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: differential-ok
+  - id: tilt
+    title: Assetto e segno orizzontale
+    objective: Assetto e segno orizzontale
+    instruction: 'Mantieni spinte hover e cambia soltanto x₀[4]=θ da 0 a .2 rad. Per θ positivo sinθ>0: la formula
+      prevede v_x,next<0. Il body ruota antiorario, entrambe le frecce puntano verso sinistra e in alto. Non è un
+      input dedicato alla coordinata x.'
+    help: 'Componenti 0-based: px=0,vx=1,py=2,vy=3,θ=4,ω=5; u₁=0,u₂=1. Formula e controllo richiesto sono nel pannello.
+      Ogni attività riparte dal proprio preset; Indietro lo ripristina.'
+    formulaFocus: {fileID: 11400000, guid: 9759c54309ed579697f81c8eb26d6bd3, type: 2}
+    selectedTermId: x4
+    visibleTermIds:
+    - x4
+    - u1
+    - u2
+    - next1
+    - next3
+    enabledControlIds:
+    - initial-state
+    editableParameterTargets: []
+    visibleInitialStateComponents:
+    - 4
+    visibleInputComponents: []
+    visibleLayerIds:
+    - PhysicalBody
+    - Position
+    - Components
+    - trajectory
+    - input
+    - next
+    - desired
+    showCosts: 0
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale lettura descrive il fenomeno?
+    answers:
+    - id: tilt-ok
+      text: 'θ positivo orienta la spinta verso sinistra: v_x,next negativo.'
+      feedback: 'Corretto: la verifica usa campioni e metriche della stessa revisione.'
+    - id: wrong
+      text: θ positivo rende necessariamente positivo v_x,next.
+      feedback: Controlla formula, componenti e segni; questa risposta non descrive il risultato richiesto.
+    conditions:
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.current
+        component: 4
+        scope: 0
+        sampleIndex: 0
+        unit: rad
+        comparison: 2
+        expectedValue: 0.2
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.next
+        component: 1
+        scope: 1
+        sampleIndex: 0
+        unit: m/s
+        comparison: 4
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.current
+        component: 0
+        scope: 0
+        sampleIndex: 0
+        unit: m
+        comparison: 0
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.current
+        component: 2
+        scope: 0
+        sampleIndex: 0
+        unit: m
+        comparison: 0
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: tilt-ok
+  - id: trajectory
+    title: Leggere una traiettoria proiettata
+    objective: Leggere una traiettoria proiettata
+    instruction: 'Il preset di questa attività ha θ₀=.2 rad. Entriamo a t=10 (τ=.2 s): seleziona y_t, poi esplora
+      con la timeline e torna a 10 per verificare. La linea XY collega la posizione del centro di massa; non è lo
+      stato completo. I grafici separati mostrano ognuna delle sei componenti rispetto al tempo fisico: nessun asse
+      di fase θ/ω universale.'
+    help: 'Componenti 0-based: px=0,vx=1,py=2,vy=3,θ=4,ω=5; u₁=0,u₂=1. Formula e controllo richiesto sono nel pannello.
+      Ogni attività riparte dal proprio preset; Indietro lo ripristina.'
+    formulaFocus: {fileID: 11400000, guid: a49095362ece5ae4936a91da5f15909a, type: 2}
+    selectedTermId: output.current
+    visibleTermIds:
+    - output.current
+    - state.current
+    - time.index
+    - time.physical
+    enabledControlIds:
+    - seek
+    - step
+    - play
+    editableParameterTargets: []
+    visibleInitialStateComponents: []
+    visibleInputComponents: []
+    visibleLayerIds:
+    - PhysicalBody
+    - Position
+    - Components
+    - trajectory
+    - input
+    - next
+    - desired
+    showCosts: 0
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 8
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 0
+      - 0
+      - 1
+      - 0
+      - 0.2
+      - 0
+      scope: 0
+    - kind: 4
+      index: 10
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale lettura descrive il fenomeno?
+    answers:
+    - id: wrong
+      text: La curva XY contiene da sola tutto lo stato 6D.
+      feedback: Controlla formula, componenti e segni; questa risposta non descrive il risultato richiesto.
+    - id: trajectory-ok
+      text: La curva XY omette velocità e assetto, conservati nei sei grafici.
+      feedback: 'Corretto: la verifica usa campioni e metriche della stessa revisione.'
+    conditions:
+    - evaluatorId: term
+      targetId: output.current
+      expectedAnswerId: ''
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: time.index
+        component: -1
+        scope: 0
+        sampleIndex: 10
+        unit: '1'
+        comparison: 2
+        expectedValue: 10
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: trajectory-ok
+  - id: reference
+    title: Cambiare un campione desiderato
+    objective: Cambiare un campione desiderato
+    instruction: 'Ingresso a t=10: reference px=.1 m e vx=.5 m/s, py=1 m. u_des=0 NON è hover: h_des può essere
+      non nullo. Modifica cost.reference.state.10.0 da .1 a .4 m. y_des cambia a [.4,1], mentre il rollout reale
+      resta fermo. Tratteggio desiderato distinto dalla linea reale.'
+    help: 'Componenti 0-based: px=0,vx=1,py=2,vy=3,θ=4,ω=5; u₁=0,u₂=1. Formula e controllo richiesto sono nel pannello.
+      Ogni attività riparte dal proprio preset; Indietro lo ripristina.'
+    formulaFocus: {fileID: 11400000, guid: 427acc0dedd15c758c90022c988b2428, type: 2}
+    selectedTermId: reference.output
+    visibleTermIds:
+    - reference.output
+    - reference.state
+    - reference.input
+    - desired-h
+    - output.current
+    enabledControlIds:
+    - parameter
+    editableParameterTargets:
+    - cost.reference.state.10.0
+    visibleInitialStateComponents: []
+    visibleInputComponents: []
+    visibleLayerIds:
+    - PhysicalBody
+    - Position
+    - Components
+    - trajectory
+    - input
+    - next
+    - desired
+    - cost
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 4
+      index: 10
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale lettura descrive il fenomeno?
+    answers:
+    - id: reference-ok
+      text: Un desiderio non è obbligatoriamente un rollout fattibile.
+      feedback: 'Corretto: la verifica usa campioni e metriche della stessa revisione.'
+    - id: wrong
+      text: Il renderer forza gli stati reali a coincidere col desiderato.
+      feedback: Controlla formula, componenti e segni; questa risposta non descrive il risultato richiesto.
+    conditions:
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: reference.output
+        component: 0
+        scope: 0
+        sampleIndex: 10
+        unit: m
+        comparison: 2
+        expectedValue: 0.4
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: output.current
+        component: 0
+        scope: 0
+        sampleIndex: 10
+        unit: m
+        comparison: 0
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: term
+      targetId: desired-h
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: reference-ok
+  - id: cost
+    title: Pesare una componente di velocità
+    objective: Pesare una componente di velocità
+    instruction: 'Qui v_y,0=.5 m/s e v_y,des=0: il contributo di questa componente è ½Q₃₃·.5². Cambia cost.q.3 da
+      1 a 2. ℓˣ₀ deve crescere di .125, senza cambiare lo stato. Il costo somma sei scarti pesati e due spinte:
+      θ/ω desiderati zero e u_des zero. ℓ_tot NON è J inerzia.'
+    help: 'Componenti 0-based: px=0,vx=1,py=2,vy=3,θ=4,ω=5; u₁=0,u₂=1. Formula e controllo richiesto sono nel pannello.
+      Ogni attività riparte dal proprio preset; Indietro lo ripristina.'
+    formulaFocus: {fileID: 11400000, guid: a037264ccb425ecfb487e12440227a36, type: 2}
+    selectedTermId: q3
+    visibleTermIds:
+    - q3
+    - state-part
+    - input-part
+    - total
+    - inertia
+    enabledControlIds:
+    - parameter
+    editableParameterTargets:
+    - cost.q.3
+    visibleInitialStateComponents: []
+    visibleInputComponents: []
+    visibleLayerIds:
+    - PhysicalBody
+    - Position
+    - Components
+    - trajectory
+    - input
+    - next
+    - desired
+    - cost
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 8
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 0
+      - 0
+      - 1
+      - 0.5
+      - 0
+      - 0
+      scope: 0
+    question: Quale lettura descrive il fenomeno?
+    answers:
+    - id: wrong
+      text: Un peso è una saturazione automatica della spinta.
+      feedback: Controlla formula, componenti e segni; questa risposta non descrive il risultato richiesto.
+    - id: cost-ok
+      text: Il peso cambia il criterio, non la dinamica; J indica inerzia.
+      feedback: 'Corretto: la verifica usa campioni e metriche della stessa revisione.'
+    conditions:
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: parameter.cost.q.3
+        component: -1
+        scope: 0
+        sampleIndex: 0
+        unit: 1/(m/s)²
+        comparison: 2
+        expectedValue: 2
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: cost.contribution.state-deviation
+        component: -1
+        scope: 0
+        sampleIndex: 0
+        unit: '1'
+        comparison: 5
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.current
+        component: 3
+        scope: 0
+        sampleIndex: 0
+        unit: m/s
+        comparison: 0
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: cost-ok
+  - id: input-limit
+    title: Due limiti, due componenti
+    objective: Due limiti, due componenti
+    instruction: 'Scegli Modifica = Solo transizione t. Imposta solo u[0]=9 N; lascia u[1]=4.905. Limite 0…8 N per
+      ciascuno. g₁=1 N>0, g₂ resta dentro; il vettore applicato contiene davvero 9 N. Nessuna saturazione. Leggi
+      residuo e costo della stessa revisione: una violazione non diventa automaticamente una penalità.'
+    help: 'Componenti 0-based: px=0,vx=1,py=2,vy=3,θ=4,ω=5; u₁=0,u₂=1. Formula e controllo richiesto sono nel pannello.
+      Ogni attività riparte dal proprio preset; Indietro lo ripristina.'
+    formulaFocus: {fileID: 11400000, guid: 04c4177c74c75f74b6de1f780bb354c2, type: 2}
+    selectedTermId: u1
+    visibleTermIds:
+    - u1
+    - u2
+    - g0
+    - g1
+    - total
+    enabledControlIds:
+    - input
+    editableParameterTargets: []
+    visibleInitialStateComponents: []
+    visibleInputComponents:
+    - 0
+    visibleLayerIds:
+    - PhysicalBody
+    - Position
+    - Components
+    - trajectory
+    - input
+    - next
+    - desired
+    - constraints
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale lettura descrive il fenomeno?
+    answers:
+    - id: input-limit-ok
+      text: Viola solo il limite u₁; il comando non viene clampato.
+      feedback: 'Corretto: la verifica usa campioni e metriche della stessa revisione.'
+    - id: wrong
+      text: Un solo limite scalare viene applicato all’intero vettore.
+      feedback: Controlla formula, componenti e segni; questa risposta non descrive il risultato richiesto.
+    conditions:
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: input.applied
+        component: 0
+        scope: 0
+        sampleIndex: 0
+        unit: N
+        comparison: 2
+        expectedValue: 9
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: input.applied
+        component: 1
+        scope: 0
+        sampleIndex: 0
+        unit: N
+        comparison: 0
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: constraint.g.thrust1
+        component: -1
+        scope: 0
+        sampleIndex: 0
+        unit: N
+        comparison: 2
+        expectedValue: 1
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: constraint.g.thrust2
+        component: -1
+        scope: 0
+        sampleIndex: 0
+        unit: N
+        comparison: 0
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: input-limit-ok
+  - id: altitude-limit
+    title: La quota ha un dominio proprio
+    objective: La quota ha un dominio proprio
+    instruction: 'Cambia solo x₀[2]=p_y da 1 a 2.5 m. Il corridoio è .5…2 m: g_quota=.5 m positivo, spinte ancora
+      nei limiti. Il modello non muove artificialmente il drone dentro il corridoio. Non si certificano gli stati
+      tra campioni né l’ammissibilità di tutta la traiettoria da una sola vista.'
+    help: 'Componenti 0-based: px=0,vx=1,py=2,vy=3,θ=4,ω=5; u₁=0,u₂=1. Formula e controllo richiesto sono nel pannello.
+      Ogni attività riparte dal proprio preset; Indietro lo ripristina.'
+    formulaFocus: {fileID: 11400000, guid: 04c4177c74c75f74b6de1f780bb354c2, type: 2}
+    selectedTermId: x2
+    visibleTermIds:
+    - x2
+    - g2
+    - g0
+    - g1
+    enabledControlIds:
+    - initial-state
+    editableParameterTargets: []
+    visibleInitialStateComponents:
+    - 2
+    visibleInputComponents: []
+    visibleLayerIds:
+    - PhysicalBody
+    - Position
+    - Components
+    - trajectory
+    - input
+    - next
+    - desired
+    - constraints
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale lettura descrive il fenomeno?
+    answers:
+    - id: wrong
+      text: Un limite di quota è un peso del costo o una forza.
+      feedback: Controlla formula, componenti e segni; questa risposta non descrive il risultato richiesto.
+    - id: altitude-limit-ok
+      text: Il residuo quota ha unità m e non satura lo stato.
+      feedback: 'Corretto: la verifica usa campioni e metriche della stessa revisione.'
+    conditions:
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.current
+        component: 2
+        scope: 0
+        sampleIndex: 0
+        unit: m
+        comparison: 2
+        expectedValue: 2.5
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: constraint.g.altitude
+        component: -1
+        scope: 0
+        sampleIndex: 0
+        unit: m
+        comparison: 2
+        expectedValue: 0.5
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: constraint.g.thrust1
+        component: -1
+        scope: 0
+        sampleIndex: 0
+        unit: N
+        comparison: 0
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: constraint.g.thrust2
+        component: -1
+        scope: 0
+        sampleIndex: 0
+        unit: N
+        comparison: 0
+        expectedValue: 0
+        tolerance: 1.0e-08
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: altitude-limit-ok
+  - id: terminal
+    title: Rispettare il dominio terminale
+    objective: Rispettare il dominio terminale
+    instruction: 'Porta t a T=50, τ=1 s. Seleziona input, next e stage: N/A. x_T,y_T,x_T^des,y_T^des e ℓ_T esistono.
+      I vincoli di percorso di questo esperimento hanno dominio t<T: g_T è N/A. Concludi distinguendo l’indice di
+      prestazione dal momento d’inerzia e dal playback.'
+    help: 'Componenti 0-based: px=0,vx=1,py=2,vy=3,θ=4,ω=5; u₁=0,u₂=1. Formula e controllo richiesto sono nel pannello.
+      Ogni attività riparte dal proprio preset; Indietro lo ripristina.'
+    formulaFocus: {fileID: 11400000, guid: 53823cfe9d95529e9c34d00cea992bc4, type: 2}
+    selectedTermId: input.applied
+    visibleTermIds:
+    - input.applied
+    - state.next
+    - stage
+    - terminal
+    - output.current
+    - reference.output
+    - total
+    - g0
+    - time.index
+    - time.physical
+    enabledControlIds:
+    - seek
+    - step
+    editableParameterTargets: []
+    visibleInitialStateComponents: []
+    visibleInputComponents: []
+    visibleLayerIds:
+    - PhysicalBody
+    - Position
+    - Components
+    - trajectory
+    - input
+    - next
+    - desired
+    - cost
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale lettura descrive il fenomeno?
+    answers:
+    - id: terminal-ok
+      text: A T restano stato/output/reference/costo finale, nessun input o transizione.
+      feedback: 'Corretto: la verifica usa campioni e metriche della stessa revisione.'
+    - id: wrong
+      text: Il terminale aggiunge input zero e uno stage inventati.
+      feedback: Controlla formula, componenti e segni; questa risposta non descrive il risultato richiesto.
+    conditions:
+    - evaluatorId: terminal
+      targetId: ''
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: input.applied
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: state.next
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: stage
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: terminal-ok
+  completionCriteria: Tutte le selezioni, risposte e verifiche outcome delle 12 attività, terminale valido e receipt
+    della sessione. Credito solo C1.L5 v1/schema1; nessuna promozione da lesson precedenti.

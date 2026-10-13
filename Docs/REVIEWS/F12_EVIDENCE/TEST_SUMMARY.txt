@@ -1,0 +1,29 @@
+F12 final verification - 2026-10-11
+Unity 6000.3.8f1
+Compile final: exit 0; zero C# errors/warnings; no native helpers in final suites/compile.
+EditMode-final.xml: total=356 passed=356 failed=0 skipped=0; preserved=316 new=40
+  OptCon.Content.EditModeTests.dll: 64/64
+  OptCon.Formula.EditModeTests.dll: 123/123
+  OptCon.Lessons.EditModeTests.dll: 80/80
+  OptCon.Mathematics.EditModeTests.dll: 81/81
+  OptCon.Visualization.EditModeTests.dll: 8/8
+PlayMode-final.xml: total=89 passed=89 failed=0 skipped=0; preserved=80 new=9
+  OptCon.Navigation.PlayModeTests.dll: 89/89
+compile-final.log: SHA256 5cc0d305edf95f27bb683964bc0ca60454bf5eb3db39cda5bcdda81eaff9f08f
+EditMode-final.log: SHA256 e103eb4150816eb0d87c0307f953d16c6bb520171c979db2db5bdc6cbb0ad8fd
+PlayMode-final.log: SHA256 8dcc7c65565fec31333da5fe5e767f66d1f7cd9ab4733dd3367d2571298d626a
+production-final.log: SHA256 303b470ad5da0168ce7748d993d8d780c9c6af73d8033f6aaeb7ab270ebf6019
+production-reload-final.log: SHA256 19df1e55b9eff082f176ea1cc64beb2fcf5455b9a8b39c55fc8606890a8b5e70
+regression-pendulum-final.log: SHA256 0b98211e9f697d1590410f41bd6c61efaed2172e7307f93b8ab76c7c9bf13a68
+regression-static-final.log: SHA256 f69b3dea83b0f0aed7b745a85af05563ad9e4968bf236327cfdebcd26246bf33
+Native production: PASS. Saved Bootstrap -> complete C1.L1 -> C1.L2 all 12 steps -> valid completion -> menu/reopen -> Play restart.
+No course/lesson/experiment replacement in production; isolated FileProgressStore path only.
+Native fresh-process reload: PASS; exactly optimal-control/C1.L1 and C1.L2/version1/schema1, fresh runtime at trajectory/t0 without nominal.
+Native negative path before completion: wrong answer/incomplete exit, failed T1 request from cursor50, NonRepresentable, Reset/Restart; no C1.L2 completion.
+Native prototype/pendulum/index-only/cost/A-B/failures and static F10 regressions: PASS; zero runtime Error/Exception/Assert.
+Native interactions automated in real Editor through UI; representative GameView captures inspected visually, no user Editor click session or usability study claimed.
+27 production captures acquired (26 path + 1 fresh process); 17 selected original PNGs archived.
+Keyboard regression diagnosis: synthetic device disabled by batch OS/GameView focus, 0 InputAction events. Test-only cloned InputSettings isolate background/editor routing and are restored afterward. Legacy VisualizationTests.cs is byte-identical to baseline.
+All old 316+80 test fullnames retained and passed. Application 485 files match the isolated verified project by SHA256; 13 assemblies acyclic, Core/Simulation noEngineReferences.
+No temporary native helpers shipped. No F13 implementation.
+Full logs: C:\Users\querz\AppData\Local\Temp\OptCon-F12-2625bc843fd347d786033d6bc2ff539b

@@ -1,0 +1,594 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2447a3f1440a48128f99dcbb8f745af5, type: 3}
+  m_Name: C1_L3
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.LessonDefinition
+  id: C1.L3
+  schemaVersion: 1
+  contentVersion: '2'
+  title: Costi, prestazione e vincoli
+  description: 'Produzione F13: costi e vincoli I pp.14–23; riferimento e rollout I pp.24–25,35.'
+  objective: Costi, prestazione e vincoli
+  prerequisiteLessonIds:
+  - C1.L2
+  workspace:
+    assetPath: Assets/OptimalControl/Scenes/LessonWorkspace.unity
+  experiment: {fileID: 11400000, guid: 9dea7c89283f58e39f9a0087ec91cf3f, type: 2}
+  formulas:
+  - {fileID: 11400000, guid: af230dd990165c60b1669032ff5f5762, type: 2}
+  - {fileID: 11400000, guid: e1fec4511040575482af94d280499cf1, type: 2}
+  - {fileID: 11400000, guid: 36de24aa5ea056489becb88c1a897338, type: 2}
+  - {fileID: 11400000, guid: 6af9f1aaf93750bfbc69483dab9b750c, type: 2}
+  sources:
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 14
+    lastPhysicalPage: 25
+    firstSlide: 13
+    lastSlide: 24
+    section: Decisioni, costi, vincoli, reference e generazione di traiettorie
+    usage: 0
+    note: ''
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 35
+    lastPhysicalPage: 35
+    firstSlide: 34
+    lastSlide: 34
+    section: Riferimento a gradino fra equilibri
+    usage: 1
+    note: Campionamento discreto t=0…T; θ_des cambia al campione 10 su T=20; ω_des=0; u_des=mgl sin θ_des. La curva
+      desiderata non soddisfa la dinamica al salto. Nessuna quadratura continua.
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 27
+    lastPhysicalPage: 27
+    firstSlide: 26
+    lastSlide: 26
+    section: Euler
+    usage: 1
+    note: Pendolo discreto già usato in C1.L1/L2, δ=.02 s.
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 33
+    lastPhysicalPage: 34
+    firstSlide: 32
+    lastSlide: 33
+    section: Pendolo ed equilibrio
+    usage: 1
+    note: 'Errata p.34: ω_e=0. Righe/colonne del Core invariati.'
+  steps:
+  - id: decisions
+    title: Dalle successioni al criterio
+    objective: Definire z e J senza ripetere la dinamica.
+    instruction: 'C1.L2 ha già costruito coppie stato-input valide. Ora z raccoglie x₁…x_T e u₀…u_(T−1), con x₀
+      fissato. Il criterio J assegna un numero alla coppia: somma di stage e costo finale. Seleziona J. Il grafico
+      separa stage (punti collegati) e terminale (diamante), non un integrale.'
+    help: Formula e valori appartengono alla stessa revisione del rollout. Reset/Ricomincia torna al primo step;
+      Indietro ripristina autonomamente questa attività.
+    formulaFocus: {fileID: 11400000, guid: af230dd990165c60b1669032ff5f5762, type: 2}
+    selectedTermId: total
+    visibleTermIds:
+    - total
+    - stage
+    - terminal
+    - cumulative
+    enabledControlIds: []
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - input
+    - next
+    - cost
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale affermazione è corretta?
+    answers:
+    - id: wrong
+      text: J coincide sempre con il solo ultimo stage.
+      feedback: Rileggi la relazione mostrata e distingui criterio, riferimento, ammissibilità e rollout.
+    - id: sum
+      text: J somma T stage e un costo terminale.
+      feedback: 'Corretto: confronta formula, valori e vista.'
+    conditions:
+    - evaluatorId: term
+      targetId: total
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: sum
+  - id: tracking
+    title: Prima lo scarto, poi il peso
+    objective: Interpretare la norma quadratica diagonale.
+    instruction: 'Il riferimento di questa attività è x_des=0 e u_des=0. e_t è lo scarto: NON il residuo h della
+      dinamica. La formula somma metà scarto al quadrato per peso; θ e ω hanno unità diverse. Seleziona e_t e ℓˣ_t.
+      Q e Q_T possono avere zeri, R deve restare positiva.'
+    help: Formula e valori appartengono alla stessa revisione del rollout. Reset/Ricomincia torna al primo step;
+      Indietro ripristina autonomamente questa attività.
+    formulaFocus: {fileID: 11400000, guid: e1fec4511040575482af94d280499cf1, type: 2}
+    selectedTermId: error
+    visibleTermIds:
+    - error
+    - reference.state
+    - state.current
+    - state-part
+    - input-part
+    - Q0
+    - R0
+    enabledControlIds: []
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - input
+    - next
+    - cost
+    - desired
+    - target
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale affermazione è corretta?
+    answers:
+    - id: deviation
+      text: Il costo misura una deviazione pesata dal riferimento.
+      feedback: 'Corretto: confronta formula, valori e vista.'
+    - id: wrong
+      text: Il riferimento è obbligatoriamente una traiettoria realizzabile.
+      feedback: Rileggi la relazione mostrata e distingui criterio, riferimento, ammissibilità e rollout.
+    conditions:
+    - evaluatorId: term
+      targetId: error
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: state-part
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: deviation
+  - id: weight
+    title: Prevedi e modifica Q
+    objective: Cambiare il criterio lasciando invariato il rollout.
+    instruction: 'A t=0, θ₀=.35 rad e θ_des=0: ℓˣ contiene ½Q₀₀·.35². Se Q₀₀ passa da 2 a 4, questo addendo raddoppia.
+      Cambia Q[0] a 4 e osserva costo e grafico: i campioni x e u restano gli stessi. Nessun solver è in esecuzione.'
+    help: Formula e valori appartengono alla stessa revisione del rollout. Reset/Ricomincia torna al primo step;
+      Indietro ripristina autonomamente questa attività.
+    formulaFocus: {fileID: 11400000, guid: e1fec4511040575482af94d280499cf1, type: 2}
+    selectedTermId: Q0
+    visibleTermIds:
+    - Q0
+    - error
+    - state-part
+    - stage
+    enabledControlIds:
+    - parameter
+    editableParameterTargets:
+    - cost.q.0
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - input
+    - next
+    - cost
+    - desired
+    - target
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale affermazione è corretta?
+    answers:
+    - id: wrong
+      text: Il peso modifica automaticamente la dinamica.
+      feedback: Rileggi la relazione mostrata e distingui criterio, riferimento, ammissibilità e rollout.
+    - id: criterion
+      text: Cambia il criterio di costo, non lo stato simulato.
+      feedback: 'Corretto: confronta formula, valori e vista.'
+    conditions:
+    - evaluatorId: action
+      targetId: parameter.changed:cost.q.0
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: criterion
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: parameter.cost.q.0
+        component: -1
+        scope: 0
+        sampleIndex: 0
+        unit: '1/(rad)²'
+        comparison: 2
+        expectedValue: 4
+        tolerance: 1e-9
+        requireSameNominal: 0
+        requireSameProblem: 0
+  - id: effort
+    title: Anche il controllo ha un costo
+    objective: Distinguere peso del controllo e limite duro.
+    instruction: 'Con u₀=1 e u_des=0, il contributo controllo è ½R₀₀·1². Prevedi: R da .2 a .4 raddoppia ℓᵘ₀. Modifica
+      R[0] a .4. R resta strettamente positiva. Questo peso non impedisce di applicare un controllo grande.'
+    help: Formula e valori appartengono alla stessa revisione del rollout. Reset/Ricomincia torna al primo step;
+      Indietro ripristina autonomamente questa attività.
+    formulaFocus: {fileID: 11400000, guid: e1fec4511040575482af94d280499cf1, type: 2}
+    selectedTermId: R0
+    visibleTermIds:
+    - R0
+    - input.applied
+    - reference.input
+    - input-part
+    - stage
+    enabledControlIds:
+    - parameter
+    editableParameterTargets:
+    - cost.r.0
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - input
+    - next
+    - cost
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale affermazione è corretta?
+    answers:
+    - id: weight
+      text: R pesa lo scarto del controllo, non lo vieta.
+      feedback: 'Corretto: confronta formula, valori e vista.'
+    - id: wrong
+      text: R è un limite massimo duro dell’attuatore.
+      feedback: Rileggi la relazione mostrata e distingui criterio, riferimento, ammissibilità e rollout.
+    conditions:
+    - evaluatorId: action
+      targetId: parameter.changed:cost.r.0
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: weight
+  - id: terminal-weight
+    title: Valutare anche l’esito finale
+    objective: Leggere reference e peso al terminale.
+    instruction: 'Seleziona ℓ_T e x_T^des. Q_T pesa lo scarto FINALE, non una transizione aggiuntiva. Prevedi: aumentare
+      Q_T[0] da 5 a 10 aumenta l’addendo finale se lo scarto è non nullo. Modifica il peso; il diamante mostra ℓ_T.
+      Non esiste u_T.'
+    help: Formula e valori appartengono alla stessa revisione del rollout. Reset/Ricomincia torna al primo step;
+      Indietro ripristina autonomamente questa attività.
+    formulaFocus: {fileID: 11400000, guid: 36de24aa5ea056489becb88c1a897338, type: 2}
+    selectedTermId: terminal
+    visibleTermIds:
+    - terminal
+    - state.terminal
+    - reference.terminal
+    - QT0
+    - total
+    enabledControlIds:
+    - parameter
+    editableParameterTargets:
+    - cost.qt.0
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - input
+    - next
+    - cost
+    - desired
+    - target
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale affermazione è corretta?
+    answers:
+    - id: wrong
+      text: Il terminale richiede di inventare un input u_T.
+      feedback: Rileggi la relazione mostrata e distingui criterio, riferimento, ammissibilità e rollout.
+    - id: final
+      text: Il costo terminale valuta x_T rispetto al riferimento a T.
+      feedback: 'Corretto: confronta formula, valori e vista.'
+    conditions:
+    - evaluatorId: action
+      targetId: parameter.changed:cost.qt.0
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: terminal
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: final
+  - id: path-limit
+    title: Stringere un limite duro
+    objective: Leggere il segno di g senza saturazione.
+    instruction: 'Qui u₀=1 N·m e u_max=2: g₀=−1, dentro. Riduci constraint.torque.limit a .5: g₀=.5, fuori. Il rettangolo
+      delimita l’intervallo [−u_max,+u_max]; il marker resta sull’input applicato. Cambia solo l’ammissibilità:
+      nessun clamp, nessuna penalità aggiunta a J. Il residuo h del rollout resta zero.'
+    help: Formula e valori appartengono alla stessa revisione del rollout. Reset/Ricomincia torna al primo step;
+      Indietro ripristina autonomamente questa attività.
+    formulaFocus: {fileID: 11400000, guid: 6af9f1aaf93750bfbc69483dab9b750c, type: 2}
+    selectedTermId: g
+    visibleTermIds:
+    - g
+    - limit
+    - h
+    - input.applied
+    - feasible
+    enabledControlIds:
+    - parameter
+    editableParameterTargets:
+    - constraint.torque.limit
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - input
+    - next
+    - cost
+    - constraints
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale affermazione è corretta?
+    answers:
+    - id: hard
+      text: g>0 segnala una violazione; il controllo non viene saturato.
+      feedback: 'Corretto: confronta formula, valori e vista.'
+    - id: wrong
+      text: Il limite viene automaticamente convertito in peso R.
+      feedback: Rileggi la relazione mostrata e distingui criterio, riferimento, ammissibilità e rollout.
+    conditions:
+    - evaluatorId: action
+      targetId: parameter.changed:constraint.torque.limit
+      expectedAnswerId: ''
+    - evaluatorId: constraint.path-violated
+      targetId: ''
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: hard
+  - id: endpoint
+    title: Una richiesta fra inizio e fine
+    objective: Distinguere r, h e reference.
+    instruction: 'r=θ_T−θ₀ richiede il ritorno allo stesso angolo, usando entrambi gli estremi. Osserva r e h: h=0
+      conferma che la coppia soddisfa la dinamica; r può essere non nullo. x_des=0 è invece un riferimento del costo,
+      non impone r=0. Una penalità terminale finita non equivale a un vincolo duro.'
+    help: Formula e valori appartengono alla stessa revisione del rollout. Reset/Ricomincia torna al primo step;
+      Indietro ripristina autonomamente questa attività.
+    formulaFocus: {fileID: 11400000, guid: 6af9f1aaf93750bfbc69483dab9b750c, type: 2}
+    selectedTermId: r
+    visibleTermIds:
+    - r
+    - h
+    - g
+    - feasible
+    enabledControlIds: []
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - input
+    - next
+    - cost
+    - constraints
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale affermazione è corretta?
+    answers:
+    - id: wrong
+      text: h=0 garantisce automaticamente qualunque vincolo r.
+      feedback: Rileggi la relazione mostrata e distingui criterio, riferimento, ammissibilità e rollout.
+    - id: endpoint
+      text: Un rollout valido può violare un vincolo end-point.
+      feedback: 'Corretto: confronta formula, valori e vista.'
+    conditions:
+    - evaluatorId: term
+      targetId: r
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: endpoint
+  - id: cost-not-feasibility
+    title: Costo minore non basta
+    objective: Concludere distinguendo prestazione e ammissibilità.
+    instruction: 'Confronta due candidati dello STESSO problema: pesi, reference, modello e vincoli restano fissi.
+      A è salvato all’ingresso: u_t=1 N·m su tutta la coda, limite .5 N·m. A t=0 scegli Modifica=Coda
+      e porta u[0] a .75 N·m. Il rollout B ha un costo J inferiore ad A, ma g resta positivo.
+      Leggi J_A/J_B e g: un costo minore non basta per una soluzione ammissibile, né ottima.
+      Non cambiare Q o il limite: ciò definirebbe un problema differente. Nessun solver è in esecuzione.'
+    help: Formula e valori appartengono alla stessa revisione del rollout. Reset/Ricomincia torna al primo step;
+      Indietro ripristina autonomamente questa attività.
+    formulaFocus: {fileID: 11400000, guid: 6af9f1aaf93750bfbc69483dab9b750c, type: 2}
+    selectedTermId: g
+    visibleTermIds:
+    - g
+    - feasible
+    - total
+    - h
+    - r
+    enabledControlIds:
+    - input
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - input
+    - next
+    - cost
+    - constraints
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 7
+      index: 0
+      target: constraint.torque.limit
+      value: 0.5
+      vector: []
+      scope: 0
+    - kind: 13
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 12
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale affermazione è corretta?
+    answers:
+    - id: infeasible
+      text: 'Costo più basso, ma vincolo violato: non è una soluzione ammissibile.'
+      feedback: 'Corretto: confronta formula, valori e vista.'
+    - id: wrong
+      text: Ogni diminuzione di J rende automaticamente ammissibile il rollout.
+      feedback: Rileggi la relazione mostrata e distingui criterio, riferimento, ammissibilità e rollout.
+    conditions:
+    - evaluatorId: action
+      targetId: input.changed
+      expectedAnswerId: ''
+    - evaluatorId: constraint.path-violated
+      targetId: ''
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: infeasible
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: cost.total
+        component: -1
+        scope: 0
+        sampleIndex: 0
+        unit: '1'
+        comparison: 4
+        expectedValue: 0
+        tolerance: 1e-9
+        requireSameNominal: 0
+        requireSameProblem: 1
+  - id: terminal
+    title: Chiudere la somma discreta
+    objective: Verificare domini e accumulato finale.
+    instruction: 'Porta t a T=20. C_T somma tutti gli stage; J=C_T+ℓ_T. Seleziona u_t e stage: entrambi N/A. Rimangono
+      x_T, x_T^des e ℓ_T. Nessuna quadratura continua e nessuna transizione T→T+1.'
+    help: Formula e valori appartengono alla stessa revisione del rollout. Reset/Ricomincia torna al primo step;
+      Indietro ripristina autonomamente questa attività.
+    formulaFocus: {fileID: 11400000, guid: 36de24aa5ea056489becb88c1a897338, type: 2}
+    selectedTermId: input.applied
+    visibleTermIds:
+    - input.applied
+    - stage
+    - terminal
+    - total
+    - state.terminal
+    - reference.terminal
+    - time.index
+    enabledControlIds:
+    - seek
+    - step
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - input
+    - next
+    - cost
+    - desired
+    - target
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale affermazione è corretta?
+    answers:
+    - id: wrong
+      text: A T si aggiunge un altro stage con input zero inventato.
+      feedback: Rileggi la relazione mostrata e distingui criterio, riferimento, ammissibilità e rollout.
+    - id: terminal
+      text: Al terminale esistono stato e costo finale; input e stage sono N/A.
+      feedback: 'Corretto: confronta formula, valori e vista.'
+    conditions:
+    - evaluatorId: terminal
+      targetId: ''
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: input.applied
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: stage
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: terminal
+  completionCriteria: Azioni effettive, termini selezionati e risposte corrette. Solo C1.L3 v1/schema1 del corso
+    optimal-control; nessun credito da prototipo/fixture.

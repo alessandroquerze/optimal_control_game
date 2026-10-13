@@ -1,0 +1,9 @@
+PASS
+Saved Bootstrap, production optimal-control/C1, no content injection. Profile isolated only.
+C1.L3 nine and C1.L4 seven activities completed through real UI callbacks, wrong answers refused throughout.
+Independent costs, limit sign/no saturation, h=0 vs desired jump h=[-.5,0], state/output dimensions, sampled seek, terminal T/reference/no input or stage.
+A/reference/weights/history retained, HUD and all views share exact publication. No-op cannot advance. Previous independently restores comparison/reference and requires new user action.
+Incomplete navigation/reopen, failed cost request/input editing blocked/recovery, finite reference NonRepresentable hides renderers/retains math/recovery.
+Completion saved only optimal-control/C1.L3 and C1.L4 v1/schema1, advisory prerequisite satisfied by L3 only; L1/L2 not silently completed.
+Menu, fresh reopen and full stop/start reload persistent progress, fresh session at desired/t0/no comparison. Zero Error/Exception/Assert.
+UI interactions automated in native Editor; screenshots are real Game View captures, not a claim of human click testing.

@@ -1,0 +1,355 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e039087c2f4e1ab6f8639bc051389d, type: 3}
+  m_Name: LinearizedDynamics
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.FormulaDefinition
+  id: c1.linearized-dynamics
+  schemaVersion: 1
+  contentVersion: '1'
+  title: Modello linearizzato e previsione
+  description: 'A/B sono Jacobiani, non i nomi delle due configurazioni salvate. Nominale zero, δ=.02,m=l=1: Δx₀=0,
+    Δu₀=1 ⇒ Δxᴸ₁=[0,.02]. Il modello lineare usa =; il confronto con il nonlineare usa ≈. Al terminale rimangono
+    x̂_T/e_T, non Δu_T, Δxᴸ_(T+1) o A_T/B_T.'
+  expression: 'Δxᴸ_(t+1)=A_tΔxᴸ_t+B_tΔu_t
+
+    x̂_t=x̄_t+Δxᴸ_t; Δx_t≈Δxᴸ_t'
+  sourceTranscription: 'Δxᴸ_(t+1)=A_tΔxᴸ_t+B_tΔu_t
+
+    x̂_t=x̄_t+Δxᴸ_t; Δx_t≈Δxᴸ_t'
+  assumptions: 'A/B sono Jacobiani, non i nomi delle due configurazioni salvate. Nominale zero, δ=.02,m=l=1: Δx₀=0,
+    Δu₀=1 ⇒ Δxᴸ₁=[0,.02]. Il modello lineare usa =; il confronto con il nonlineare usa ≈. Al terminale rimangono
+    x̂_T/e_T, non Δu_T, Δxᴸ_(T+1) o A_T/B_T.'
+  terms:
+  - id: nominal.state
+    symbol: x̄_t
+    label: Stato nominale
+    meaning: Campione della traiettoria valida salvata. La barra indica il punto di sviluppo, non un target desiderato.
+    rows: 2
+    columns: 1
+    componentUnits:
+    - rad
+    - rad/s
+    value:
+      metricId: linearization.nominal-state
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: linearization.nominal
+      scope: 0
+  - id: delta.true
+    symbol: Δx_t
+    label: Perturbazione reale
+    meaning: Differenza fra stato del rollout nonlineare e stato nominale, componente per componente. Nessuna norma
+      di unità miste.
+    rows: 2
+    columns: 1
+    componentUnits:
+    - rad
+    - rad/s
+    value:
+      metricId: linearization.delta-true
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: linearization.delta
+      scope: 0
+  - id: delta.linear
+    symbol: Δxᴸ_t
+    label: Perturbazione del modello lineare
+    meaning: Stato del modello linearizzato; uguaglianza nella ricorrenza lineare, approssimazione della perturbazione
+      vera.
+    rows: 2
+    columns: 1
+    componentUnits:
+    - rad
+    - rad/s
+    value:
+      metricId: linearization.delta-linear
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: linearization.prediction
+      scope: 0
+  - id: delta.input
+    symbol: Δu_t
+    label: Perturbazione input
+    meaning: u_t−ū_t. Vettore 1×1; il simbolo curvo indica una differenza di coppia, non una forza.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - N·m
+    value:
+      metricId: linearization.delta-input
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: linearization.input
+      scope: 0
+  - id: delta.initial
+    symbol: Δx₀
+    label: Perturbazione iniziale
+    meaning: Zero nel caso x₀ fissato. Alterare x₀ è un esperimento separato, dichiarato esplicitamente.
+    rows: 2
+    columns: 1
+    componentUnits:
+    - rad
+    - rad/s
+    value:
+      metricId: linearization.delta-initial
+      kind: 1
+      scope: 4
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 4
+  - id: delta.next
+    symbol: Δxᴸ_(t+1)
+    label: Prossima perturbazione lineare
+    meaning: Valore già calcolato dalla ricorrenza sulla nominale. N/A a T.
+    rows: 2
+    columns: 1
+    componentUnits:
+    - rad
+    - rad/s
+    value:
+      metricId: linearization.delta-next
+      kind: 1
+      scope: 1
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 1
+  - id: prediction
+    symbol: x̂_t
+    label: Previsione assoluta
+    meaning: x̄_t+Δxᴸ_t. Curva ambra nel piano di fase; non è presentata come rollout nonlineare esatto.
+    rows: 2
+    columns: 1
+    componentUnits:
+    - rad
+    - rad/s
+    value:
+      metricId: linearization.prediction
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: linearization.prediction
+      scope: 0
+  - id: error
+    symbol: e_t
+    label: Errore di approssimazione
+    meaning: 'x_t−x̂_t, oppure Δx_t−Δxᴸ_t. Entrambi i rollout veri soddisfano la dinamica: questo errore NON è il
+      residuo f_t(x_t,u_t)−x_(t+1). Freccia rossa ingrandita ×20 nel grafico.'
+    rows: 2
+    columns: 1
+    componentUnits:
+    - rad
+    - rad/s
+    value:
+      metricId: linearization.error
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: linearization.error
+      scope: 0
+  - id: time.index
+    symbol: t
+    label: Indice discreto
+    meaning: Numero del campione 0…T, non secondi. Esiste anche in una dinamica index-only.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: time.index
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: time.step
+    symbol: δ
+    label: Passo fisico
+    meaning: Passo della discretizzazione (qui 0.02 s); non velocità di playback. Opzionale per altri modelli discreti.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - s
+    value:
+      metricId: time.step
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: time.physical
+    symbol: τ_t
+    label: Tempo fisico
+    meaning: Tempo del campione salvato. Nel pendolo τ_t=tδ; in una dinamica index-only è N/A.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - s
+    value:
+      metricId: time.physical
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: A00
+    symbol: A_t[0,0]
+    label: Sensibilità A00
+    meaning: ∂θ_next/∂θ = 1.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: linearization.a.0.0
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: A01
+    symbol: A_t[0,1]
+    label: Sensibilità A01
+    meaning: '∂θ_next/∂ω = δ. Riga: uscita; colonna: ingresso.'
+    rows: 1
+    columns: 1
+    componentUnits:
+    - (rad)/(rad/s)
+    value:
+      metricId: linearization.a.0.1
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: A10
+    symbol: A_t[1,0]
+    label: Sensibilità A10
+    meaning: ∂ω_next/∂θ = −δ(g/l)cos(θ̄_t), valutato sulla nominale, NON sul rollout perturbato.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - (rad/s)/(rad)
+    value:
+      metricId: linearization.a.1.0
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: A11
+    symbol: A_t[1,1]
+    label: Sensibilità A11
+    meaning: ∂ω_next/∂ω = 1.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: linearization.a.1.1
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: B00
+    symbol: B_t[0,0]
+    label: Sensibilità B00
+    meaning: ∂θ_next/∂u = 0 in Euler esplicito.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - (rad)/(N·m)
+    value:
+      metricId: linearization.b.0.0
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: B10
+    symbol: B_t[1,0]
+    label: Sensibilità B10
+    meaning: ∂ω_next/∂u = δ/(ml²). Non è il coefficiente della dinamica continua senza δ.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - (rad/s)/(N·m)
+    value:
+      metricId: linearization.b.1.0
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  sources:
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 10
+    lastPhysicalPage: 13
+    firstSlide: 9
+    lastSlide: 12
+    section: Traiettorie, equilibri e linearizzazione
+    usage: 0
+    note: ''
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 27
+    lastPhysicalPage: 27
+    firstSlide: 26
+    lastSlide: 26
+    section: Forward Euler
+    usage: 1
+    note: Adattamento del pendolo continuo alla discretizzazione già usata in F11.
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 33
+    lastPhysicalPage: 34
+    firstSlide: 32
+    lastSlide: 33
+    section: Pendolo ed equilibri
+    usage: 1
+    note: 'Errata I p.34: la prima condizione impone x₂,e=ω_e=0, non x₁,e=θ_e=0.'

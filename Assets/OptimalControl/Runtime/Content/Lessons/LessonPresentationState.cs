@@ -10,9 +10,10 @@ namespace OptCon.Content
     {
         public const string Play = "play", Step = "step", Seek = "seek", Input = "input", Parameter = "parameter",
             InitialState = "initial-state", PhysicalStep = "physical-step", PlaybackRate = "playback-rate",
-            Horizon = "horizon", Comparison = "comparison", Layers = "layers", Formula = "formula";
+            Horizon = "horizon", Comparison = "comparison", Layers = "layers", Formula = "formula",
+            InitialPerturbation = "initial-perturbation", InputPerturbation = "input-perturbation";
         public static readonly IReadOnlyList<string> All = Array.AsReadOnly(new[] { Play, Step, Seek, Input, Parameter,
-            InitialState, PhysicalStep, PlaybackRate, Horizon, Comparison, Layers, Formula });
+            InitialState, PhysicalStep, PlaybackRate, Horizon, Comparison, Layers, Formula, InitialPerturbation, InputPerturbation });
         public static string For(SimulationCommand command)
         {
             switch (command.Kind)
@@ -23,6 +24,8 @@ namespace OptCon.Content
                 case SimulationCommandKind.SetInput: return Input;
                 case SimulationCommandKind.SetParameter: return Parameter;
                 case SimulationCommandKind.SetInitialState: return InitialState;
+                case SimulationCommandKind.SetInitialPerturbation: return InitialPerturbation;
+                case SimulationCommandKind.SetInputPerturbation: return InputPerturbation;
                 case SimulationCommandKind.SetPhysicalStep: return PhysicalStep;
                 case SimulationCommandKind.SetPlaybackRate: return PlaybackRate;
                 case SimulationCommandKind.SetHorizon: return Horizon;

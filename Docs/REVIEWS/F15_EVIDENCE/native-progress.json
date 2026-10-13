@@ -1,0 +1,12 @@
+{
+    "schemaVersion": 1,
+    "completions": [
+        {
+            "courseId": "optimal-control",
+            "courseVersion": "1",
+            "lessonId": "C1.L6",
+            "lessonVersion": "1",
+            "lessonSchemaVersion": 1
+        }
+    ]
+}

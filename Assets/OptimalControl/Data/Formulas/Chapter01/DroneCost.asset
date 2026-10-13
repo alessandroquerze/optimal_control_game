@@ -1,0 +1,264 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e039087c2f4e1ab6f8639bc051389d, type: 3}
+  m_Name: DroneCost
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.FormulaDefinition
+  id: c1.drone.cost
+  schemaVersion: 1
+  contentVersion: '1'
+  title: Costo componente per componente
+  description: 'Pesi diagonali nelle unità inverse quadrate: nessuna somma diretta di m e rad. ℓ_tot è l’indice
+    di prestazione; J della dinamica è il momento d’inerzia. Hover consuma forza, quindi effort non nullo. Nessuna
+    quadratura continua.'
+  expression: 'e_t=x_t−x_t^des
+
+    ℓ_t=½Σ_(i=0)^5 q_i e_t[i]² + ½r₁u₁²+½r₂u₂²
+
+    ℓ_T=½Σ_(i=0)^5 q_T,i e_T[i]²
+
+    ℓ_tot=Σ_(t=0)^(T−1)ℓ_t+ℓ_T
+
+    θ_des=ω_des=0; u_des=[0,0]'
+  sourceTranscription: 'e_t=x_t−x_t^des
+
+    ℓ_t=½Σ_(i=0)^5 q_i e_t[i]² + ½r₁u₁²+½r₂u₂²
+
+    ℓ_T=½Σ_(i=0)^5 q_T,i e_T[i]²
+
+    ℓ_tot=Σ_(t=0)^(T−1)ℓ_t+ℓ_T
+
+    θ_des=ω_des=0; u_des=[0,0]'
+  assumptions: 'Pesi diagonali nelle unità inverse quadrate: nessuna somma diretta di m e rad. ℓ_tot è l’indice
+    di prestazione; J della dinamica è il momento d’inerzia. Hover consuma forza, quindi effort non nullo. Nessuna
+    quadratura continua.'
+  terms:
+  - id: state-part
+    symbol: ℓˣ_t
+    label: Contributo stato
+    meaning: Norma diagonale dello scarto stato/reference salvato.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: cost.contribution.state-deviation
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: input-part
+    symbol: ℓᵘ_t
+    label: Contributo spinte
+    meaning: ½r₁u₁²+½r₂u₂². Input reference zero.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: cost.contribution.control-deviation
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: stage
+    symbol: ℓ_t
+    label: Stage
+    meaning: Somma pesata degli errori di sei stati e due spinte.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: cost.stage
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: total
+    symbol: ℓ_tot
+    label: Indice di prestazione
+    meaning: Somma dei T stage e del terminale. Diverso da J, momento d’inerzia. Costo adimensionale con pesi nelle
+      unità inverse quadrate.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: cost.total
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: terminal
+    symbol: ℓ_T
+    label: Costo finale
+    meaning: Q_T e reference al campione T; nessun input terminale.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: cost.terminal
+      kind: 0
+      scope: 2
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 2
+  - id: q3
+    symbol: Q₃₃
+    label: Peso velocità verticale
+    meaning: Indici componenti 0-based; peso dello scarto vy−vy_des.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - 1/(m/s)²
+    value:
+      metricId: parameter.cost.q.3
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: reference.state
+    symbol: x_t^des
+    label: Stato desiderato
+    meaning: Sei componenti campionate; θ_des=ω_des=0. Curva non necessariamente fattibile.
+    rows: 6
+    columns: 1
+    componentUnits:
+    - m
+    - m/s
+    - m
+    - m/s
+    - rad
+    - rad/s
+    value:
+      metricId: reference.state
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: reference.state
+      scope: 0
+  - id: reference.input
+    symbol: u_t^des
+    label: Input desiderato zero
+    meaning: 'I p.29 penalizza u₁²,u₂²: reference input [0,0]. NON il comando di hover.'
+    rows: 2
+    columns: 1
+    componentUnits:
+    - N
+    - N
+    value:
+      metricId: reference.input
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: mass
+    symbol: M
+    label: Massa
+    meaning: Massa totale positiva.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - kg
+    value:
+      metricId: parameter.model.mass
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: length
+    symbol: L
+    label: Distanza fra rotori
+    meaning: Braccio di ciascuna forza L/2.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - m
+    value:
+      metricId: parameter.model.arm-length
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: gravity
+    symbol: g
+    label: Gravità
+    meaning: Direzione verticale negativa.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - m/s²
+    value:
+      metricId: parameter.model.gravity
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: inertia
+    symbol: J
+    label: Momento d’inerzia del drone
+    meaning: J [kg·m²] della fonte NON è l’indice di prestazione ℓ_tot.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - kg·m²
+    value:
+      metricId: parameter.model.moment-of-inertia
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  sources:
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 26
+    lastPhysicalPage: 30
+    firstSlide: 25
+    lastSlide: 29
+    section: Drone planare, Euler, costo e limiti
+    usage: 1
+    note: 'Fonte chiamata 3D, equazioni planari. Stato ordinato [px,vx,py,vy,θ,ω]. J è il momento d’inerzia. Costo
+      diagonale discreto, input desiderato zero. Vincoli t=0…T−1 coerenti con I p.21: nessun input a T.'

@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4a65509c5394032a246076299067e3a, type: 3}
+  m_Name: PendulumTransfer
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.ExperimentDefinition
+  id: c1.transfer.pendulum
+  schemaVersion: 1
+  contentVersion: 1
+  title: Continuo e trasferimento del pendolo
+  description: "H=2 s; N=20; \u03B4=.1 s. Input manuale, nessun solver. Equilibri
+    e reference congelati al modello di apertura."
+  model: {fileID: 11400000, guid: c9f41e1a5d7751dc9325a730ba9f164d, type: 2}
+  provider: {fileID: 11400000, guid: c9f41e1a5d7751dc9325a730ba9f164d, type: 2}
+  scenarioPrefab: {fileID: 7187201496726855610, guid: f38adc02826a43944a5e7c52429ee58d, type: 3}
+  cost: {fileID: 11400000, guid: 00e8fbd0370b5636b50ce96075a73b74, type: 2}
+  constraints: {fileID: 11400000, guid: 57a65d19547559f080e8286c26672116, type: 2}
+  stateDimension: 2
+  controlDimension: 1
+  outputDimension: 1
+  stateUnits:
+  - rad
+  - rad/s
+  controlUnits:
+  - "N\xB7m"
+  outputUnits:
+  - rad
+  usesDiscreteTime: 1
+  discreteTime:
+    horizon: 20
+    hasPhysicalTimeStep: 1
+    stepSeconds: 0.1
+    initialState:
+    - 0
+    - 0
+    defaultControl:
+    - 0
+    referenceState: []
+  parameters:
+  - id: mass
+    label: Massa
+    description: Massa positiva del pendolo.
+    valueKind: 0
+    unit: kg
+    defaultValue: 1
+    minimum: 0.1
+    maximum: 10
+    step: 0.1
+    modelTarget: model.mass
+    recalculation: 0
+  - id: length
+    label: Lunghezza
+    description: Lunghezza positiva del pendolo.
+    valueKind: 0
+    unit: m
+    defaultValue: 1
+    minimum: 0.1
+    maximum: 10
+    step: 0.1
+    modelTarget: model.length
+    recalculation: 0
+  - id: gravity
+    label: Accelerazione gravitazionale
+    description: "Valore della gravit\xE0 del modello; non della fisica Unity."
+    valueKind: 0
+    unit: "m/s\xB2"
+    defaultValue: 9.81
+    minimum: 0
+    maximum: 20
+    step: 0.01
+    modelTarget: model.gravity
+    recalculation: 0
+  sources:
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 31
+    lastPhysicalPage: 36
+    firstSlide: 30
+    lastSlide: 35
+    section: Problema continuo, pendolo, equilibri, desiderato e funzionale
+    usage: 1
+    note: "H indica la durata T della fonte; N indica T discreto. Correzione p.34:
+      velocit\xE0 di equilibrio nulla. Costo p.36 SENZA \xBD. Quadratura rettangolo
+      sinistro: scelta numerica F15, non formula esatta della fonte."
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 27
+    lastPhysicalPage: 27
+    firstSlide: 26
+    lastSlide: 26
+    section: Forward Euler
+    usage: 1
+    note: Regola applicata al pendolo p.33; tutte le righe usano lo stato vecchio.

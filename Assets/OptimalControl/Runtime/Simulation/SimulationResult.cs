@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace OptCon.Simulation
 {
@@ -12,13 +13,25 @@ namespace OptCon.Simulation
         public long RevisionId => History.RevisionId;
         public CostEvaluation Costs { get; }
         public OutputEvaluation Outputs { get; }
+        public ReferenceEvaluation Reference { get; }
+        public ConstraintEvaluation Constraints { get; }
+        public PendulumAccuracyDiagnostic Accuracy { get; }
+        public OptCon.Core.IDifferentiableDynamics DifferentiableDynamics { get; }
+        /// <summary>Finite-horizon constancy of an already valid rollout, not a general stability certificate.</summary>
+        public bool IsConstantStateInput { get; }
         internal SimulationResult(SimulationConfiguration configuration, TrajectoryHistory history)
         {
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             History = history ?? throw new ArgumentNullException(nameof(history));
+            DifferentiableDynamics = configuration.Model.CreateDynamics() as OptCon.Core.IDifferentiableDynamics;
+            IsConstantStateInput = history.States.All(x => x.SequenceEqual(history.States[0])) &&
+                history.Controls.All(u => u.SequenceEqual(history.Controls[0]));
             Costs = configuration.Cost == null ? null : new CostEvaluation(configuration.Cost, history);
             var output = configuration.Model.CreateOutputFunction();
             Outputs = output == null ? null : new OutputEvaluation(output, history);
+            Reference = configuration.Reference == null ? null : new ReferenceEvaluation(configuration.Reference, history, output);
+            Constraints = configuration.Constraints == null ? null : new ConstraintEvaluation(configuration.Constraints, configuration.Model, history, configuration.Reference);
+            Accuracy = PendulumAccuracyDiagnostic.TryCreate(configuration, history);
         }
     }
 
@@ -27,9 +40,13 @@ namespace OptCon.Simulation
     {
         public SimulationResult Result { get; }
         IExperimentResult IExperimentSnapshot.Result => Result;
-        public ExperimentCapabilities Capabilities => ExperimentCapabilities.Parameters | ExperimentCapabilities.Trajectory;
+        public ExperimentCapabilities Capabilities => ExperimentCapabilities.Parameters | ExperimentCapabilities.Trajectory |
+            (Result.DifferentiableDynamics == null ? ExperimentCapabilities.None : ExperimentCapabilities.Linearization);
         public SimulationSnapshot Sample { get; }
         public ComparisonSnapshot Comparison { get; }
+        public DiscretizationComparison DiscretizationComparison { get; }
+        public LinearizationComparison Linearization { get; }
+        public string LinearizationDiagnostic { get; }
         public SimulationConfiguration RequestedConfiguration { get; }
         public long AttemptRevisionId { get; }
         public string Error { get; }
@@ -46,10 +63,16 @@ namespace OptCon.Simulation
             input = RequestedConfiguration.Controls[index]; return true;
         }
         internal SessionState(SimulationResult result, SimulationConfiguration requested, int cursor,
-            long attempt, string error, bool playing, double samplesPerSecond, bool closed, ComparisonSnapshot comparison = null)
+            long attempt, string error, bool playing, double samplesPerSecond, bool closed, ComparisonSnapshot comparison = null,
+            LinearizationComparison linearization = null, string linearizationDiagnostic = null)
         {
+            Linearization = linearization; LinearizationDiagnostic = linearizationDiagnostic;
             Comparison = comparison; Result = result; Sample = result.History.GetSnapshot(cursor); RequestedConfiguration = requested;
+            if (comparison?.Result.Configuration.ContinuousSampling != null && result.Configuration.ContinuousSampling != null)
+                DiscretizationComparison = new DiscretizationComparison(comparison.Result, result);
             AttemptRevisionId = attempt; Error = error; IsPlaying = playing; SamplesPerSecond = samplesPerSecond; IsClosed = closed;
         }
+        public SessionState Select(int index) => new SessionState(Result, RequestedConfiguration, index, AttemptRevisionId,
+            Error, IsPlaying, SamplesPerSecond, IsClosed, Comparison, Linearization, LinearizationDiagnostic);
     }
 }

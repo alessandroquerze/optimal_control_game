@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using OptCon.Content;
 using OptCon.Simulation;
 using UnityEngine;
@@ -18,6 +19,7 @@ namespace OptCon.Presentation
         private TimelinePresenter timeline;
         private ParameterPanelPresenter parameters;
         private CostPanelPresenter costs;
+        private PerturbationPanelPresenter perturbations;
         private ILessonRuntime lessonRuntime;
         private LessonStepPresenter steps;
         private long appliedGeneration = -1;
@@ -50,7 +52,7 @@ namespace OptCon.Presentation
             if (action != "StepForward" && action != "StepBackward") return false;
             // A focused slider owns the arrow keys; P/R and input shortcuts remain usable.
             var focus = GetComponent<UIDocument>().rootVisualElement.focusController?.focusedElement as VisualElement;
-            for (var element = focus; element != null; element = element.parent) if (element is SliderInt) return true;
+            for (var element = focus; element != null; element = element.parent) if (element is SliderInt || element is Slider) return true;
             return false;
         }
         public void Bind(LessonDefinition destination, IExperimentSession value, HighlightRegistry registry, ILessonRuntime runtime = null, IVisualizationStatus visualStatus = null, RuntimeMetricResolver metricResolver = null)
@@ -71,7 +73,13 @@ namespace OptCon.Presentation
             {
                 timeline = new TimelinePresenter(root, commands);
                 parameters = new ParameterPanelPresenter(root, lesson.Experiment, commands, trajectory);
-                costs = new CostPanelPresenter(root, commands, trajectory, metrics);
+                costs = new CostPanelPresenter(root, commands, trajectory, metrics, lesson.Experiment.Cost?.TotalSymbol ?? "J");
+                // Tools are an editorial opt-in, not an automatic consequence of a model's capability.
+                // Older lessons keep their original focus/navigation surface in free exploration too.
+                if (lesson.Steps.Any(step => step.EnabledControlIds.Contains(LessonControls.InitialPerturbation) ||
+                    step.EnabledControlIds.Contains(LessonControls.InputPerturbation)))
+                    perturbations = new PerturbationPanelPresenter(root, commands, trajectory, metrics);
+                else root.Q<VisualElement>("linearization-controls").style.display = DisplayStyle.None;
             }
             else snapshotParameters = new SnapshotParameterPresenter(root, lesson.Experiment, commands);
             visualizationDiagnostic = root.Q<Label>("visualization-diagnostic");
@@ -104,6 +112,8 @@ namespace OptCon.Presentation
             }
             Formula.Render(state);
             ApplyLesson();
+            if (state is SessionState perturbed) perturbations?.Render(perturbed, lessonRuntime?.Presentation);
+            else GetComponent<UIDocument>().rootVisualElement.Q<VisualElement>("linearization-controls").style.display = DisplayStyle.None;
             ApplyCapabilities();
             RenderVisualizationStatus();
         }
@@ -147,7 +157,7 @@ namespace OptCon.Presentation
             if (visualizationDiagnostic != null) { visualizationDiagnostic.text = ""; visualizationDiagnostic.style.display = DisplayStyle.None; }
             visualizationDiagnostic = null;
             steps?.Dispose(); steps = null; appliedGeneration = -1;
-            Formula?.Dispose(); timeline?.Dispose(); parameters?.Dispose(); costs?.Dispose(); costs = null; Formula = null; timeline = null; parameters = null; snapshotParameters?.Dispose(); snapshotParameters = null; DisplayedSnapshot = null;
+            Formula?.Dispose(); timeline?.Dispose(); parameters?.Dispose(); costs?.Dispose(); perturbations?.Dispose(); perturbations = null; costs = null; Formula = null; timeline = null; parameters = null; snapshotParameters?.Dispose(); snapshotParameters = null; DisplayedSnapshot = null;
         }
         private void OnEnable() => Connect();
         private void OnDisable() => Disconnect();

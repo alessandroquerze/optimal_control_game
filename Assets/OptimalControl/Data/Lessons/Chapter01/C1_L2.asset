@@ -1,0 +1,944 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2447a3f1440a48128f99dcbb8f745af5, type: 3}
+  m_Name: C1_L2
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.LessonDefinition
+  id: C1.L2
+  schemaVersion: 1
+  contentVersion: '2'
+  title: Traiettorie, equilibri e linearizzazione
+  description: 'C1.L2 di produzione: I pp.10–13; pendolo/Euler già introdotti da C1.L1. Non è il prototipo.'
+  objective: Riconoscere traiettorie ed equilibri; linearizzare sulla nominale e verificare limiti ed errore
+    dell’approssimazione.
+  prerequisiteLessonIds:
+  - C1.L1
+  workspace:
+    assetPath: Assets/OptimalControl/Scenes/LessonWorkspace.unity
+  experiment: {fileID: 11400000, guid: fff54ef3b56e5be9a7ba469c36d52fc2, type: 2}
+  formulas:
+  - {fileID: 11400000, guid: c1b3cde9150a5f56a67bd4f2e01aca53, type: 2}
+  - {fileID: 11400000, guid: b03a46ebd5c15bddaf8d1e9edcc1b813, type: 2}
+  - {fileID: 11400000, guid: f072d2b0dd085cb2ae7a049d5130ef84, type: 2}
+  - {fileID: 11400000, guid: 21755ded99115a538104bd5ea8f646a7, type: 2}
+  - {fileID: 11400000, guid: 36c76d69a11b5d499e7ac62d137559df, type: 2}
+  - {fileID: 11400000, guid: bf1d7393a5cd521589011cd0f72eda9c, type: 2}
+  - {fileID: 11400000, guid: 1c6f0cf7619706840865029829233386, type: 2}
+  sources:
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 10
+    lastPhysicalPage: 13
+    firstSlide: 9
+    lastSlide: 12
+    section: Traiettorie, equilibri e linearizzazione
+    usage: 0
+    note: ''
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 27
+    lastPhysicalPage: 27
+    firstSlide: 26
+    lastSlide: 26
+    section: Forward Euler
+    usage: 1
+    note: Adattamento del pendolo continuo alla discretizzazione già usata in F11.
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 33
+    lastPhysicalPage: 34
+    firstSlide: 32
+    lastSlide: 33
+    section: Pendolo ed equilibri
+    usage: 1
+    note: 'Errata I p.34: la prima condizione impone x₂,e=ω_e=0, non x₁,e=θ_e=0.'
+  steps:
+  - id: trajectory
+    title: Una traiettoria è una coppia
+    objective: Distinguere la coppia stato-input dalla sua curva di fase.
+    instruction: 'C1.L1 ha introdotto i campioni x_t e gli input u_t. Ora consideriamo tutta la coppia di successioni:
+      è una traiettoria se soddisfa OGNI transizione. Seleziona u_t e premi Step →. La curva (θ,ω) mostra solo
+      gli stati; gli input sono associati agli archi t→t+1, non a punti oltre T (I pp.10–11).'
+    help: ''
+    formulaFocus: {fileID: 11400000, guid: c1b3cde9150a5f56a67bd4f2e01aca53, type: 2}
+    selectedTermId: state.current
+    visibleTermIds:
+    - state.current
+    - input.applied
+    - time.index
+    enabledControlIds:
+    - step
+    - seek
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - trajectory
+    - next
+    - input
+    showCosts: 0
+    entryActions: []
+    question: Che cosa specifica una traiettoria del sistema?
+    answers:
+    - id: curve
+      text: Qualunque curva disegnata nel piano di fase.
+      feedback: Una curva arbitraria non garantisce le transizioni né specifica gli input.
+    - id: pair
+      text: Stati e input che soddisfano tutte le transizioni.
+      feedback: 'Esatto: la curva degli stati è solo una sua rappresentazione.'
+    conditions:
+    - evaluatorId: term
+      targetId: input.applied
+      expectedAnswerId: ''
+    - evaluatorId: action
+      targetId: time.advanced
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: pair
+  - id: equilibrium
+    title: Un futuro che rimane uguale
+    objective: Riconoscere un equilibrio come traiettoria costante.
+    instruction: 'Preset θ₀=ω₀=0 e u_t=0. Per il pendolo sin(0)=0: Euler restituisce lo stesso stato a ogni
+      transizione. Premi Step → e seleziona x_t: indice e tempo avanzano, lo stato resta [0,0]. È un equilibrio,
+      non una simulazione in pausa (I p.11).'
+    help: ''
+    formulaFocus: {fileID: 11400000, guid: b03a46ebd5c15bddaf8d1e9edcc1b813, type: 2}
+    selectedTermId: state.current
+    visibleTermIds:
+    - state.current
+    - input.applied
+    - time.index
+    enabledControlIds:
+    - step
+    - seek
+    - play
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - trajectory
+    - next
+    showCosts: 0
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 8
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 0
+      - 0
+      scope: 0
+    question: Perché questa coppia è un equilibrio?
+    answers:
+    - id: constant
+      text: Lo stesso stato e input soddisfano ogni transizione.
+      feedback: Esatto. Il tempo avanza mentre lo stato resta costante.
+    - id: paused
+      text: Perché il pulsante Play non è premuto.
+      feedback: La pausa riguarda il cursore. Qui anche avanzando i campioni restano identici.
+    conditions:
+    - evaluatorId: action
+      targetId: time.advanced
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: state.current
+      expectedAnswerId: ''
+    - evaluatorId: trajectory.constant
+      targetId: ''
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: constant
+  - id: balance
+    title: Equilibrio anche con angolo non nullo
+    objective: Trovare la coppia che bilancia gravità e coppia.
+    instruction: Poniamo θ₀=π/2 rad e ω₀=0. La formula sopra dà u_e=mgl sin(π/2)=9.81 N·m. In Input e parametri
+      scegli modifica della CODA e imposta u[0]=9.81. Verifica che l’intera curva resti un punto. L’errata
+      della fonte impone ω_e=0, NON θ_e=0; un equilibrio non implica stabilità.
+    help: ''
+    formulaFocus: {fileID: 11400000, guid: b03a46ebd5c15bddaf8d1e9edcc1b813, type: 2}
+    selectedTermId: state.current
+    visibleTermIds:
+    - state.current
+    - input.applied
+    enabledControlIds:
+    - input
+    - step
+    - seek
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - trajectory
+    - next
+    - input
+    showCosts: 0
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 8
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 1.5707963267948966
+      - 0
+      scope: 0
+    question: Quale condizione deve annullarsi per mantenere l’angolo costante?
+    answers:
+    - id: zero-angle
+      text: L’angolo deve essere sempre zero.
+      feedback: Con θ_e=π/2 basta bilanciare la gravità con u_e=9.81.
+    - id: balance
+      text: ω_e=0 e accelerazione nulla con la coppia di equilibrio.
+      feedback: 'Corretto: θ_e può essere diverso da zero.'
+    conditions:
+    - evaluatorId: action
+      targetId: input.changed
+      expectedAnswerId: ''
+    - evaluatorId: trajectory.constant
+      targetId: ''
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: balance
+  - id: nominal
+    title: Scegli e congela una nominale valida
+    objective: Definire il punto di sviluppo lungo un rollout.
+    instruction: 'La barra indica una traiettoria di riferimento PER IL CALCOLO LOCALE, non un obiettivo desiderato.
+      Puoi scegliere x₀ o un input, poi premi Salva traiettoria nominale. Seleziona x̄_t: i campioni viola
+      e la loro configurazione sono congelati. Anche una traiettoria non costante può essere nominale; i Jacobiani
+      potranno variare con t.'
+    help: ''
+    formulaFocus: {fileID: 11400000, guid: c1b3cde9150a5f56a67bd4f2e01aca53, type: 2}
+    selectedTermId: nominal.state
+    visibleTermIds:
+    - nominal.state
+    - nominal.input
+    - state.current
+    enabledControlIds:
+    - initial-state
+    - input
+    - comparison
+    - step
+    - seek
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - trajectory
+    - next
+    - linearization
+    showCosts: 0
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale coppia può essere la nominale?
+    answers:
+    - id: valid
+      text: Una coppia stato-input che soddisfa la dinamica.
+      feedback: 'Corretto: qui è un rollout salvato, con modello e campioni propri.'
+    - id: arbitrary
+      text: Una curva arbitraria, anche senza input.
+      feedback: Per linearizzare sulla traiettoria occorre una nominale dinamicamente valida.
+    conditions:
+    - evaluatorId: action
+      targetId: comparison.saved
+      expectedAnswerId: ''
+    - evaluatorId: linearization.available
+      targetId: ''
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: nominal.state
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: valid
+  - id: differences
+    title: Perturbare mantenendo x₀ fissato
+    objective: Definire Δx e Δu rispetto alla nominale.
+    instruction: 'Per isolare gli effetti ripartiamo dalla nominale di equilibrio [0,0],ū=0, già salvata. Δ
+      significa differenza, non derivata. Qui x₀ resta fissato: Δx₀=0. Imposta Δu_t[0]=1 N·m a t=0 nel controllo
+      vicino e seleziona Δu_t. Cambia solo u₀; la simulazione ricalcola il futuro vero.'
+    help: ''
+    formulaFocus: {fileID: 11400000, guid: f072d2b0dd085cb2ae7a049d5130ef84, type: 2}
+    selectedTermId: nominal.state
+    visibleTermIds:
+    - nominal.state
+    - nominal.input
+    - delta.true
+    - delta.input
+    - delta.initial
+    enabledControlIds:
+    - input-perturbation
+    - seek
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - trajectory
+    - next
+    - linearization
+    - linearization-input
+    showCosts: 0
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 8
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 0
+      - 0
+      scope: 0
+    - kind: 12
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Se modifichi u₀ ma mantieni x₀ fissato, quanto vale Δx₀?
+    answers:
+    - id: input
+      text: È uguale a Δu₀.
+      feedback: Δx₀ e Δu₀ appartengono a spazi diversi; x₀ non è stato modificato.
+    - id: zero
+      text: Il vettore zero.
+      feedback: 'Corretto: la perturbazione dell’input non cambia la condizione iniziale.'
+    conditions:
+    - evaluatorId: action
+      targetId: input.changed
+      expectedAnswerId: ''
+    - evaluatorId: linearization.initial-fixed
+      targetId: ''
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: delta.input
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: zero
+  - id: jacobians
+    title: Una tabella di sensibilità locali
+    objective: Leggere A_t e B_t senza cambiare convenzione.
+    instruction: 'Una derivata parziale misura quanto cambia una componente successiva per un piccolo cambiamento
+      di una componente attuale. Nel Jacobiano le righe sono uscite, le colonne ingressi. Il pendolo ha A 2×2
+      e B 2×1. Seleziona A_t[1,0] e B_t[1,0]: a θ̄=0 valgono −0.1962 e 0.02 nelle unità indicate. Sono valutati
+      sulla NOMINALE salvata, non sullo stato perturbato.'
+    help: ''
+    formulaFocus: {fileID: 11400000, guid: 21755ded99115a538104bd5ea8f646a7, type: 2}
+    selectedTermId: A00
+    visibleTermIds:
+    - A00
+    - A01
+    - A10
+    - A11
+    - B00
+    - B10
+    - nominal.state
+    - time.step
+    enabledControlIds: []
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - trajectory
+    - next
+    - linearization
+    showCosts: 0
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 8
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 0
+      - 0
+      scope: 0
+    - kind: 12
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 6
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 1
+      scope: 0
+    - kind: 4
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Dove si valutano i Jacobiani della linearizzazione?
+    answers:
+    - id: nominal
+      text: In (x̄_t,ū_t), sulla nominale valida.
+      feedback: 'Corretto. Il corso scrive A=∇₁fᵀ e B=∇₂fᵀ: il nostro Jacobiano ha già righe di uscita.'
+    - id: perturbed
+      text: Sempre nello stato perturbato corrente.
+      feedback: 'Questa sarebbe un’altra linearizzazione: qui conserviamo il punto di sviluppo nominale.'
+    conditions:
+    - evaluatorId: linearization.available
+      targetId: ''
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: A10
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: B10
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: nominal
+  - id: linear-model
+    title: Prevedi una perturbazione con il modello lineare
+    objective: Usare la ricorrenza con Δx₀=0.
+    instruction: 'Il modello lineare impone l’uguaglianza mostrata sopra. Solo il confronto con il nonlineare
+      usa ≈. Alla nominale zero, Δx₀=[0,0] e Δu₀=1: moltiplicare B₀ per 1 dà [0,0.02]. Seleziona Δxᴸ_(t+1);
+      il valore live permette di controllare la previsione prima dello Step.'
+    help: ''
+    formulaFocus: {fileID: 11400000, guid: 36c76d69a11b5d499e7ac62d137559df, type: 2}
+    selectedTermId: delta.linear
+    visibleTermIds:
+    - delta.linear
+    - delta.input
+    - delta.initial
+    - delta.next
+    - prediction
+    enabledControlIds: []
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - trajectory
+    - next
+    - linearization
+    - linearization-input
+    showCosts: 0
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 8
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 0
+      - 0
+      scope: 0
+    - kind: 12
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 6
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 1
+      scope: 0
+    - kind: 4
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale perturbazione lineare è prevista al primo passo?
+    answers:
+    - id: angle-first
+      text: Δθᴸ₁=0.02 rad; Δωᴸ₁=0.
+      feedback: La prima riga B è zero; la coppia agisce prima sulla velocità.
+    - id: first
+      text: Δθᴸ₁=0 rad; Δωᴸ₁=0.02 rad/s.
+      feedback: 'Esatto: A₀ moltiplica il vettore zero e B₀ agisce sulla coppia.'
+    conditions:
+    - evaluatorId: linearization.available
+      targetId: ''
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: delta.next
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: first
+  - id: compare-input
+    title: Dal modello locale al rollout vero
+    objective: Confrontare due previsioni al medesimo campione.
+    instruction: 'Premi Step → una volta e seleziona e_t. Con x₀ invariato il primo passo è esattamente affine
+      nell’input: vero e lineare coincidono a t=1. Questo NON dimostra esattezza per tutta la traiettoria nonlineare.
+      Blu=vero, ambra=lineare, viola=nominale. La freccia Δx è nel piano di fase; la coppia Δu è curva.'
+    help: ''
+    formulaFocus: {fileID: 11400000, guid: 36c76d69a11b5d499e7ac62d137559df, type: 2}
+    selectedTermId: delta.true
+    visibleTermIds:
+    - delta.true
+    - delta.linear
+    - prediction
+    - error
+    - time.index
+    enabledControlIds:
+    - step
+    - seek
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - trajectory
+    - next
+    - linearization
+    - linearization-error
+    - linearization-input
+    showCosts: 0
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 8
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 0
+      - 0
+      scope: 0
+    - kind: 12
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 6
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 1
+      scope: 0
+    - kind: 4
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: L’errore zero del primo passo garantisce esattezza globale?
+    answers:
+    - id: first-only
+      text: 'No: qui il primo passo coincide perché è affine nell’input.'
+      feedback: Corretto. Le transizioni successive includono sin(θ), quindi il modello è locale.
+    - id: global
+      text: Sì, la dinamica è diventata lineare ovunque.
+      feedback: Il seno nella dinamica non è scomparso dal rollout vero.
+    conditions:
+    - evaluatorId: linearization.available
+      targetId: ''
+      expectedAnswerId: ''
+    - evaluatorId: action
+      targetId: time.advanced
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: error
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: first-only
+  - id: initial-perturbed
+    title: 'Un esperimento diverso: perturbare x₀'
+    objective: Dichiarare esplicitamente Δx₀ non nullo.
+    instruction: 'Ora ū=0 e nominale [0,0]. Questo è il CASO INIZIALE PERTURBATO, distinto da x₀ fissato. Imposta
+      Δx₀[0]=0.1 rad, lascia Δx₀[1]=0, poi Step →. A t=1 la formula sopra dà ω₁≈−0.01958731635 e ω̂₁=−0.01962
+      rad/s: piccolo errore non nullo. Seleziona e_t e confronta le due componenti.'
+    help: ''
+    formulaFocus: {fileID: 11400000, guid: bf1d7393a5cd521589011cd0f72eda9c, type: 2}
+    selectedTermId: delta.initial
+    visibleTermIds:
+    - delta.initial
+    - delta.true
+    - delta.linear
+    - prediction
+    - error
+    - time.index
+    enabledControlIds:
+    - initial-perturbation
+    - step
+    - seek
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - trajectory
+    - next
+    - linearization
+    - linearization-error
+    showCosts: 0
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 8
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 0
+      - 0
+      scope: 0
+    - kind: 12
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Questo esperimento conserva l’ipotesi Δx₀=0?
+    answers:
+    - id: fixed
+      text: Sì, Δx₀ è sempre zero per definizione.
+      feedback: È zero soltanto nel caso iniziale fissato; qui lo abbiamo cambiato.
+    - id: separate
+      text: 'No: abbiamo perturbato esplicitamente la condizione iniziale.'
+      feedback: Esatto. Non si confonde un parametro iniziale modificato con una decisione libera di ottimizzazione.
+    conditions:
+    - evaluatorId: linearization.available
+      targetId: ''
+      expectedAnswerId: ''
+    - evaluatorId: action
+      targetId: initial.changed
+      expectedAnswerId: ''
+    - evaluatorId: action
+      targetId: time.advanced
+      expectedAnswerId: ''
+    - evaluatorId: linearization.initial-perturbed
+      targetId: ''
+      expectedAnswerId: ''
+    - evaluatorId: linearization.error-nonzero
+      targetId: ''
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: error
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: separate
+  - id: amplitude
+    title: Quanto lontano vale l’approssimazione?
+    objective: Confrontare piccola e grande perturbazione sulla stessa nominale.
+    instruction: 'Rimani a t=1. Prima leggi e_ω per Δθ₀=0.1: circa 0.00003268365 rad/s. Aumenta Δx₀[0], per esempio a 0.8
+      rad: il nuovo errore è e_ω≈0.01621473497 rad/s. La nominale e i Jacobiani restano identici; cresce la
+      distanza dalla nominale. La freccia rossa è ingrandita ×20 solo nel grafico, i valori HUD non sono scalati.'
+    help: ''
+    formulaFocus: {fileID: 11400000, guid: bf1d7393a5cd521589011cd0f72eda9c, type: 2}
+    selectedTermId: delta.initial
+    visibleTermIds:
+    - delta.initial
+    - prediction
+    - error
+    - delta.true
+    - delta.linear
+    enabledControlIds:
+    - initial-perturbation
+    - seek
+    - step
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - trajectory
+    - next
+    - linearization
+    - linearization-error
+    showCosts: 0
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 8
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 0
+      - 0
+      scope: 0
+    - kind: 12
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 8
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 0.1
+      - 0
+      scope: 0
+    - kind: 4
+      index: 1
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Che cosa indica il peggioramento in questo confronto?
+    answers:
+    - id: local
+      text: La linearizzazione descrive perturbazioni locali alla nominale.
+      feedback: Corretto. Non è una garanzia di monotonia dell’errore per ogni modello, ampiezza o tempo.
+    - id: new-matrix
+      text: I Jacobiani sono stati ricalcolati sullo stato perturbato.
+      feedback: 'No: la stessa nominale determina A/B per entrambi i confronti.'
+    conditions:
+    - evaluatorId: linearization.available
+      targetId: ''
+      expectedAnswerId: ''
+    - evaluatorId: action
+      targetId: initial.changed
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: local
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: linearization.error
+        component: 1
+        scope: 0
+        sampleIndex: 1
+        unit: 'rad/s'
+        comparison: 3
+        expectedValue: 0
+        tolerance: 1e-9
+        requireSameNominal: 1
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: linearization.delta-initial
+        component: 0
+        scope: 4
+        sampleIndex: 1
+        unit: 'rad'
+        comparison: 3
+        expectedValue: 0
+        tolerance: 1e-9
+        requireSameNominal: 1
+        requireSameProblem: 0
+  - id: error-meaning
+    title: Errore di previsione, non violazione dinamica
+    objective: Interpretare e senza confonderlo con un residuo.
+    instruction: 'Seleziona e_t: è vero meno previsione lineare. Il rollout vero e la nominale sono entrambi
+      prodotti da f, quindi soddisfano le loro transizioni. e≠0 misura l’approssimazione locale, NON una transizione
+      non valida. Non è nemmeno un costo o una misura di ottimalità.'
+    help: ''
+    formulaFocus: {fileID: 11400000, guid: bf1d7393a5cd521589011cd0f72eda9c, type: 2}
+    selectedTermId: error
+    visibleTermIds:
+    - error
+    - prediction
+    - delta.true
+    - delta.linear
+    enabledControlIds: []
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - trajectory
+    - next
+    - linearization
+    - linearization-error
+    showCosts: 0
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 8
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 0
+      - 0
+      scope: 0
+    - kind: 12
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 8
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 0.8
+      - 0
+      scope: 0
+    - kind: 4
+      index: 1
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Che cosa significa e_t non nullo?
+    answers:
+    - id: violation
+      text: Il rollout vero viola la dinamica del pendolo.
+      feedback: Il residuo dinamico confronta f(x_t,u_t) con x_(t+1), non x_t con x̂_t.
+    - id: approximation
+      text: La previsione lineare differisce dal rollout nonlineare.
+      feedback: 'Esatto: il rollout vero resta dinamicamente valido.'
+    conditions:
+    - evaluatorId: linearization.available
+      targetId: ''
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: error
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: approximation
+  - id: terminal
+    title: Il confronto termina dove termina la storia
+    objective: Concludere senza inventare una transizione dopo T.
+    instruction: 'Porta t a T=100. Seleziona Δu_t: N/A, come Δxᴸ_(T+1) e A_T/B_T. Rimangono stato vero, nominale,
+      previsione x̂_T ed errore e_T. La traiettoria stato-input comprende T input e T+1 stati; il piano di
+      fase e il moto fisico restano viste distinte.'
+    help: ''
+    formulaFocus: {fileID: 11400000, guid: 36c76d69a11b5d499e7ac62d137559df, type: 2}
+    selectedTermId: delta.input
+    visibleTermIds:
+    - delta.input
+    - delta.next
+    - prediction
+    - error
+    - time.index
+    - time.physical
+    - time.step
+    - A10
+    - B10
+    enabledControlIds:
+    - seek
+    - step
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - trajectory
+    - next
+    - linearization
+    - linearization-input
+    showCosts: 0
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 8
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 0
+      - 0
+      scope: 0
+    - kind: 12
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 8
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 0.8
+      - 0
+      scope: 0
+    - kind: 4
+      index: 1
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Che cosa è disponibile al campione terminale?
+    answers:
+    - id: terminal
+      text: x̂_T ed e_T; nessun Δu_T o next oltre T.
+      feedback: Corretto. Hai verificato traiettorie, equilibri e approssimazione locale.
+    - id: extra
+      text: Una nuova transizione con Δu_T=0 inventato.
+      feedback: 'Non esiste una transizione T→T+1 nel problema: N/A è distinto da zero.'
+    conditions:
+    - evaluatorId: linearization.available
+      targetId: ''
+      expectedAnswerId: ''
+    - evaluatorId: terminal
+      targetId: ''
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: delta.input
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: terminal
+  completionCriteria: 'Dodici verifiche guidate: interazioni effettive, nominale salvata, equilibrio trovato,
+    casi iniziale fissato/perturbato distinti, Jacobiani nominali, errore locale e terminale. Credito soltanto
+    optimal-control/C1.L2 v1/schema1.'

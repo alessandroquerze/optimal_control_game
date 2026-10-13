@@ -10,6 +10,12 @@ namespace OptCon.Core
         public double Gravity { get; }
         public double MomentOfInertia { get; }
         internal double GravityOverLength { get; }
+        public NumericVector EquilibriumState(double angle) { NumericValidation.RequireFinite(angle, nameof(angle)); return new NumericVector(angle, 0); }
+        public NumericVector EquilibriumInput(double angle)
+        {
+            NumericValidation.RequireFinite(angle, nameof(angle));
+            return new NumericVector(Mass * Gravity * Length * Math.Sin(angle));
+        }
 
         public PendulumParameters(double mass, double length, double gravity)
         {

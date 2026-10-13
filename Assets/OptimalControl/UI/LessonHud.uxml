@@ -6,6 +6,7 @@
             <ui:Label name="lesson-step-objective" class="lesson-objective" />
             <ui:Label name="lesson-instruction" class="hud-note" />
             <ui:Label name="lesson-formula-expression" class="formula-expression" />
+            <ui:VisualElement name="linearization-controls" />
             <ui:Foldout name="lesson-help-panel" text="Suggerimento" value="false"><ui:Label name="lesson-help" class="hud-note" /></ui:Foldout>
             <ui:Label name="lesson-question" class="hud-note" />
             <ui:VisualElement name="lesson-answers" />
@@ -32,13 +33,18 @@
             <ui:DoubleField name="playback-rate" label="Playback [campioni/s]" value="10" is-delayed="true" />
             <ui:Label text="Il playback regola la presentazione: non modifica δ né il risultato matematico." class="hud-note" />
         </ui:Foldout>
-        <ui:Foldout text="Costo discreto e confronto A/B" value="false" name="cost-panel">
-            <ui:Label text="Costo per campione [1], non integrale. Q, QT ≥ 0; R > 0. Pesi con unità inverse al quadrato." class="hud-note" />
-            <ui:Label text="Sfera ciano: target; diamante viola: x_T e costo terminale. Barre/curve di costo usano t, non secondi. A: linea viola spessa; B: blu sottile." class="hud-note" />
+        <ui:Foldout text="Costo discreto, limiti e confronto A/B" value="false" name="cost-panel">
+            <ui:Label name="cost-semantics" text="Costo per campione [1], non integrale. Q, QT ≥ 0; R > 0. Pesi con unità inverse al quadrato." class="hud-note" />
+            <ui:VisualElement name="discretization-controls">
+                <ui:Label name="physical-grid-status" class="hud-note" />
+                <ui:SliderInt name="discretization-choice" label="Griglia δ" low-value="0" high-value="2" />
+                <ui:DoubleField name="physical-step" label="δ [s] · H fisso" is-delayed="true" />
+            </ui:VisualElement>
+            <ui:Label name="cost-visual-legend" class="hud-note" />
             <ui:Label name="cost-live" class="hud-note" />
-            <ui:Foldout text="Pesi, target e orizzonte" value="false" name="cost-configuration">
+            <ui:Foldout text="Pesi, riferimento, limiti e orizzonte" value="false" name="cost-configuration">
             <ui:IntegerField name="horizon" label="T [1…10000]" is-delayed="true" />
-            <ui:Label text="Estendere T ripete l'ultimo input; ridurlo tronca la sequenza." class="hud-note" />
+            <ui:Label name="horizon-policy" class="hud-note" />
             <ui:VisualElement name="cost-parameters" />
             </ui:Foldout>
             <ui:VisualElement name="comparison-controls" class="transport">
@@ -64,7 +70,7 @@
         <ui:Foldout text="Ipotesi e convenzioni" value="false">
             <ui:Label name="formula-description" class="hud-note" />
             <ui:Label name="formula-assumptions" class="hud-note" />
-            <ui:Label name="dynamic-legend" text="Sfera blu: stato corrente. Cubo/ghost arancio: campione successivo. Linee: guide fra campioni, non interpolazione fisica. Tasti 1/2/3: layer corpo/fase/stato-tempo." class="hud-note" />
+            <ui:Label name="dynamic-legend" text="Sfera blu: stato corrente. Cubo/ghost arancio: campione successivo. Linee: guide fra campioni, non interpolazione fisica. Tasti 1/2/3: layer definiti dallo scenario; le etichette indicano componenti e unità." class="hud-note" />
         </ui:Foldout>
     </ui:VisualElement>
 </ui:UXML>

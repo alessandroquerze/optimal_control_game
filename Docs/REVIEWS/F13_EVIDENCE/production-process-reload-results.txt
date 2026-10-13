@@ -1,0 +1,2 @@
+PASS
+Fresh Unity process, saved Bootstrap. FileProgressStore restored exactly optimal-control/C1.L3 and C1.L4, version1/schema1. Menu showed saved progress; C1.L4 opened fresh at desired, t=0, delta=.02, no comparison/linearization and no runtime completion.

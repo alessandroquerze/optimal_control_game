@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: OptCon.Content::OptCon.Content.LessonDefinition
   id: C1.L1
   schemaVersion: 1
-  contentVersion: '1'
+  contentVersion: '2'
   title: Stato, input, output e tempo
   description: 'Prima lezione di produzione: motivazioni I pp.2–7, notazione I pp.8–10, pendolo I p.33 ed Euler
     adattato da I p.27. Nessun costo o solver.'
@@ -78,10 +78,6 @@ MonoBehaviour:
     entryActions: []
     question: Quale applicazione vuoi esplorare?
     answers:
-    - id: aircraft
-      text: Aeronautica
-      feedback: 'Indice: consumo o comfort. Vincoli: spinta e assetto. Lo stesso tracking può richiedere consumi
-        diversi.'
     - id: robotics
       text: Robotica
       feedback: 'Indice: distanza dal percorso o tempo. Vincoli: workspace e saturazione dei motori.'
@@ -94,6 +90,10 @@ MonoBehaviour:
     - id: space
       text: Spazio
       feedback: 'Indice: energia o tempo. Vincoli: orbita, orientamento e spinta.'
+    - id: aircraft
+      text: Aeronautica
+      feedback: 'Indice: consumo o comfort. Vincoli: spinta e assetto. Lo stesso tracking può richiedere consumi
+        diversi.'
     conditions:
     - evaluatorId: answer.selected
       targetId: ''
@@ -132,7 +132,7 @@ MonoBehaviour:
     title: La posizione non è tutto lo stato
     objective: Distinguere θ dalla coppia [θ,ω].
     instruction: 'θ è l’angolo in rad; ω è la velocità angolare in rad/s. Seleziona x_t; apri Input e parametri
-      e cambia x₀[1] da 0 a 0.5 mantenendo x₀[0]=0.35. Il corpo resta alla stessa posa, il punto (θ,ω) cambia: due
+      e cambia solo x₀[1], per esempio da 0 a 0.5, mantenendo x₀[0]=0.35. Il corpo resta alla stessa posa, il punto (θ,ω) cambia: due
       velocità possono dare futuri diversi (I pp.8,33).'
     help: ''
     formulaFocus: {fileID: 11400000, guid: b27faf8225eb5d398cdf3923c8f86c70, type: 2}
@@ -157,22 +157,47 @@ MonoBehaviour:
       scope: 0
     question: Quale dato distingue i due stati alla stessa posa?
     answers:
-    - id: full
-      text: La velocità ω, oltre all’angolo θ.
-      feedback: 'Corretto: lo stato contiene entrambe le componenti.'
     - id: pose
       text: 'Nessun dato: la posa determina tutto.'
       feedback: Il corpo visualizza solo θ; osserva la seconda componente e il punto di fase.
+    - id: full
+      text: La velocità ω, oltre all’angolo θ.
+      feedback: 'Corretto: lo stato contiene entrambe le componenti.'
     conditions:
     - evaluatorId: term
       targetId: state.current
       expectedAnswerId: ''
-    - evaluatorId: action
-      targetId: initial.changed
-      expectedAnswerId: ''
     - evaluatorId: answer
       targetId: ''
       expectedAnswerId: full
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.current
+        component: 0
+        scope: 0
+        sampleIndex: 0
+        unit: 'rad'
+        comparison: 0
+        expectedValue: 0
+        tolerance: 1e-9
+        requireSameNominal: 0
+        requireSameProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.current
+        component: 1
+        scope: 0
+        sampleIndex: 0
+        unit: 'rad/s'
+        comparison: 1
+        expectedValue: 0
+        tolerance: 1e-9
+        requireSameNominal: 0
+        requireSameProblem: 0
   - id: output
     title: Osservare y non equivale a conoscere x
     objective: Riconoscere una funzione di output concreta.
@@ -230,12 +255,12 @@ MonoBehaviour:
     entryActions: []
     question: Che cosa descrive ẋ(τ)=f(x(τ),u(τ),τ)?
     answers:
-    - id: rate
-      text: La variazione istantanea per unità di tempo.
-      feedback: Corretto. Una transizione discreta, invece, restituisce direttamente il prossimo stato.
     - id: sample
       text: Il campione x_(t+1) senza discretizzazione.
       feedback: ẋ è una derivata; per costruire campioni occorre una regola di discretizzazione.
+    - id: rate
+      text: La variazione istantanea per unità di tempo.
+      feedback: Corretto. Una transizione discreta, invece, restituisce direttamente il prossimo stato.
     conditions:
     - evaluatorId: term
       targetId: derivative
@@ -321,12 +346,12 @@ MonoBehaviour:
     entryActions: []
     question: Quale velocità usa la prima riga Euler?
     answers:
-    - id: old
-      text: ω_t, prima della transizione.
-      feedback: 'Corretto: cambiare u₀ non cambia θ₁ quando ω₀=0.'
     - id: new
       text: ω_(t+1), appena calcolata.
       feedback: Le due righe usano entrambe lo stato precedente. Osserva θ₁=θ₀ quando ω₀=0.
+    - id: old
+      text: ω_t, prima della transizione.
+      feedback: 'Corretto: cambiare u₀ non cambia θ₁ quando ω₀=0.'
     conditions:
     - evaluatorId: term
       targetId: input.applied
@@ -416,12 +441,12 @@ MonoBehaviour:
       scope: 0
     question: Nel pendolo, t=20 significa…
     answers:
-    - id: index
-      text: Indice 20; τ=0.4 s con δ=0.02 s.
-      feedback: 'Corretto: non sono 20 secondi.'
     - id: seconds
       text: 20 secondi, qualunque sia δ.
       feedback: t è un indice. Il tempo fisico deriva dalla discretizzazione dichiarata.
+    - id: index
+      text: Indice 20; τ=0.4 s con δ=0.02 s.
+      feedback: 'Corretto: non sono 20 secondi.'
     conditions:
     - evaluatorId: action
       targetId: time.advanced
@@ -510,12 +535,12 @@ MonoBehaviour:
     entryActions: []
     question: Quali dati esistono al terminale di questo pendolo?
     answers:
-    - id: terminal
-      text: x_T e y_T=θ_T; nessun u_T o next.
-      feedback: Corretto. Hai distinto stato, input, output e tempo.
     - id: extra
       text: u_T e x_(T+1), perché ci sono T+1 stati.
       feedback: I T+1 stati includono x₀; le transizioni e gli input sono soltanto T.
+    - id: terminal
+      text: x_T e y_T=θ_T; nessun u_T o next.
+      feedback: Corretto. Hai distinto stato, input, output e tempo.
     conditions:
     - evaluatorId: terminal
       targetId: ''

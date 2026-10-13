@@ -1,0 +1,129 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd5fde60c0345bd4be035cce6a5acb19, type: 3}
+  m_Name: ConstantOrigin
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.SampledReferenceDefinition
+  id: c1.reference.origin
+  schemaVersion: 1
+  contentVersion: '1'
+  title: Curva desiderata ConstantOrigin
+  description: 'Dati editoriali congelati: non un rollout. T+1 stati, T input, nessun u_T.'
+  states:
+  - values:
+    - 0
+    - 0
+  - values:
+    - 0
+    - 0
+  - values:
+    - 0
+    - 0
+  - values:
+    - 0
+    - 0
+  - values:
+    - 0
+    - 0
+  - values:
+    - 0
+    - 0
+  - values:
+    - 0
+    - 0
+  - values:
+    - 0
+    - 0
+  - values:
+    - 0
+    - 0
+  - values:
+    - 0
+    - 0
+  - values:
+    - 0
+    - 0
+  - values:
+    - 0
+    - 0
+  - values:
+    - 0
+    - 0
+  - values:
+    - 0
+    - 0
+  - values:
+    - 0
+    - 0
+  - values:
+    - 0
+    - 0
+  - values:
+    - 0
+    - 0
+  - values:
+    - 0
+    - 0
+  - values:
+    - 0
+    - 0
+  - values:
+    - 0
+    - 0
+  - values:
+    - 0
+    - 0
+  inputs:
+  - values:
+    - 0
+  - values:
+    - 0
+  - values:
+    - 0
+  - values:
+    - 0
+  - values:
+    - 0
+  - values:
+    - 0
+  - values:
+    - 0
+  - values:
+    - 0
+  - values:
+    - 0
+  - values:
+    - 0
+  - values:
+    - 0
+  - values:
+    - 0
+  - values:
+    - 0
+  - values:
+    - 0
+  - values:
+    - 0
+  - values:
+    - 0
+  - values:
+    - 0
+  - values:
+    - 0
+  - values:
+    - 0
+  - values:
+    - 0
+  stateUnits:
+  - rad
+  - rad/s
+  inputUnits:
+  - N·m

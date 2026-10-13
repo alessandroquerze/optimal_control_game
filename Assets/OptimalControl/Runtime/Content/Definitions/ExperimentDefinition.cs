@@ -14,6 +14,7 @@ namespace OptCon.Content
         private ExperimentProviderDefinition provider;
         [SerializeField] private GameObject scenarioPrefab;
         [SerializeField] private CostDefinition cost;
+        [SerializeField] private ConstraintDefinition constraints;
         [SerializeField] private int stateDimension;
         [SerializeField] private int controlDimension;
         [SerializeField] private int outputDimension;
@@ -30,6 +31,7 @@ namespace OptCon.Content
         public ExperimentProviderDefinition Provider => provider != null ? provider : model;
         public bool HasConflictingProviders => provider != null && model != null && provider != model;
         public CostDefinition Cost => cost;
+        public ConstraintDefinition Constraints => constraints;
         public GameObject ScenarioPrefab => scenarioPrefab;
         public int StateDimension => stateDimension;
         public int ControlDimension => controlDimension;

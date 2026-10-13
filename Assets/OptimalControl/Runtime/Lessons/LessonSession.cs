@@ -14,11 +14,13 @@ namespace OptCon.Application
         private readonly LessonPlan plan;
         private readonly IReadOnlyList<IReadOnlyList<ILessonConditionEvaluator>> evaluators;
         private readonly HashSet<string> facts = new HashSet<string>(StringComparer.Ordinal);
+        private readonly object activityLifetime = new object();
         private int index;
         private long generation;
         private bool free, completed, busy, dispatching, closed;
         private string answer, feedback, entryError;
         private readonly string contentVersion;
+        public LessonActivityBaseline ActivityBaseline { get; private set; }
         private readonly int schemaVersion;
         private sealed class EntryFailure : InvalidOperationException
         { public EntryFailure(string message) : base(message) { } }
@@ -37,6 +39,7 @@ namespace OptCon.Application
                 if (availableLayers != null && step.VisibleLayers.Any(layer => !availableLayers.Contains(layer))) throw new ArgumentException("Step requests an unknown visual layer.");
             }
             registry = registry ?? new LessonConditionRegistry();
+            foreach (var step in plan.Steps) foreach (var condition in step.Conditions) registry.ValidateBinding(condition, simulation.Current);
             evaluators = Array.AsReadOnly(plan.Steps.Select(s => (IReadOnlyList<ILessonConditionEvaluator>)Array.AsReadOnly(s.Conditions.Select(c => registry.Resolve(c.EvaluatorId, simulation.Capabilities)).ToArray())).ToArray());
             free = plan.Steps.Count == 0;
             // Initialization occurs before UI/input binding and before navigation Ready.
@@ -58,6 +61,8 @@ namespace OptCon.Application
             // Commit educational identity only after every required action succeeds.
             index = target; completed = free = false; entryError = null;
             facts.Clear(); answer = feedback = null; generation++;
+            ActivityBaseline = plan.Steps[target].Conditions.Any(c => c.Evidence != null)
+                ? new LessonActivityBaseline(plan.Steps[target].Id, generation, simulation.Current, activityLifetime) : null;
         }
         private void RequireEntry(SimulationCommand command, int target)
         {
@@ -67,7 +72,7 @@ namespace OptCon.Application
         private void Refresh()
         {
             var step = plan.Steps.Count == 0 ? null : plan.Steps[index];
-            var context = new LessonConditionContext(simulation.Current, facts, answer);
+            var context = new LessonConditionContext(simulation.Current, facts, answer, ActivityBaseline, step?.Id, generation, activityLifetime);
             bool[] met = step == null ? Array.Empty<bool>() : step.Conditions.Select((c, i) => evaluators[index][i].IsMet(c, context)).ToArray();
             Presentation = new LessonPresentationState(plan.LessonId, step, index, plan.Steps.Count, generation, free,
                 completed, entryError == null && !free && !completed && met.All(v => v), feedback, met, entryError);
@@ -91,12 +96,14 @@ namespace OptCon.Application
                 {
                     entryError = exception.Message; completed = false; success = false;
                     facts.Clear(); answer = feedback = null; generation++;
+                    ActivityBaseline = null;
                 }
                 catch (Exception exception)
                 {
                     // Programming/consumer failures remain observable to the caller; never award progress.
                     entryError = "Lesson operation failed: " + exception.Message; completed = false;
                     facts.Clear(); answer = feedback = null; generation++;
+                    ActivityBaseline = null;
                     unexpected = exception;
                 }
                 finally { busy = false; Refresh(); }
@@ -134,8 +141,9 @@ namespace OptCon.Application
             if (!simulation.Execute(SimulationCommand.Reset()) || (simulation.Supports(SimulationCommandKind.ClearComparison) && !simulation.Execute(SimulationCommand.ClearComparison())))
                 throw new EntryFailure("Cannot restore exploration preset. " + simulation.Current.Error);
             entryError = null; completed = false; facts.Clear(); answer = feedback = null; generation++;
+            ActivityBaseline = null;
         }
-        public bool Explore() => entryError == null && Transition(() => { free = true; generation++; if (simulation.Supports(SimulationCommandKind.Pause)) simulation.Execute(SimulationCommand.Pause()); });
+        public bool Explore() => entryError == null && Transition(() => { free = true; generation++; ActivityBaseline = null; if (simulation.Supports(SimulationCommandKind.Pause)) simulation.Execute(SimulationCommand.Pause()); });
         public bool Answer(string answerId)
         {
             if (Blocked || entryError != null || free || completed) return false;
@@ -167,14 +175,14 @@ namespace OptCon.Application
                 if (!success || free) return;
                 var after = simulation.Current;
                 var afterTrajectory = after as SessionState;
-                if (command.Kind == SimulationCommandKind.SetInput && beforeTrajectory != null && afterTrajectory != null && !beforeTrajectory.Result.Configuration.Controls[command.Index].SequenceEqual(afterTrajectory.Result.Configuration.Controls[command.Index])) facts.Add("input.changed");
+                if ((command.Kind == SimulationCommandKind.SetInput || command.Kind == SimulationCommandKind.SetInputPerturbation) && beforeTrajectory != null && afterTrajectory != null && !beforeTrajectory.Result.Configuration.Controls[command.Index].SequenceEqual(afterTrajectory.Result.Configuration.Controls[command.Index])) facts.Add("input.changed");
                 if (command.Kind == SimulationCommandKind.SetParameter && before.Result.RevisionId != after.Result.RevisionId)
                 {
                     var oldValue = before.Result.Configuration.Parameters.FirstOrDefault(p => p.Target == command.Target);
                     if (oldValue != null && oldValue.Value != command.Value) facts.Add("parameter.changed:" + command.Target);
                 }
                 if (command.Kind == SimulationCommandKind.StepForward && beforeTrajectory != null && afterTrajectory != null && afterTrajectory.Sample.Timestep > beforeTrajectory.Sample.Timestep) facts.Add("time.advanced");
-                if (command.Kind == SimulationCommandKind.SetInitialState && beforeTrajectory != null && afterTrajectory != null &&
+                if ((command.Kind == SimulationCommandKind.SetInitialState || command.Kind == SimulationCommandKind.SetInitialPerturbation) && beforeTrajectory != null && afterTrajectory != null &&
                     !beforeTrajectory.Result.Configuration.InitialState.SequenceEqual(afterTrajectory.Result.Configuration.InitialState)) facts.Add("initial.changed");
                 if (command.Kind == SimulationCommandKind.CaptureComparison) facts.Add("comparison.saved");
             });
@@ -182,7 +190,7 @@ namespace OptCon.Application
         }
         public void Dispose()
         {
-            if (closed) return; closed = true; subscription.Dispose(); Changed = null; CompletionValidated = null; facts.Clear();
+            if (closed) return; closed = true; subscription.Dispose(); Changed = null; CompletionValidated = null; facts.Clear(); ActivityBaseline = null;
         }
         internal bool IsCurrentCompletion(LessonCompletion receipt) => !closed && completed && !free && entryError == null
             && Presentation.IsCompleted && Presentation.Error == null && Presentation.ConditionsMet.All(v => v)

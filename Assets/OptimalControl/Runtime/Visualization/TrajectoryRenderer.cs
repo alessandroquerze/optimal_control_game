@@ -19,5 +19,14 @@ namespace OptCon.Presentation
             line.SetPositions(points);
             Source = history;
         }
+        /// <summary>Projects supplied derived samples in the original history's declared coordinate/time domain.</summary>
+        public void RenderDerived(TrajectoryHistory context, System.Collections.Generic.IReadOnlyList<OptCon.Core.NumericVector> states, StateProjection projection)
+        {
+            if (states == null || states.Count != context.States.Count) throw new System.ArgumentException("Derived sample domain differs from its source history.");
+            var points = new Vector3[states.Count];
+            for (int i = 0; i < points.Length; i++) points[i] = projection.ProjectState(context, i, states[i]);
+            var line = GetComponent<LineRenderer>(); line.useWorldSpace = false; line.positionCount = points.Length;
+            line.SetPositions(points); Source = context;
+        }
     }
 }

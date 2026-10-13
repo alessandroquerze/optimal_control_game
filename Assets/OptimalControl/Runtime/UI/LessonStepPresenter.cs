@@ -63,11 +63,18 @@ namespace OptCon.Presentation
             Restrict("step-back", state.Allows(LessonControls.Step)); Restrict("step-next", state.Allows(LessonControls.Step));
             Restrict("timeline-seek", state.Allows(LessonControls.Seek)); Restrict("playback-rate", state.Allows(LessonControls.PlaybackRate));
             Restrict("horizon", state.Allows(LessonControls.Horizon)); Restrict("input-scope", state.Allows(LessonControls.Input));
+            Restrict("physical-step", state.Allows(LessonControls.PhysicalStep)); Restrict("discretization-choice", state.Allows(LessonControls.PhysicalStep));
             foreach (var field in root.Query<DoubleField>().ToList())
             {
                 if (field.name.StartsWith("parameter-", StringComparison.Ordinal)) Restrict(field.name, state.AllowsParameter(field.name.Substring(10)));
+                if (field.name.StartsWith("parameter-cost.", StringComparison.Ordinal) || field.name.StartsWith("parameter-constraint.", StringComparison.Ordinal))
+                    field.style.display = state.AllowsParameter(field.name.Substring(10)) ? DisplayStyle.Flex : DisplayStyle.None;
                 if (field.name.StartsWith("input-", StringComparison.Ordinal)) Restrict(field.name, state.Allows(LessonControls.Input));
                 if (field.name.StartsWith("initial-state-", StringComparison.Ordinal)) Restrict(field.name, state.Allows(LessonControls.InitialState));
+                if (field.name.StartsWith("initial-state-", StringComparison.Ordinal) && int.TryParse(field.name.Substring(14), out int stateComponent))
+                    field.style.display = state.IsFreeExploration || state.Step == null || state.Step.VisibleInitialStateComponents.Count == 0 || state.Step.VisibleInitialStateComponents.Contains(stateComponent) ? DisplayStyle.Flex : DisplayStyle.None;
+                if (field.name.StartsWith("input-", StringComparison.Ordinal) && int.TryParse(field.name.Substring(6), out int inputComponent))
+                    field.style.display = state.IsFreeExploration || state.Step == null || state.Step.VisibleInputComponents.Count == 0 || state.Step.VisibleInputComponents.Contains(inputComponent) ? DisplayStyle.Flex : DisplayStyle.None;
             }
             bool modelParameters = root.Q<VisualElement>("parameter-fields").Query<DoubleField>().ToList().Any(field => state.AllowsParameter(field.name.Substring(10)));
             root.Q<VisualElement>("input-fields").style.display = state.Allows(LessonControls.Input) ? root.Q<VisualElement>("input-fields").style.display : DisplayStyle.None;
@@ -77,8 +84,11 @@ namespace OptCon.Presentation
             root.Q<VisualElement>("playback-rate").style.display = state.Allows(LessonControls.PlaybackRate) ? DisplayStyle.Flex : DisplayStyle.None;
             root.Q<VisualElement>("parameter-panel").style.display = state.Allows(LessonControls.Input) || state.Allows(LessonControls.InitialState) || modelParameters || state.Allows(LessonControls.PlaybackRate) ? DisplayStyle.Flex : DisplayStyle.None;
             if (!state.IsFreeExploration && state.Step != null && !state.Step.ShowCosts) root.Q<VisualElement>("cost-panel").style.display = DisplayStyle.None;
-            root.Q<VisualElement>("comparison-controls").style.display = root.Q<VisualElement>("comparison-configuration").style.display = state.Allows(LessonControls.Comparison) ? DisplayStyle.Flex : DisplayStyle.None;
-            bool costEditing = state.IsFreeExploration || state.Allows(LessonControls.Horizon) || (state.Step != null && state.Step.EditableParameters.Any(t => t.StartsWith("cost.", StringComparison.Ordinal)));
+            root.Q<VisualElement>("comparison-controls").style.display = state.Allows(LessonControls.Comparison) ? DisplayStyle.Flex : DisplayStyle.None;
+            // Fixed-problem evidence discloses the frozen A/B values without permitting the student to overwrite A.
+            bool discloseComparison = state.Allows(LessonControls.Comparison) || state.Step?.Conditions.Any(c => c.Evidence?.RequireSameProblem == true || c.Evidence?.RequireSamePhysicalProblem == true) == true;
+            root.Q<VisualElement>("comparison-configuration").style.display = discloseComparison ? DisplayStyle.Flex : DisplayStyle.None;
+            bool costEditing = state.IsFreeExploration || state.Allows(LessonControls.Horizon) || (state.Step != null && state.Step.EditableParameters.Any(t => t.StartsWith("cost.", StringComparison.Ordinal) || t.StartsWith("constraint.", StringComparison.Ordinal)));
             root.Q<VisualElement>("cost-configuration").style.display = costEditing ? DisplayStyle.Flex : DisplayStyle.None;
             root.Q<DropdownField>("formula-choice").SetEnabled(state.Allows(LessonControls.Formula));
         }

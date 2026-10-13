@@ -95,7 +95,7 @@ namespace OptCon.Tests
             Assert.That(bootstrap.Navigation.Course.Id, Is.EqualTo("optimal-control"));
             Assert.That(bootstrap.Navigation.Course.IsPrototype, Is.False);
             Assert.That(Menu.Q<Label>("catalog-kind").text, Is.EqualTo("CORSO"));
-            Assert.That(Menu.Query<Button>().ToList().Count(b => b.userData is string), Is.EqualTo(1));
+            Assert.That(Menu.Query<Button>().ToList().Where(b => b.userData is string).Select(b => (string)b.userData), Is.EquivalentTo(new[] { "C1.L1", "C1.L2", "C1.L3", "C1.L4", "C1.L5", "C1.L6" }));
             Assert.That(bootstrap.Navigation.OpenLesson("prototype.pendulum"), Is.False);
             Assert.That(bootstrap.Navigation.OpenLesson("fixture.f10.static"), Is.False);
             yield return Open();

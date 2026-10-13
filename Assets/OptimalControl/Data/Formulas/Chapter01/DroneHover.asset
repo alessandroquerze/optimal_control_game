@@ -1,0 +1,334 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e039087c2f4e1ab6f8639bc051389d, type: 3}
+  m_Name: DroneHover
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.FormulaDefinition
+  id: c1.drone.hover
+  schemaVersion: 1
+  contentVersion: '1'
+  title: Prevedere e verificare hover
+  description: Equilibrio derivato dalla dinamica. Preset M=1,g=9.81 ⇒ ciascuna spinta 4.905 N. Se M o g cambiano
+    in esplorazione, questo numero non è un nuovo default universale.
+  expression: 'θ=ω=v_x=v_y=0
+
+    u₁+u₂=Mg; u₁−u₂=0 ⇒ u₁=u₂=Mg/2
+
+    p̈_x=−(u₁+u₂)sinθ/M; p̈_y=(u₁+u₂)cosθ/M−g
+
+    θ̈=L(u₁−u₂)/(2J)
+
+    x_next=x+δ f_CT(x,u)'
+  sourceTranscription: 'θ=ω=v_x=v_y=0
+
+    u₁+u₂=Mg; u₁−u₂=0 ⇒ u₁=u₂=Mg/2
+
+    p̈_x=−(u₁+u₂)sinθ/M; p̈_y=(u₁+u₂)cosθ/M−g
+
+    θ̈=L(u₁−u₂)/(2J)
+
+    x_next=x+δ f_CT(x,u)'
+  assumptions: Equilibrio derivato dalla dinamica. Preset M=1,g=9.81 ⇒ ciascuna spinta 4.905 N. Se M o g cambiano
+    in esplorazione, questo numero non è un nuovo default universale.
+  terms:
+  - id: input.applied
+    symbol: u_t
+    label: Vettore delle due spinte
+    meaning: Vector(2), ordine [u₁,u₂], forze in N, non coppie. Somma e differenza accoppiano il moto.
+    rows: 2
+    columns: 1
+    componentUnits:
+    - N
+    - N
+    value:
+      metricId: input.applied
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: input.applied
+      scope: 0
+  - id: u1
+    symbol: u₁,t
+    label: Spinta destra
+    meaning: Componente 0 ESPLICITA di input.applied Vector(2). Forza normale al body, non asse x.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - N
+    value:
+      metricId: input.applied
+      kind: 0
+      scope: 0
+      component: 0
+      numericFormat: G6
+    highlight:
+      semanticRole: input.thrust1
+      scope: 0
+  - id: u2
+    symbol: u₂,t
+    label: Spinta sinistra
+    meaning: Componente 1 ESPLICITA di input.applied Vector(2). La differenza produce momento.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - N
+    value:
+      metricId: input.applied
+      kind: 0
+      scope: 0
+      component: 1
+      numericFormat: G6
+    highlight:
+      semanticRole: input.thrust2
+      scope: 0
+  - id: state.current
+    symbol: x_t
+    label: Stato completo 6D
+    meaning: '[px,vx,py,vy,θ,ω]. Non sei posizioni: unità diverse.'
+    rows: 6
+    columns: 1
+    componentUnits:
+    - m
+    - m/s
+    - m
+    - m/s
+    - rad
+    - rad/s
+    value:
+      metricId: state.current
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: state.current
+      scope: 0
+  - id: state.next
+    symbol: x_(t+1)
+    label: Stato successivo
+    meaning: Campione salvato @t+1; tutte le righe Euler usano x_t.
+    rows: 6
+    columns: 1
+    componentUnits:
+    - m
+    - m/s
+    - m
+    - m/s
+    - rad
+    - rad/s
+    value:
+      metricId: state.next
+      kind: 1
+      scope: 1
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: state.next
+      scope: 1
+  - id: mass
+    symbol: M
+    label: Massa
+    meaning: Massa totale positiva.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - kg
+    value:
+      metricId: parameter.model.mass
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: length
+    symbol: L
+    label: Distanza fra rotori
+    meaning: Braccio di ciascuna forza L/2.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - m
+    value:
+      metricId: parameter.model.arm-length
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: gravity
+    symbol: g
+    label: Gravità
+    meaning: Direzione verticale negativa.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - m/s²
+    value:
+      metricId: parameter.model.gravity
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: inertia
+    symbol: J
+    label: Momento d’inerzia del drone
+    meaning: J [kg·m²] della fonte NON è l’indice di prestazione ℓ_tot.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - kg·m²
+    value:
+      metricId: parameter.model.moment-of-inertia
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: time.step
+    symbol: δ
+    label: Passo fisico
+    meaning: Passo della discretizzazione (qui 0.02 s); non velocità di playback. Opzionale per altri modelli discreti.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - s
+    value:
+      metricId: time.step
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: next0
+    symbol: p_x_(t+1)
+    label: Posizione orizzontale successiva
+    meaning: Campione salvato, non ricalcolato dal HUD.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - m
+    value:
+      metricId: state.next
+      kind: 0
+      scope: 1
+      component: 0
+      numericFormat: G6
+    highlight:
+      semanticRole: state.next.component.0
+      scope: 1
+  - id: next1
+    symbol: v_x_(t+1)
+    label: Velocità orizzontale successiva
+    meaning: Campione salvato, non ricalcolato dal HUD.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - m/s
+    value:
+      metricId: state.next
+      kind: 0
+      scope: 1
+      component: 1
+      numericFormat: G6
+    highlight:
+      semanticRole: state.next.component.1
+      scope: 1
+  - id: next2
+    symbol: p_y_(t+1)
+    label: Quota successiva
+    meaning: Campione salvato, non ricalcolato dal HUD.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - m
+    value:
+      metricId: state.next
+      kind: 0
+      scope: 1
+      component: 2
+      numericFormat: G6
+    highlight:
+      semanticRole: state.next.component.2
+      scope: 1
+  - id: next3
+    symbol: v_y_(t+1)
+    label: Velocità verticale successiva
+    meaning: Campione salvato, non ricalcolato dal HUD.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - m/s
+    value:
+      metricId: state.next
+      kind: 0
+      scope: 1
+      component: 3
+      numericFormat: G6
+    highlight:
+      semanticRole: state.next.component.3
+      scope: 1
+  - id: next4
+    symbol: θ_(t+1)
+    label: Assetto positivo antiorario successiva
+    meaning: Campione salvato, non ricalcolato dal HUD.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - rad
+    value:
+      metricId: state.next
+      kind: 0
+      scope: 1
+      component: 4
+      numericFormat: G6
+    highlight:
+      semanticRole: state.next.component.4
+      scope: 1
+  - id: next5
+    symbol: ω_(t+1)
+    label: Velocità angolare successiva
+    meaning: Campione salvato, non ricalcolato dal HUD.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - rad/s
+    value:
+      metricId: state.next
+      kind: 0
+      scope: 1
+      component: 5
+      numericFormat: G6
+    highlight:
+      semanticRole: state.next.component.5
+      scope: 1
+  sources:
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 26
+    lastPhysicalPage: 30
+    firstSlide: 25
+    lastSlide: 29
+    section: Drone planare, Euler, costo e limiti
+    usage: 1
+    note: 'Fonte chiamata 3D, equazioni planari. Stato ordinato [px,vx,py,vy,θ,ω]. J è il momento d’inerzia. Costo
+      diagonale discreto, input desiderato zero. Vincoli t=0…T−1 coerenti con I p.21: nessun input a T.'

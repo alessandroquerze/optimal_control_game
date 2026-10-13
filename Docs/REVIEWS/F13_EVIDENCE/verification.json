@@ -1,0 +1,87 @@
+{
+  "date": "2026-10-11",
+  "unity": "6000.3.8f1",
+  "tests": {
+    "EditMode": {
+      "total": 388,
+      "passed": 388,
+      "failed": 0,
+      "skipped": 0,
+      "preserved": 356,
+      "new": 32,
+      "assemblies": {
+        "OptCon.Content.EditModeTests.dll": 64,
+        "OptCon.Formula.EditModeTests.dll": 155,
+        "OptCon.Lessons.EditModeTests.dll": 80,
+        "OptCon.Mathematics.EditModeTests.dll": 81,
+        "OptCon.Visualization.EditModeTests.dll": 8
+      }
+    },
+    "PlayMode": {
+      "total": 97,
+      "passed": 97,
+      "failed": 0,
+      "skipped": 0,
+      "preserved": 89,
+      "new": 8,
+      "assemblies": {
+        "OptCon.Navigation.PlayModeTests.dll": 97
+      }
+    }
+  },
+  "logs": {
+    "adjust-final": {
+      "exit": 0,
+      "sha256": "f178d6b593a0ceb702ac7b32527de68b9b41de1ede7fde85cc72e8ec95f8e0d5"
+    },
+    "production-final": {
+      "exit": 0,
+      "sha256": "46042be1595d0ea73fb60e97f7bf13ba2affa75d687e4ad24cad35d238f60119"
+    },
+    "production-reload-final": {
+      "exit": 0,
+      "sha256": "bef25f8ad15121137f87429c4aba5f80a020f045139c4185874967e236f786f0"
+    },
+    "regression-linearization-final": {
+      "exit": 0,
+      "sha256": "fbeb1505bba1dcb33b445134531a61c5cd1bed77fdf47034a35a08ea656653c4"
+    },
+    "regression-pendulum-final": {
+      "exit": 0,
+      "sha256": "39086999f6cef03148a4fc54565c0c46eeefc844e52473d4fac1476a45c71c2c"
+    },
+    "regression-static-final": {
+      "exit": 0,
+      "sha256": "a32dcf1a45760757b2e391bba5dec8a96e66453adfaa7dec45b717e3a53dcd0f"
+    },
+    "EditMode-final": {
+      "exit": 0,
+      "sha256": "217f7a116663c07559f6e4e6f1e68c14ecc95f525539d69fd8a154e7115f64ce"
+    },
+    "PlayMode-final": {
+      "exit": 0,
+      "sha256": "4b4602238d208a25ef54262b1489ece2a606d10e21ee25be9b51e2708ad3e70f"
+    },
+    "compile-final": {
+      "exit": 0,
+      "sha256": "3260d284a916425d4e1d72145d4e30b3762e94bdb248498b7758b02a7b10300c"
+    },
+    "production-live-final": {
+      "exit": 0,
+      "sha256": "e73e0b67cd8d1915120a94e6619c6a3bb2548bd95d971028be3fc0a958f15e30"
+    },
+    "compile-post-captures": {
+      "exit": 0,
+      "sha256": "c07b8d822a027e8e86175f323357d94ee8bdb959faca288389e6ff4285826e9c"
+    }
+  },
+  "baselineFiles": 647,
+  "applicationFiles": 540,
+  "cloneMatches": true,
+  "acyclicAssemblies": 13,
+  "noEngineReferences": [
+    "OptCon.Core",
+    "OptCon.Simulation"
+  ],
+  "archivedGameViewCaptures": 23
+}

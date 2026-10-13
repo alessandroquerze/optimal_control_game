@@ -19,12 +19,19 @@ namespace OptCon.Presentation
             var sample = state.Sample;
             if (inputComponent < 0 || inputComponent >= sample.Model.Dimensions.Control || sample.Model.ControlUnits[inputComponent] != expectedUnit)
                 throw new ArgumentException("Torque glyph requires an explicitly configured rotational input/unit.");
-            GetComponent<HighlightTarget>().SetSample(sample.RevisionId, sample.IsTerminal ? (int?)null : sample.Timestep);
+            RenderValue(sample.IsTerminal ? (double?)null : sample.AppliedControl[inputComponent], expectedUnit,
+                sample.RevisionId, sample.IsTerminal ? (int?)null : sample.Timestep, "Coppia u[" + inputComponent + "]");
+        }
+        /// <summary>A supplied saved rotational quantity, including a torque perturbation; no model evaluation.</summary>
+        public void RenderValue(double? value, string unit, long revision, int? sampleIndex, string caption)
+        {
+            if (unit != expectedUnit) throw new ArgumentException("Torque glyph requires the configured rotational unit.");
+            if (value.HasValue) OptCon.Core.NumericValidation.RequireFinite(value.Value, nameof(value));
+            GetComponent<HighlightTarget>().SetSample(revision, value.HasValue ? sampleIndex : null);
             var line = GetComponent<LineRenderer>(); line.useWorldSpace = false;
-            label.text = sample.IsTerminal ? "Coppia: N/A al terminale" : "Coppia u[" + inputComponent + "] = " +
-                sample.AppliedControl[inputComponent].ToString("G4", CultureInfo.InvariantCulture) + " " + expectedUnit + "\n+ antiorario; dimensione del simbolo fissa";
-            if (sample.IsTerminal || sample.AppliedControl[inputComponent] == 0) { line.positionCount = 0; return; }
-            float sign = Math.Sign(sample.AppliedControl[inputComponent]);
+            label.text = !value.HasValue ? caption + ": N/A" : caption + " = " + value.Value.ToString("G4", CultureInfo.InvariantCulture) + " " + unit + "\n+ antiorario; dimensione del simbolo fissa";
+            if (!value.HasValue || value.Value == 0) { line.positionCount = 0; return; }
+            float sign = Math.Sign(value.Value);
             const int segments = 24;
             line.positionCount = segments + 5;
             for (int i = 0; i <= segments; i++)

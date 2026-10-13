@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-13",
+  "unity": "6000.3.8f1",
+  "scope": "F14 only",
+  "tests": {
+    "EditMode": {
+      "total": "484",
+      "passed": "484",
+      "failed": "0",
+      "skipped": "0",
+      "result": "Passed",
+      "duration": "5,3452677",
+      "baseline_cases_preserved": 425,
+      "new_cases": 59
+    },
+    "PlayMode": {
+      "total": "108",
+      "passed": "108",
+      "failed": "0",
+      "skipped": "0",
+      "result": "Passed",
+      "duration": "93,275276",
+      "baseline_cases_preserved": 101,
+      "new_cases": 7
+    }
+  },
+  "native": {
+    "native-complete": 0,
+    "native-complete-reload": 0
+  },
+  "compile": {
+    "compile-final": 0
+  },
+  "application_file_count": 598,
+  "application_clone_identical": true,
+  "temporary_helpers_removed": true,
+  "screenshot_count": 20,
+  "pdf_sha256": "ae169f3492dc0915d0777d62e90184107d7017aee03b8620bbfe0aee9bd3a469",
+  "assembly_count": 13,
+  "assembly_cycles": false
+}

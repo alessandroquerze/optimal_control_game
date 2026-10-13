@@ -1,0 +1,36 @@
+NEGATIVE PASS continuous NonRepresentable/exploration
+PASS failed 100-to-1-step request, input guard, A04, NonRepresentable, coherent publication, reset/restart
+NEGATIVE PASS continuous wrong answer with valid outcome
+PASS continuous · r9 · t=0 · x=[0;0] · cost=2.355987831556078
+NEGATIVE PASS dynamics wrong answer with valid outcome
+PASS dynamics · r10 · t=0 · x=[0;0] · cost=2.355987831556078
+NEGATIVE PASS equilibria wrong answer with valid outcome
+PASS equilibria · r11 · t=10 · x=[0;0] · cost=2.355987831556078
+NEGATIVE PASS desired wrong answer with valid outcome
+PASS desired · r12 · t=9 · x=[0;0] · cost=2.355987831556078
+NEGATIVE PASS density wrong answer with valid outcome
+PASS density · r13 · t=10 · x=[0;0] · cost=2.355987831556078
+NEGATIVE PASS weights wrong answer with valid outcome
+PASS weights · r15 · t=10 · x=[0;0] · cost=2.605987831556078
+NEGATIVE PASS cumulative wrong answer with valid outcome
+PASS cumulative · r16 · t=20 · x=[0;0] · cost=2.355987831556078
+NEGATIVE PASS manual wrong answer with valid outcome
+PASS manual · r18 · t=0 · x=[0;0] · cost=2.688869644940409
+NEGATIVE PASS refinement larger delta cannot replace required refinement
+NEGATIVE PASS refinement wrong answer with valid outcome
+PASS refinement · r22 · t=0 · x=[0;0] · cost=2.2168392440387814
+NEGATIVE PASS refinement Previous restored baseline
+PASS Previous and outcome recapture
+NEGATIVE PASS accuracy larger delta cannot replace required refinement
+NEGATIVE PASS accuracy wrong answer with valid outcome
+PASS accuracy · r34 · t=0 · x=[0;0] · cost=14.224880128185369
+NEGATIVE PASS definitions wrong answer with valid outcome
+PASS definitions · r35 · t=0 · x=[0;0] · cost=2.355987831556078
+NEGATIVE PASS terminal wrong answer with valid outcome
+PASS terminal · r36 · t=20 · x=[0;0] · cost=2.355987831556078
+PASS saved-course menu/open C1.L1 and shared publication
+PASS saved-course menu/open C1.L2 and shared publication
+PASS saved-course menu/open C1.L3 and shared publication
+PASS saved-course menu/open C1.L4 and shared publication
+PASS saved-course menu/open C1.L5 and shared publication
+PASS saved Bootstrap, all 12 steps, menu/reopen, stable C1.L6 v1/schema1, persistent completion; F16 untouched

@@ -1,0 +1,278 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e039087c2f4e1ab6f8639bc051389d, type: 3}
+  m_Name: TransferQuadrature
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.FormulaDefinition
+  id: c1.transfer.quadrature
+  schemaVersion: 1
+  contentVersion: '1'
+  title: Somma numerica a durata comune
+  description: 'Rettangolo sinistro, scelta numerica F15 associata a Euler. J^δ approssima J_c; terminale una volta.
+    A/B: stesse leggi fisiche, non copia di array per indice.'
+  expression: 'J^δ=Σ_(t=0)^(N−1) δ L_t+Φ(x_N)
+
+    C_0=0; C_k=Σ_(t=0)^(k−1)δL_t
+
+    H=Nδ; τ_t=tδ'
+  sourceTranscription: 'J^δ=Σ_(t=0)^(N−1) δ L_t+Φ(x_N)
+
+    C_0=0; C_k=Σ_(t=0)^(k−1)δL_t
+
+    H=Nδ; τ_t=tδ'
+  assumptions: 'Rettangolo sinistro, scelta numerica F15 associata a Euler. J^δ approssima J_c; terminale una volta.
+    A/B: stesse leggi fisiche, non copia di array per indice.'
+  terms:
+  - id: density
+    symbol: L_t
+    label: Densità running
+    meaning: L(x_t,u_t,τ_t) [1/s], NON il contributo integrato. Solo t<N.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - 1/s
+    value:
+      metricId: continuous.density
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: cost.density
+      scope: 0
+  - id: cell
+    symbol: δL_t
+    label: Contributo della cella
+    meaning: Valore già integrato dal layer matematico, adimensionale. N/A a N.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: continuous.contribution
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: cost.stage
+      scope: 0
+  - id: cumulative
+    symbol: C_t
+    label: Cumulativo running
+    meaning: 'Σ delle celle PRIMA del cursore: C0=0; C_N esclude Φ.'
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: continuous.cumulative
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: cost.cumulative
+      scope: 0
+  - id: terminal
+    symbol: Φ
+    label: Costo terminale
+    meaning: Valutazione di x_N rispetto al reference finale; una sola volta, senza δ e senza u_N.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: continuous.terminal
+      kind: 0
+      scope: 2
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: cost.terminal
+      scope: 2
+  - id: total
+    symbol: J^δ
+    label: Approssimazione del funzionale
+    meaning: C_N+Φ; quadratura e rollout Euler sono approssimazioni. Non costo minimo certificato.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: continuous.total
+      kind: 0
+      scope: 4
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 4
+  - id: duration
+    symbol: H
+    label: Durata fisica
+    meaning: Durata T continuo della fonte, qui H per distinguerla da N transizioni.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - s
+    value:
+      metricId: continuous.duration
+      kind: 0
+      scope: 4
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 4
+  - id: transitions
+    symbol: N
+    label: Numero di transizioni
+    meaning: N=T discreto; N+1 stati, N input. H=Nδ.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: continuous.transitions
+      kind: 0
+      scope: 4
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 4
+  - id: time.step
+    symbol: δ
+    label: Passo fisico
+    meaning: 'Passo fisico Euler e larghezza delle celle. H fisso: cambiare δ ricampiona N, input e riferimento.
+      Non playback.'
+    rows: 1
+    columns: 1
+    componentUnits:
+    - s
+    value:
+      metricId: time.step
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: time.physical
+    symbol: τ_t
+    label: Tempo fisico
+    meaning: Tempo del campione salvato. Nel pendolo τ_t=tδ; in una dinamica index-only è N/A.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - s
+    value:
+      metricId: time.physical
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: same-problem
+    symbol: P_A=P_B
+    label: Stesso problema fisico
+    meaning: 'Confronto autorevole: stessi H, modello/parametri/x0, leggi input/reference, pesi e terminale. Soltanto
+      δ/N differiscono.'
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: continuous.comparison.same-problem
+      kind: 0
+      scope: 4
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 4
+  - id: cost-difference
+    symbol: J_B−J_A
+    label: Differenza quadrature
+    meaning: Differenza tra due approssimazioni dello stesso problema; NON errore rispetto al vero integrale.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: continuous.comparison.cost-difference
+      kind: 0
+      scope: 4
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 4
+  sources:
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 31
+    lastPhysicalPage: 36
+    firstSlide: 30
+    lastSlide: 35
+    section: Problema continuo, pendolo, equilibri, desiderato e funzionale
+    usage: 1
+    note: 'H indica la durata T della fonte; N indica T discreto. Correzione p.34: velocità di equilibrio nulla.
+      Costo p.36 SENZA ½. Quadratura rettangolo sinistro: scelta numerica F15, non formula esatta della fonte.'
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 27
+    lastPhysicalPage: 27
+    firstSlide: 26
+    lastSlide: 26
+    section: Forward Euler
+    usage: 1
+    note: Regola applicata al pendolo p.33; tutte le righe usano lo stato vecchio.
+  layout:
+    rootId: r
+    nodes:
+    - id: r
+      kind: 2
+      children:
+      - j
+      - eq
+      - sum
+      - plus
+      - phi
+    - id: j
+      kind: 1
+      termId: total
+    - id: eq
+      kind: 0
+      text: '='
+    - id: sum
+      kind: 5
+      children:
+      - lo
+      - hi
+      - cell
+    - id: lo
+      kind: 0
+      text: t=0
+    - id: hi
+      kind: 0
+      text: N−1
+    - id: cell
+      kind: 1
+      termId: cell
+    - id: plus
+      kind: 0
+      text: +
+    - id: phi
+      kind: 1
+      termId: terminal

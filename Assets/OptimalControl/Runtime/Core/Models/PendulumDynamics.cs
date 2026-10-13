@@ -7,7 +7,7 @@ namespace OptCon.Core
     /// State [angle, angular velocity], input [torque]. Both equations use the OLD state.
     /// Angles remain unwrapped; no damping, saturation, collision or Unity physics is added.
     /// </summary>
-    public sealed class PendulumDynamics : IDiscreteDynamics
+    public sealed class PendulumDynamics : IDifferentiableDynamics
     {
         public PendulumParameters Parameters { get; }
         public double StepSeconds { get; }
@@ -27,14 +27,37 @@ namespace OptCon.Core
             if (timestep < 0) throw new ArgumentOutOfRangeException(nameof(timestep));
             NumericValidation.RequireDimension(state, Descriptor.Dimensions.State, nameof(state));
             NumericValidation.RequireDimension(control, Descriptor.Dimensions.Control, nameof(control));
-            double angle = state[0];
-            double velocity = state[1];
-            double acceleration = -Parameters.GravityOverLength * Math.Sin(angle) + control[0] / Parameters.MomentOfInertia;
-            double nextAngle = angle + StepSeconds * velocity;
-            double nextVelocity = velocity + StepSeconds * acceleration;
-            if (!NumericValidation.IsFinite(acceleration) || !NumericValidation.IsFinite(nextAngle) || !NumericValidation.IsFinite(nextVelocity))
+            var derivative = EvaluateDerivative(state, control);
+            double nextAngle = state[0] + StepSeconds * derivative[0];
+            double nextVelocity = state[1] + StepSeconds * derivative[1];
+            if (!NumericValidation.IsFinite(nextAngle) || !NumericValidation.IsFinite(nextVelocity))
                 throw new ArithmeticException($"Pendulum transition at t={timestep} produced a non-finite result.");
             return new NumericVector(nextAngle, nextVelocity);
+        }
+        public NumericVector EvaluateDerivative(NumericVector state, NumericVector control)
+        {
+            ValidatePair(0, state, control);
+            double acceleration = -Parameters.GravityOverLength * Math.Sin(state[0]) + control[0] / Parameters.MomentOfInertia;
+            if (!NumericValidation.IsFinite(acceleration)) throw new ArithmeticException("Pendulum derivative produced a non-finite result.");
+            return new NumericVector(state[1], acceleration);
+        }
+
+        private void ValidatePair(int timestep, NumericVector state, NumericVector control)
+        {
+            if (timestep < 0) throw new ArgumentOutOfRangeException(nameof(timestep));
+            NumericValidation.RequireDimension(state, 2, nameof(state));
+            NumericValidation.RequireDimension(control, 1, nameof(control));
+        }
+        public NumericMatrix StateJacobian(int timestep, NumericVector state, NumericVector control)
+        {
+            ValidatePair(timestep, state, control);
+            return new NumericMatrix(2, 2, 1, StepSeconds,
+                -StepSeconds * Parameters.GravityOverLength * Math.Cos(state[0]), 1);
+        }
+        public NumericMatrix InputJacobian(int timestep, NumericVector state, NumericVector control)
+        {
+            ValidatePair(timestep, state, control);
+            return new NumericMatrix(2, 1, 0, StepSeconds / Parameters.MomentOfInertia);
         }
     }
 }

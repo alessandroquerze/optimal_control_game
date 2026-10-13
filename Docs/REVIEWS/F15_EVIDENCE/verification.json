@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-13",
+  "unity": "6000.3.8f1",
+  "scope": "F15 only",
+  "tests": {
+    "EditMode": {
+      "total": "543",
+      "passed": "543",
+      "failed": "0",
+      "skipped": "0",
+      "result": "Passed",
+      "duration": "5,7939753",
+      "baseline_cases_preserved": 484,
+      "new_cases": 59
+    },
+    "PlayMode": {
+      "total": "114",
+      "passed": "114",
+      "failed": "0",
+      "skipped": "0",
+      "result": "Passed",
+      "duration": "99,3243317",
+      "baseline_cases_preserved": 108,
+      "new_cases": 6
+    }
+  },
+  "compile": {
+    "compile-final": 0
+  },
+  "native": {
+    "native-complete-final": 0,
+    "native-complete-reload": 0
+  },
+  "screenshot_count": 37,
+  "application_file_count": 664,
+  "application_clone_identical": true,
+  "temporary_helpers_removed": true,
+  "pdf_sha256": "ae169f3492dc0915d0777d62e90184107d7017aee03b8620bbfe0aee9bd3a469",
+  "assembly_count": 13,
+  "assembly_cycles": false,
+  "core_simulation_pure": true,
+  "csharp_errors_warnings": 0
+}

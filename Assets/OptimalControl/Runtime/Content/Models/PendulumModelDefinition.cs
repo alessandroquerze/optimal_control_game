@@ -6,8 +6,9 @@ using UnityEngine;
 namespace OptCon.Content
 {
     [CreateAssetMenu(menuName = "Optimal Control/Models/Pendulum (Explicit Euler)")]
-    public sealed class PendulumModelDefinition : ModelDefinition
+    public class PendulumModelDefinition : ModelDefinition
     {
+        public override OptCon.Simulation.ExperimentCapabilities Capabilities => base.Capabilities | OptCon.Simulation.ExperimentCapabilities.Linearization;
         public override ModelDimensions Dimensions => new ModelDimensions(2, 1, 1);
         protected override ModelConfiguration CreateModel(double? physicalStep, IReadOnlyDictionary<string, double> parameters)
         {

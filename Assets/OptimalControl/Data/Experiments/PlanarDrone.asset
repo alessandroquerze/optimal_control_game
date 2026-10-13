@@ -1,0 +1,111 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4a65509c5394032a246076299067e3a, type: 3}
+  m_Name: PlanarDrone
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.ExperimentDefinition
+  id: c1.drone.planar
+  schemaVersion: 1
+  contentVersion: '1'
+  title: 'Drone planare: sei stati e due spinte'
+  description: Produzione F14; I pp.26–30. Nessuna ottimizzazione, saturazione o quadratura.
+  model: {fileID: 11400000, guid: 71c8b521f2bb5ac39953ab6a030e6472, type: 2}
+  scenarioPrefab: {fileID: 215351469593391701, guid: de06434f775a6f443be476748af43f07, type: 3}
+  cost: {fileID: 11400000, guid: 0ead76878e4254fda4ab4e36790c824f, type: 2}
+  stateDimension: 6
+  controlDimension: 2
+  outputDimension: 2
+  stateUnits:
+  - m
+  - m/s
+  - m
+  - m/s
+  - rad
+  - rad/s
+  controlUnits:
+  - N
+  - N
+  outputUnits:
+  - m
+  - m
+  usesDiscreteTime: 1
+  discreteTime:
+    horizon: 50
+    hasPhysicalTimeStep: 1
+    stepSeconds: 0.02
+    initialState:
+    - 0
+    - 0
+    - 1
+    - 0
+    - 0
+    - 0
+    defaultControl:
+    - 4.905
+    - 4.905
+    referenceState: []
+  parameters:
+  - id: drone.mass
+    label: M · massa
+    description: M · massa; SI, configurazione immutabile della revisione.
+    valueKind: 0
+    unit: kg
+    defaultValue: 1
+    minimum: 0.1
+    maximum: 10
+    step: 0.1
+    modelTarget: model.mass
+    recalculation: 0
+  - id: drone.arm-length
+    label: L · distanza rotori
+    description: L · distanza rotori; SI, configurazione immutabile della revisione.
+    valueKind: 0
+    unit: m
+    defaultValue: 1
+    minimum: 0.1
+    maximum: 4
+    step: 0.1
+    modelTarget: model.arm-length
+    recalculation: 0
+  - id: drone.gravity
+    label: g · gravità
+    description: g · gravità; SI, configurazione immutabile della revisione.
+    valueKind: 0
+    unit: m/s²
+    defaultValue: 9.81
+    minimum: 0
+    maximum: 20
+    step: 0.1
+    modelTarget: model.gravity
+    recalculation: 0
+  - id: drone.moment-of-inertia
+    label: J · momento d’inerzia (non costo)
+    description: J · momento d’inerzia (non costo); SI, configurazione immutabile della revisione.
+    valueKind: 0
+    unit: kg·m²
+    defaultValue: 0.25
+    minimum: 0.01
+    maximum: 5
+    step: 0.01
+    modelTarget: model.moment-of-inertia
+    recalculation: 0
+  sources:
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 26
+    lastPhysicalPage: 30
+    firstSlide: 25
+    lastSlide: 29
+    section: Drone planare, Euler, costo e limiti
+    usage: 1
+    note: 'Fonte chiamata 3D, equazioni planari. Stato ordinato [px,vx,py,vy,θ,ω]. J è il momento d’inerzia. Costo
+      diagonale discreto, input desiderato zero. Vincoli t=0…T−1 coerenti con I p.21: nessun input a T.'
+  constraints: {fileID: 11400000, guid: acff369bd71a55fb9a26725762a0bf5a, type: 2}
+  provider: {fileID: 11400000, guid: 71c8b521f2bb5ac39953ab6a030e6472, type: 2}

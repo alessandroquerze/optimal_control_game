@@ -9,12 +9,12 @@ namespace OptCon.Presentation
         public long RevisionId => GetComponent<HighlightTarget>().RevisionId;
         public void RenderGlobal(Vector3 point, long revision)
         {
-            GetComponent<HighlightTarget>().SetGlobal(revision, true);
+            foreach (var target in GetComponents<HighlightTarget>()) target.SetGlobal(revision, true);
             transform.localPosition = point; gameObject.SetActive(true);
         }
         public void Render(Vector3 point, long revision, int? sample)
         {
-            GetComponent<HighlightTarget>().SetSample(revision, sample);
+            foreach (var target in GetComponents<HighlightTarget>()) target.SetSample(revision, sample);
             gameObject.SetActive(sample.HasValue);
             if (sample.HasValue) transform.localPosition = point;
         }

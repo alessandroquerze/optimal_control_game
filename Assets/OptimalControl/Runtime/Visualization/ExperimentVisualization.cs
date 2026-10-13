@@ -15,6 +15,11 @@ namespace OptCon.Presentation
         [SerializeField] private CostContributionVisualizer[] costs = System.Array.Empty<CostContributionVisualizer>();
         [SerializeField] private TargetVisualizer[] targets = System.Array.Empty<TargetVisualizer>();
         [SerializeField] private ComparisonTrajectoryRenderer[] comparisons = System.Array.Empty<ComparisonTrajectoryRenderer>();
+        [SerializeField] private LinearizationComparisonView[] linearizations = System.Array.Empty<LinearizationComparisonView>();
+        [SerializeField] private ReferenceTrajectoryView[] references = System.Array.Empty<ReferenceTrajectoryView>();
+        [SerializeField] private ConstraintRegionVisualizer[] constraints = System.Array.Empty<ConstraintRegionVisualizer>();
+        [SerializeField] private PlanarDroneBodyView[] planarBodies = System.Array.Empty<PlanarDroneBodyView>();
+        [SerializeField] private ContinuousFunctionalView[] continuousFunctionals = System.Array.Empty<ContinuousFunctionalView>();
         private SimulationSession session;
         private bool subscribed;
         private ILessonRuntime lesson;
@@ -72,11 +77,16 @@ namespace OptCon.Presentation
             {
                 foreach (var plot in plots) plot.Render(state);
                 foreach (var body in angularBodies) body.Render(state);
+                foreach (var body in planarBodies) body.Render(state);
                 foreach (var torque in torques) torque.Render(state);
                 foreach (var transition in transitions) transition.Render(state);
                 foreach (var cost in costs) cost.Render(state);
                 foreach (var target in targets) target.Render(state);
                 foreach (var comparison in comparisons) comparison.Render(state);
+                foreach (var linearization in linearizations) linearization.Render(state);
+                foreach (var reference in references) reference.Render(state);
+                foreach (var constraint in constraints) constraint.Render(state);
+                foreach (var functional in continuousFunctionals) functional.Render(state);
                 if (lesson != null) ApplyPresentation(lesson.Presentation);
                 highlights.Refresh();
                 Status = new VisualizationStatus(state, VisualizationAvailability.Available);

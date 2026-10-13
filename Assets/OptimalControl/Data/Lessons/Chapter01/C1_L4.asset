@@ -1,0 +1,525 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2447a3f1440a48128f99dcbb8f745af5, type: 3}
+  m_Name: C1_L4
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.LessonDefinition
+  id: C1.L4
+  schemaVersion: 1
+  contentVersion: '1'
+  title: Riferimento desiderato e rollout manuale
+  description: 'Produzione F13: costi e vincoli I pp.14–23; riferimento e rollout I pp.24–25,35.'
+  objective: Riferimento desiderato e rollout manuale
+  prerequisiteLessonIds:
+  - C1.L3
+  workspace:
+    assetPath: Assets/OptimalControl/Scenes/LessonWorkspace.unity
+  experiment: {fileID: 11400000, guid: 80f001a129875cc9b47d4c10e8a69f69, type: 2}
+  formulas:
+  - {fileID: 11400000, guid: bd943400bc0d5de9bfd5c6d6740cc0d8, type: 2}
+  - {fileID: 11400000, guid: e1fec4511040575482af94d280499cf1, type: 2}
+  - {fileID: 11400000, guid: 36de24aa5ea056489becb88c1a897338, type: 2}
+  - {fileID: 11400000, guid: 6af9f1aaf93750bfbc69483dab9b750c, type: 2}
+  - {fileID: 11400000, guid: af230dd990165c60b1669032ff5f5762, type: 2}
+  sources:
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 14
+    lastPhysicalPage: 25
+    firstSlide: 13
+    lastSlide: 24
+    section: Decisioni, costi, vincoli, reference e generazione di traiettorie
+    usage: 0
+    note: ''
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 35
+    lastPhysicalPage: 35
+    firstSlide: 34
+    lastSlide: 34
+    section: Riferimento a gradino fra equilibri
+    usage: 1
+    note: Campionamento discreto t=0…T; θ_des cambia al campione 10 su T=20; ω_des=0; u_des=mgl sin θ_des. La curva
+      desiderata non soddisfa la dinamica al salto. Nessuna quadratura continua.
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 27
+    lastPhysicalPage: 27
+    firstSlide: 26
+    lastSlide: 26
+    section: Euler
+    usage: 1
+    note: Pendolo discreto già usato in C1.L1/L2, δ=.02 s.
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 33
+    lastPhysicalPage: 34
+    firstSlide: 32
+    lastSlide: 33
+    section: Pendolo ed equilibrio
+    usage: 1
+    note: 'Errata p.34: ω_e=0. Righe/colonne del Core invariati.'
+  steps:
+  - id: desired
+    title: Un desiderio non è ancora un rollout
+    objective: Distinguere curve desired/actual e output.
+    instruction: 'La curva desiderata passa da equilibrio θ=0 a θ=.5 rad al campione 10; ω_des=0. u_des=mgl sin
+      θ_des: 0 poi 4.7031645337 N·m. Tratteggio e diamante distinguono il desiderato dal rollout reale continuo/sfera.
+      Seleziona x_des e y_des: due componenti contro una. Nel pendolo y_des=θ_des, NON l’intero stato.'
+    help: Formula e valori appartengono alla stessa revisione del rollout. Reset/Ricomincia torna al primo step;
+      Indietro ripristina autonomamente questa attività.
+    formulaFocus: {fileID: 11400000, guid: bd943400bc0d5de9bfd5c6d6740cc0d8, type: 2}
+    selectedTermId: reference.state
+    visibleTermIds:
+    - reference.state
+    - reference.input
+    - reference.output
+    - state.current
+    - output.current
+    enabledControlIds: []
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - input
+    - next
+    - cost
+    - desired
+    - target
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale affermazione è corretta?
+    answers:
+    - id: wrong
+      text: Qualunque curva desiderata è già un rollout valido.
+      feedback: Rileggi la relazione mostrata e distingui criterio, riferimento, ammissibilità e rollout.
+    - id: different
+      text: x_des è una curva desiderata; y_des deriva dall’output del modello.
+      feedback: 'Corretto: confronta formula, valori e vista.'
+    conditions:
+    - evaluatorId: term
+      targetId: reference.state
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: reference.output
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: different
+  - id: jump
+    title: Il salto può violare la dinamica
+    objective: Identificare una transizione desiderata non ammissibile.
+    instruction: 'L’ingresso porta t=9, subito prima del salto. Seleziona h_des: il modello da [0,0] e u_des=0 prevede
+      [0,0], mentre il campione desiderato 10 è [.5,0]. Residuo [−.5,0]. I due lati sono equilibri, il salto non
+      è una transizione del sistema. Il rollout reale ha h=0.'
+    help: Formula e valori appartengono alla stessa revisione del rollout. Reset/Ricomincia torna al primo step;
+      Indietro ripristina autonomamente questa attività.
+    formulaFocus: {fileID: 11400000, guid: bd943400bc0d5de9bfd5c6d6740cc0d8, type: 2}
+    selectedTermId: desired-h
+    visibleTermIds:
+    - desired-h
+    - h
+    - reference.state
+    - reference.input
+    - time.index
+    enabledControlIds: []
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - input
+    - next
+    - cost
+    - desired
+    - target
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 4
+      index: 9
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale affermazione è corretta?
+    answers:
+    - id: jump
+      text: La transizione 9→10 viola la dinamica desiderata.
+      feedback: 'Corretto: confronta formula, valori e vista.'
+    - id: wrong
+      text: Due equilibri possono sempre essere uniti con un salto istantaneo.
+      feedback: Rileggi la relazione mostrata e distingui criterio, riferimento, ammissibilità e rollout.
+    conditions:
+    - evaluatorId: term
+      targetId: desired-h
+      expectedAnswerId: ''
+    - evaluatorId: reference.not-feasible
+      targetId: ''
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: jump
+  - id: manual
+    title: Generare un rollout con il controllo
+    objective: Modificare input senza fingere ottimizzazione.
+    instruction: 'Da t=0 con x₀=[0,0], imposta input u[0]=1 usando CODA. Il simulation core genera gli stati reali;
+      premi Step. La curva tratteggiata resta immutata. Non stiamo ricopiando x_des negli stati né minimizzando
+      J: questo è un tentativo MANUALE che soddisfa f, anche se non segue il gradino.'
+    help: Formula e valori appartengono alla stessa revisione del rollout. Reset/Ricomincia torna al primo step;
+      Indietro ripristina autonomamente questa attività.
+    formulaFocus: {fileID: 11400000, guid: bd943400bc0d5de9bfd5c6d6740cc0d8, type: 2}
+    selectedTermId: input.applied
+    visibleTermIds:
+    - input.applied
+    - state.current
+    - h
+    - desired-h
+    - reference.state
+    enabledControlIds:
+    - input
+    - step
+    - seek
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - input
+    - next
+    - cost
+    - desired
+    - target
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale affermazione è corretta?
+    answers:
+    - id: wrong
+      text: Il renderer sposta gli stati sulla curva desiderata.
+      feedback: Rileggi la relazione mostrata e distingui criterio, riferimento, ammissibilità e rollout.
+    - id: manual
+      text: Il rollout manuale soddisfa f; non è automaticamente ottimo o uguale al desiderato.
+      feedback: 'Corretto: confronta formula, valori e vista.'
+    conditions:
+    - evaluatorId: action
+      targetId: input.changed
+      expectedAnswerId: ''
+    - evaluatorId: action
+      targetId: time.advanced
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: h
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: manual
+  - id: tracking
+    title: Confrontare allo stesso campione
+    objective: Misurare scarto e stage con reference indicizzata.
+    instruction: L’attività ricrea autonomamente u=1 su tutta la coda e seleziona t=10. Ora x_des=[.5,0] e u_des≈4.70316.
+      e_t e i due contributi usano proprio questi campioni. Seleziona e_t e ℓˣ_t; seek fra 9 e 10 mostra il cambio
+      esatto della curva desiderata, non un default costante.
+    help: Formula e valori appartengono alla stessa revisione del rollout. Reset/Ricomincia torna al primo step;
+      Indietro ripristina autonomamente questa attività.
+    formulaFocus: {fileID: 11400000, guid: e1fec4511040575482af94d280499cf1, type: 2}
+    selectedTermId: error
+    visibleTermIds:
+    - error
+    - reference.state
+    - reference.input
+    - state.current
+    - input.applied
+    - state-part
+    - input-part
+    - stage
+    enabledControlIds:
+    - seek
+    - step
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - input
+    - next
+    - cost
+    - desired
+    - target
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 6
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 1
+      scope: 1
+    - kind: 4
+      index: 10
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale affermazione è corretta?
+    answers:
+    - id: same-sample
+      text: Stage e scarto confrontano reale e desiderato allo stesso t.
+      feedback: 'Corretto: confronta formula, valori e vista.'
+    - id: wrong
+      text: Ogni stage usa sempre il riferimento iniziale t=0.
+      feedback: Rileggi la relazione mostrata e distingui criterio, riferimento, ammissibilità e rollout.
+    conditions:
+    - evaluatorId: term
+      targetId: error
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: state-part
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: same-sample
+  - id: change-reference
+    title: Stesso controllo, desiderio diverso
+    objective: Confrontare revisioni con riferimento proprio.
+    instruction: 'La configurazione A è salvata a t=10 con u=1. Prima prevedi dalla formula: x_t resta fisso, ma
+      cambiare x_des cambia e_t e il contributo di tracking. In costo/limiti modifica cost.reference.state.10.0
+      da .5 a .8. Si cambia SOLO quel campione desiderato; il nuovo punto non promette equilibrio. B ha costo/reference
+      propri; A conserva i suoi. Non è una ricerca dell’ottimo.'
+    help: Formula e valori appartengono alla stessa revisione del rollout. Reset/Ricomincia torna al primo step;
+      Indietro ripristina autonomamente questa attività.
+    formulaFocus: {fileID: 11400000, guid: e1fec4511040575482af94d280499cf1, type: 2}
+    selectedTermId: reference.state
+    visibleTermIds:
+    - reference.state
+    - state.current
+    - error
+    - state-part
+    - stage
+    enabledControlIds:
+    - parameter
+    - comparison
+    - seek
+    editableParameterTargets:
+    - cost.reference.state.10.0
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - input
+    - next
+    - cost
+    - desired
+    - target
+    - comparison
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 6
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 1
+      scope: 1
+    - kind: 4
+      index: 10
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 12
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale affermazione è corretta?
+    answers:
+    - id: wrong
+      text: Il riferimento nuovo riscrive retroattivamente anche il risultato A.
+      feedback: Rileggi la relazione mostrata e distingui criterio, riferimento, ammissibilità e rollout.
+    - id: reference
+      text: Cambia riferimento e costo di B; rollout e configurazione A restano propri.
+      feedback: 'Corretto: confronta formula, valori e vista.'
+    conditions:
+    - evaluatorId: action
+      targetId: parameter.changed:cost.reference.state.10.0
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: reference.state
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: reference
+  - id: reference-not-constraint
+    title: Desiderato, costo e limite sono distinti
+    objective: Separare tre ruoli matematici.
+    instruction: 'Torniamo al gradino editoriale e al rollout manuale u=1. x_des dice dove vorremmo andare; Q/R
+      pesano gli scarti; g e r descrivono ammissibilità. La curva desiderata resta dinamicamente non valida al salto.
+      Nessuno dei tre ruoli è un solver. Seleziona g: il limite non dipende dal valore desiderato.'
+    help: Formula e valori appartengono alla stessa revisione del rollout. Reset/Ricomincia torna al primo step;
+      Indietro ripristina autonomamente questa attività.
+    formulaFocus: {fileID: 11400000, guid: 6af9f1aaf93750bfbc69483dab9b750c, type: 2}
+    selectedTermId: g
+    visibleTermIds:
+    - g
+    - r
+    - h
+    - feasible
+    - total
+    enabledControlIds: []
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - input
+    - next
+    - cost
+    - desired
+    - target
+    - constraints
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 6
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 1
+      scope: 1
+    - kind: 4
+      index: 10
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale affermazione è corretta?
+    answers:
+    - id: roles
+      text: Reference descrive un desiderio, costo una preferenza, vincolo una richiesta dura.
+      feedback: 'Corretto: confronta formula, valori e vista.'
+    - id: wrong
+      text: Un target desiderato è sempre un vincolo duro imposto dal renderer.
+      feedback: Rileggi la relazione mostrata e distingui criterio, riferimento, ammissibilità e rollout.
+    conditions:
+    - evaluatorId: term
+      targetId: g
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: roles
+  - id: terminal
+    title: Il riferimento finale appartiene a T
+    objective: Concludere senza inventare input terminale.
+    instruction: 'Porta il cursore a T=20. Seleziona x_T^des: [.5,0], non il campione iniziale [0,0]. ℓ_T usa questo
+      riferimento e il suo Q_T. u_T, u_T^des e lo stage a T sono assenti. Il percorso costruisce il problema e un
+      rollout manuale; l’ottimizzazione arriverà in F28, non qui.'
+    help: Formula e valori appartengono alla stessa revisione del rollout. Reset/Ricomincia torna al primo step;
+      Indietro ripristina autonomamente questa attività.
+    formulaFocus: {fileID: 11400000, guid: 36de24aa5ea056489becb88c1a897338, type: 2}
+    selectedTermId: reference.terminal
+    visibleTermIds:
+    - reference.terminal
+    - state.terminal
+    - terminal
+    - stage
+    - input.applied
+    - time.index
+    enabledControlIds:
+    - seek
+    - step
+    editableParameterTargets: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - input
+    - next
+    - cost
+    - desired
+    - target
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 6
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 1
+      scope: 1
+    question: Quale affermazione è corretta?
+    answers:
+    - id: wrong
+      text: ℓ_T rilegge il riferimento iniziale o quello dell’ultima revisione B.
+      feedback: Rileggi la relazione mostrata e distingui criterio, riferimento, ammissibilità e rollout.
+    - id: terminal
+      text: Il terminale usa reference a T e nessun input terminale.
+      feedback: 'Corretto: confronta formula, valori e vista.'
+    conditions:
+    - evaluatorId: terminal
+      targetId: ''
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: reference.terminal
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: input.applied
+      expectedAnswerId: ''
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: terminal
+  completionCriteria: Azioni effettive, termini selezionati e risposte corrette. Solo C1.L4 v1/schema1 del corso
+    optimal-control; nessun credito da prototipo/fixture.

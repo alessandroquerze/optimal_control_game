@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 955dcc1e7f774ebaa7e6c3542074a628, type: 3}
+  m_Name: DroneTracking
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.QuadraticTrackingCostDefinition
+  id: c1.drone.tracking
+  schemaVersion: 1
+  contentVersion: '1'
+  title: Costo diagonale del drone
+  description: 'I p.29: Q/Q_T semidefinite positive, R positiva. θ,ω e input desiderati zero. Somma discreta, nessun
+    fattore δ. Indice di prestazione ℓ_tot, distinto da J inerzia.'
+  stateWeights:
+  - 2
+  - 1
+  - 2
+  - 1
+  - 0.5
+  - 0.2
+  inputWeights:
+  - 0.02
+  - 0.02
+  terminalWeights:
+  - 5
+  - 2
+  - 5
+  - 2
+  - 1
+  - 0.4
+  referenceInput: []
+  sampledReference: {fileID: 11400000, guid: 8b71c6b02ce2545b82e2667716923d01, type: 2}
+  stateContribution:
+    id: state-deviation
+    label: Deviazione stato
+    symbol: ℓˣ
+    description: Metà norma Q (o Q_T al terminale) dello scarto dal campione desiderato.
+    unit: '1'
+  inputContribution:
+    id: control-deviation
+    label: Deviazione controllo
+    symbol: ℓᵘ
+    description: Metà norma R dello scarto u_t−u_t^des, solo per t<T.
+    unit: '1'
+  totalSymbol: ℓ_tot

@@ -1,0 +1,198 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e039087c2f4e1ab6f8639bc051389d, type: 3}
+  m_Name: DroneBounds
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.FormulaDefinition
+  id: c1.drone.bounds
+  schemaVersion: 1
+  contentVersion: '1'
+  title: Limiti delle due spinte e della quota
+  description: Tre intervalli per componenti distinte, non un limite scalare universale. Un residuo positivo non
+    altera il comando. Quota diagnosticata ai campioni t<T; non si certificano segmenti continui o il campione terminale.
+  expression: '0≤u₁≤8 N; 0≤u₂≤8 N; .5≤p_y≤2 m
+
+    g(v)=max(v_min−v,v−v_max)≤0
+
+    t=0,…,T−1: diagnostica, NON saturazione'
+  sourceTranscription: '0≤u₁≤8 N; 0≤u₂≤8 N; .5≤p_y≤2 m
+
+    g(v)=max(v_min−v,v−v_max)≤0
+
+    t=0,…,T−1: diagnostica, NON saturazione'
+  assumptions: Tre intervalli per componenti distinte, non un limite scalare universale. Un residuo positivo non
+    altera il comando. Quota diagnosticata ai campioni t<T; non si certificano segmenti continui o il campione terminale.
+  terms:
+  - id: input.applied
+    symbol: u_t
+    label: Vettore delle due spinte
+    meaning: Vector(2), ordine [u₁,u₂], forze in N, non coppie. Somma e differenza accoppiano il moto.
+    rows: 2
+    columns: 1
+    componentUnits:
+    - N
+    - N
+    value:
+      metricId: input.applied
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: input.applied
+      scope: 0
+  - id: u1
+    symbol: u₁,t
+    label: Spinta destra
+    meaning: Componente 0 ESPLICITA di input.applied Vector(2). Forza normale al body, non asse x.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - N
+    value:
+      metricId: input.applied
+      kind: 0
+      scope: 0
+      component: 0
+      numericFormat: G6
+    highlight:
+      semanticRole: input.thrust1
+      scope: 0
+  - id: u2
+    symbol: u₂,t
+    label: Spinta sinistra
+    meaning: Componente 1 ESPLICITA di input.applied Vector(2). La differenza produce momento.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - N
+    value:
+      metricId: input.applied
+      kind: 0
+      scope: 0
+      component: 1
+      numericFormat: G6
+    highlight:
+      semanticRole: input.thrust2
+      scope: 0
+  - id: g0
+    symbol: g_0
+    label: Residuo spinta u₁
+    meaning: 'max(min−v,v−max)≤0: negativo dentro, zero sul bordo, positivo fuori. Diagnostica, nessuna saturazione.'
+    rows: 1
+    columns: 1
+    componentUnits:
+    - N
+    value:
+      metricId: constraint.g.thrust1
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: constraint.thrust1
+      scope: 0
+  - id: g1
+    symbol: g_1
+    label: Residuo spinta u₂
+    meaning: 'max(min−v,v−max)≤0: negativo dentro, zero sul bordo, positivo fuori. Diagnostica, nessuna saturazione.'
+    rows: 1
+    columns: 1
+    componentUnits:
+    - N
+    value:
+      metricId: constraint.g.thrust2
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: constraint.thrust2
+      scope: 0
+  - id: g2
+    symbol: g_2
+    label: Residuo quota
+    meaning: 'max(min−v,v−max)≤0: negativo dentro, zero sul bordo, positivo fuori. Diagnostica, nessuna saturazione.'
+    rows: 1
+    columns: 1
+    componentUnits:
+    - m
+    value:
+      metricId: constraint.g.altitude
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: constraint.altitude
+      scope: 0
+  - id: x2
+    symbol: p_y_t
+    label: Quota
+    meaning: 'Componente 2 dello stato. Zero θ: body orizzontale; piano fisico XY.'
+    rows: 1
+    columns: 1
+    componentUnits:
+    - m
+    value:
+      metricId: state.current
+      kind: 0
+      scope: 0
+      component: 2
+      numericFormat: G6
+    highlight:
+      semanticRole: state.component.2
+      scope: 0
+  - id: total
+    symbol: ℓ_tot
+    label: Indice di prestazione
+    meaning: Somma dei T stage e del terminale. Diverso da J, momento d’inerzia. Costo adimensionale con pesi nelle
+      unità inverse quadrate.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: cost.total
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: time.index
+    symbol: t
+    label: Indice discreto
+    meaning: Numero del campione 0…T, non secondi. Esiste anche in una dinamica index-only.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: time.index
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  sources:
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 26
+    lastPhysicalPage: 30
+    firstSlide: 25
+    lastSlide: 29
+    section: Drone planare, Euler, costo e limiti
+    usage: 1
+    note: 'Fonte chiamata 3D, equazioni planari. Stato ordinato [px,vx,py,vy,θ,ω]. J è il momento d’inerzia. Costo
+      diagonale discreto, input desiderato zero. Vincoli t=0…T−1 coerenti con I p.21: nessun input a T.'

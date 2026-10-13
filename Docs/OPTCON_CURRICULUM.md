@@ -114,6 +114,10 @@ Per il tracking si scelgono `Q,Q_T` simmetriche semidefinite positive e `R` simm
 
 **Verifica:** costruire una traiettoria a costo minore ma non ammissibile e spiegare perché non è una soluzione del problema vincolato. Sistemi comuni: costi scomposti, regioni di vincolo, formula-term binding.
 
+**Copertura effettiva dopo F13 e gate MR-01–05 (12 ottobre 2026):** C1.L3 di produzione insegna z impilato con x₀ fissato, tracking/effort, stage/terminale/cumulativo/J, pesi diagonali, limite simmetrico di coppia con residuo g e vincolo fra estremi r. L'attività sul costo confronta input manuali differenti sotto lo stesso modello, costo, reference e vincoli. C1.L4 distingue riferimento campionato, output desiderato e rollout reale; il salto desiderato può violare la dinamica. La regione mostrata è un intervallo di coppia, non un'ellisse o l'intero insieme delle traiettorie ammissibili.
+
+La lista di visualizzazioni sopra rimane l'obiettivo curriculare: gli esempi statici scalari/vettoriali di I pp.14–18, parabola/superficie generale, ellisse ammissibile e frontiera di uguaglianza **non sono ancora erogati da C1.L3** e non vanno assunti come conoscenze già acquisite. Recupero tracciato nella roadmap: **F16** per decisioni statiche e superfici; **F17** per geometria degli insiemi, ellisse e distinzione interno/frontiera; **F20** per proiezioni sui soli insiemi con operatore effettivamente implementato; **F28** per verifica della copertura e richiami nel Chapter 1. Nessuna proiezione dell'ellisse è promessa dal contratto corrente. La fixture statica F10 non accredita questa copertura; solver/ottimizzazione del tracking rimangono alle fasi successive e all'integrazione F28.
+
 ### C1.L4 — Curva desiderata e generazione di traiettorie
 
 **Fonti:** I pp. 22–25, «Cost function: examples», «Trajectory generation», «Optimal control for trajectory generation»; slide 21–24. Richiamo applicativo: I p. 35, slide 34.

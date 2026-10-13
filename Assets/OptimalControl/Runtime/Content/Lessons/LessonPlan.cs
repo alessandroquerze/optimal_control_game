@@ -10,8 +10,43 @@ namespace OptCon.Content
         public string EvaluatorId { get; }
         public string TargetId { get; }
         public string ExpectedAnswerId { get; }
+        public LessonMetricEvidencePlan Evidence { get; }
         public LessonConditionPlan(LessonConditionDefinition definition)
-        { EvaluatorId = definition.EvaluatorId; TargetId = definition.TargetId; ExpectedAnswerId = definition.ExpectedAnswerId; }
+        {
+            EvaluatorId = definition.EvaluatorId; TargetId = definition.TargetId; ExpectedAnswerId = definition.ExpectedAnswerId;
+            if (EvaluatorId == "metric.evidence") Evidence = new LessonMetricEvidencePlan(definition.Evidence);
+        }
+    }
+    /// <summary>Frozen evidence binding. Scalar typing/component selection belongs to RuntimeMetricResolver.</summary>
+    public sealed class LessonMetricEvidencePlan
+    {
+        public string MetricId { get; }
+        public int Component { get; }
+        public FormulaScope Scope { get; }
+        public int SampleIndex { get; }
+        public string Unit { get; }
+        public LessonMetricComparison Comparison { get; }
+        public double ExpectedValue { get; }
+        public double Tolerance { get; }
+        public bool RequireSameNominal { get; }
+        public bool RequireSameProblem { get; }
+        public bool RequireSamePhysicalProblem { get; }
+        public LessonMetricEvidencePlan(LessonMetricEvidenceDefinition definition)
+        {
+            if (definition == null) throw new ArgumentException("Metric evidence requires an explicit descriptor.");
+            if (string.IsNullOrWhiteSpace(definition.MetricId) || string.IsNullOrWhiteSpace(definition.Unit) || definition.Component < -1 ||
+                definition.SampleIndex < 0 || !Enum.IsDefined(typeof(LessonMetricComparison), definition.Comparison) ||
+                (definition.Scope != FormulaScope.CurrentTimestep && definition.Scope != FormulaScope.NextTimestep && definition.Scope != FormulaScope.Snapshot))
+                throw new ArgumentException("Invalid metric evidence binding, component, sample, unit or comparison.");
+            OptCon.Core.NumericValidation.RequireFinite(definition.ExpectedValue, "evidence.expectedValue");
+            OptCon.Core.NumericValidation.RequireFinite(definition.Tolerance, "evidence.tolerance");
+            if (definition.Tolerance < 0) throw new ArgumentException("Evidence tolerance must be nonnegative, in the metric's unit.");
+            MetricId = definition.MetricId; Component = definition.Component; Scope = definition.Scope;
+            SampleIndex = definition.SampleIndex; Unit = definition.Unit; Comparison = definition.Comparison;
+            ExpectedValue = definition.ExpectedValue; Tolerance = definition.Tolerance;
+            RequireSameNominal = definition.RequireSameNominal; RequireSameProblem = definition.RequireSameProblem;
+            RequireSamePhysicalProblem = definition.RequireSamePhysicalProblem;
+        }
     }
     public sealed class LessonAnswerPlan
     {
@@ -35,6 +70,8 @@ namespace OptCon.Content
         public IReadOnlyList<string> VisibleTerms { get; }
         public IReadOnlyList<string> EnabledControls { get; }
         public IReadOnlyList<string> EditableParameters { get; }
+        public IReadOnlyList<int> VisibleInitialStateComponents { get; }
+        public IReadOnlyList<int> VisibleInputComponents { get; }
         public IReadOnlyList<string> VisibleLayers { get; }
         public IReadOnlyList<SimulationCommand> EntryCommands { get; }
         public IReadOnlyList<LessonConditionPlan> Conditions { get; }
@@ -46,6 +83,8 @@ namespace OptCon.Content
             ShowCosts = definition.ShowCosts;
             VisibleTerms = Array.AsReadOnly(definition.VisibleTermIds.ToArray()); EnabledControls = Array.AsReadOnly(definition.EnabledControlIds.ToArray());
             EditableParameters = Array.AsReadOnly(definition.EditableParameterTargets.ToArray()); VisibleLayers = Array.AsReadOnly(definition.VisibleLayerIds.ToArray());
+            VisibleInitialStateComponents = Array.AsReadOnly(definition.VisibleInitialStateComponents.ToArray());
+            VisibleInputComponents = Array.AsReadOnly(definition.VisibleInputComponents.ToArray());
             EntryCommands = Array.AsReadOnly(definition.EntryActions.Select(a => a.CreateCommand()).ToArray());
             Conditions = Array.AsReadOnly(definition.Conditions.Select(c => new LessonConditionPlan(c)).ToArray());
             Answers = Array.AsReadOnly(definition.Answers.Select(a => new LessonAnswerPlan(a)).ToArray());
@@ -72,6 +111,13 @@ namespace OptCon.Content
                 if (step.VisibleTermIds.Count > 0 && !string.IsNullOrEmpty(step.SelectedTermId) && !step.VisibleTermIds.Contains(step.SelectedTermId))
                     throw new ArgumentException("Selected term must be disclosed by the step.");
                 if (step.EnabledControlIds.Any(c => !LessonControls.All.Contains(c))) throw new ArgumentException("Unknown lesson control ID.");
+                if (definition.Experiment == null && (step.VisibleInitialStateComponents.Count > 0 || step.VisibleInputComponents.Count > 0))
+                    throw new ArgumentException("Component disclosure requires an experiment descriptor.");
+                if (step.VisibleInitialStateComponents.Any(i => i < 0 || i >= definition.Experiment.StateDimension) ||
+                    step.VisibleInputComponents.Any(i => i < 0 || i >= definition.Experiment.ControlDimension) ||
+                    step.VisibleInitialStateComponents.Distinct().Count() != step.VisibleInitialStateComponents.Count ||
+                    step.VisibleInputComponents.Distinct().Count() != step.VisibleInputComponents.Count)
+                    throw new ArgumentException("Invalid or duplicate component disclosure.");
                 if (step.Conditions.Any(c => c == null || string.IsNullOrWhiteSpace(c.EvaluatorId))) throw new ArgumentException("Missing lesson evaluator ID.");
                 if (step.Answers.Any(a => a == null || string.IsNullOrWhiteSpace(a.Id) || string.IsNullOrWhiteSpace(a.Text)) || step.Answers.Select(a => a.Id).Distinct().Count() != step.Answers.Count)
                     throw new ArgumentException("Answer IDs/text must be present and unique.");

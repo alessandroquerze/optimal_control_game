@@ -1,0 +1,1 @@
+PASS new Unity process: saved Bootstrap, persistent C1.L6 completion, fresh reopened session, restart preserves progress

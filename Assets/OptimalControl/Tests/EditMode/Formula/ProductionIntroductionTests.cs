@@ -18,7 +18,7 @@ namespace OptCon.Tests
     {
         private const string A = "Assets/OptimalControl/";
         private CourseDefinition Course => AssetDatabase.LoadAssetAtPath<CourseDefinition>(A + "Data/Courses/OptimalControlCourse.asset");
-        private LessonDefinition Definition => Course.Chapters.Single().Lessons.Single();
+        private LessonDefinition Definition => Course.Chapters.Single().Lessons.Single(l => l.Id == "C1.L1");
         private SimulationSession Open() => Definition.Experiment.Model.CreateSession(Definition.Experiment);
         private readonly RuntimeMetricResolver metrics = new RuntimeMetricResolver();
         private static void Select(LessonSession lesson, string term) => lesson.RecordTermSelection(lesson.Presentation.Step.FormulaId, term);
@@ -46,7 +46,7 @@ namespace OptCon.Tests
         {
             Assert.That(Course.Id, Is.EqualTo("optimal-control")); Assert.That(Course.IsPrototype, Is.False);
             Assert.That(Course.Chapters.Single().Id, Is.EqualTo("C1")); Assert.That(Definition.Id, Is.EqualTo("C1.L1"));
-            Assert.That(Definition.ContentVersion, Is.EqualTo("1")); Assert.That(Definition.PrerequisiteLessonIds, Is.Empty);
+            Assert.That(Definition.ContentVersion, Is.EqualTo("2")); Assert.That(Definition.PrerequisiteLessonIds, Is.Empty);
             Assert.That(Definition.Experiment.Id, Is.EqualTo("c1.introduction.pendulum")); Assert.That(Definition.Experiment.Cost, Is.Null);
             Assert.That(Definition.Experiment, Is.Not.SameAs(AssetDatabase.LoadAssetAtPath<ExperimentDefinition>(A + "Data/Experiments/PendulumPrototype.asset")));
             string guid = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(Course));
@@ -178,7 +178,7 @@ namespace OptCon.Tests
             using var binding = new LessonProgressBinding(lesson, s, progress, () => true);
             Complete(lesson); Assert.That(lesson.Presentation.IsCompleted, Is.True); Assert.That(store.SaveCount, Is.EqualTo(2));
             var record = store.Load().Completions.Single(c => c.CourseId == Course.Id);
-            Assert.That(record.LessonId, Is.EqualTo("C1.L1")); Assert.That(record.LessonVersion, Is.EqualTo("1")); Assert.That(record.LessonSchemaVersion, Is.EqualTo(1));
+            Assert.That(record.LessonId, Is.EqualTo("C1.L1")); Assert.That(record.LessonVersion, Is.EqualTo("2")); Assert.That(record.LessonSchemaVersion, Is.EqualTo(1));
             Assert.That(new ProgressionService(Course, store).GetStatus("C1.L1").IsCompleted, Is.True);
             lesson.Restart(); Complete(lesson); Assert.That(store.SaveCount, Is.EqualTo(2));
         }

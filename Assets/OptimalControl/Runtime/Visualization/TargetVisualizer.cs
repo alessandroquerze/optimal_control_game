@@ -13,7 +13,7 @@ namespace OptCon.Presentation
         public void Render(SessionState state)
         {
             DisplayedResult = state.Result; var result = state.Result; int t = state.Sample.Timestep, T = result.History.Horizon;
-            var reference = result.Configuration.ReferenceState;
+            var reference = result.Configuration.StateReferenceAt(t);
             target.Render(reference == null ? Vector3.zero : plot.Projection.ProjectState(result.History, t, reference), result.RevisionId, reference == null ? (int?)null : t);
             terminal.Render(plot.Projection.Project(result.History, T), result.RevisionId, T);
         }

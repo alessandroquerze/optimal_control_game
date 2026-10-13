@@ -1,0 +1,264 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e039087c2f4e1ab6f8639bc051389d, type: 3}
+  m_Name: PendulumJacobians
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.FormulaDefinition
+  id: c1.pendulum-jacobians
+  schemaVersion: 1
+  contentVersion: '1'
+  title: Jacobiani discreti sulla nominale
+  description: 'Un Jacobiano è una tabella di sensibilità locali: riga = componente dello stato successivo, colonna
+    = componente dello stato/input attuale. A è n×n; B n×m. Qui n=2,m=1; alla nominale θ̄=0: A₁₀=−0.1962 e B₁₀=0.02.
+    Le celle hanno unità di uscita/ingresso; i pedici indicano riga e colonna al campione t.'
+  expression: 'A_t = ∂f_t/∂x = [[1,δ], [−δ(g/l)cos(θ̄_t),1]]
+
+    B_t = ∂f_t/∂u = [[0], [δ/(ml²)]]
+
+    A_t=∇₁f_tᵀ; B_t=∇₂f_tᵀ (convenzione del corso)'
+  sourceTranscription: 'A_t = ∂f_t/∂x = [[1,δ], [−δ(g/l)cos(θ̄_t),1]]
+
+    B_t = ∂f_t/∂u = [[0], [δ/(ml²)]]
+
+    A_t=∇₁f_tᵀ; B_t=∇₂f_tᵀ (convenzione del corso)'
+  assumptions: 'Un Jacobiano è una tabella di sensibilità locali: riga = componente dello stato successivo, colonna
+    = componente dello stato/input attuale. A è n×n; B n×m. Qui n=2,m=1; alla nominale θ̄=0: A₁₀=−0.1962 e B₁₀=0.02.
+    Le celle hanno unità di uscita/ingresso; i pedici indicano riga e colonna al campione t.'
+  terms:
+  - id: A00
+    symbol: A₀₀
+    label: Sensibilità A00
+    meaning: ∂θ_next/∂θ = 1.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: linearization.a.0.0
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: A01
+    symbol: A₀₁
+    label: Sensibilità A01
+    meaning: '∂θ_next/∂ω = δ. Riga: uscita; colonna: ingresso.'
+    rows: 1
+    columns: 1
+    componentUnits:
+    - (rad)/(rad/s)
+    value:
+      metricId: linearization.a.0.1
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: A10
+    symbol: A₁₀
+    label: Sensibilità A10
+    meaning: ∂ω_next/∂θ = −δ(g/l)cos(θ̄_t), valutato sulla nominale, NON sul rollout perturbato.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - (rad/s)/(rad)
+    value:
+      metricId: linearization.a.1.0
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: A11
+    symbol: A₁₁
+    label: Sensibilità A11
+    meaning: ∂ω_next/∂ω = 1.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: linearization.a.1.1
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: B00
+    symbol: B₀₀
+    label: Sensibilità B00
+    meaning: ∂θ_next/∂u = 0 in Euler esplicito.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - (rad)/(N·m)
+    value:
+      metricId: linearization.b.0.0
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: B10
+    symbol: B₁₀
+    label: Sensibilità B10
+    meaning: ∂ω_next/∂u = δ/(ml²). Non è il coefficiente della dinamica continua senza δ.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - (rad/s)/(N·m)
+    value:
+      metricId: linearization.b.1.0
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: nominal.state
+    symbol: x̄_t
+    label: Stato nominale
+    meaning: Campione della traiettoria valida salvata. La barra indica il punto di sviluppo, non un target desiderato.
+    rows: 2
+    columns: 1
+    componentUnits:
+    - rad
+    - rad/s
+    value:
+      metricId: linearization.nominal-state
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: linearization.nominal
+      scope: 0
+  - id: nominal.input
+    symbol: ū_t
+    label: Input nominale
+    meaning: Controllo salvato con la nominale; serve a definire Δu. Non esiste ū_T.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - N·m
+    value:
+      metricId: linearization.nominal-input
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: time.step
+    symbol: δ
+    label: Passo fisico
+    meaning: Passo della discretizzazione (qui 0.02 s); non velocità di playback. Opzionale per altri modelli discreti.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - s
+    value:
+      metricId: time.step
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  sources:
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 10
+    lastPhysicalPage: 13
+    firstSlide: 9
+    lastSlide: 12
+    section: Traiettorie, equilibri e linearizzazione
+    usage: 0
+    note: ''
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 27
+    lastPhysicalPage: 27
+    firstSlide: 26
+    lastSlide: 26
+    section: Forward Euler
+    usage: 1
+    note: Adattamento del pendolo continuo alla discretizzazione già usata in F11.
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 33
+    lastPhysicalPage: 34
+    firstSlide: 32
+    lastSlide: 33
+    section: Pendolo ed equilibri
+    usage: 1
+    note: 'Errata I p.34: la prima condizione impone x₂,e=ω_e=0, non x₁,e=θ_e=0.'
+  layout:
+    rootId: jac
+    nodes:
+    - id: jac
+      kind: 2
+      children:
+      - a-label
+      - a
+      - b-label
+      - b
+    - id: a-label
+      kind: 0
+      text: A_t=
+    - id: a
+      kind: 7
+      rows: 2
+      columns: 2
+      children:
+      - a00
+      - a01
+      - a10
+      - a11
+    - id: b-label
+      kind: 0
+      text: B_t=
+    - id: b
+      kind: 7
+      rows: 2
+      columns: 1
+      children:
+      - b00
+      - b10
+    - id: a00
+      kind: 1
+      termId: A00
+    - id: a01
+      kind: 1
+      termId: A01
+    - id: a10
+      kind: 1
+      termId: A10
+    - id: a11
+      kind: 1
+      termId: A11
+    - id: b00
+      kind: 1
+      termId: B00
+    - id: b10
+      kind: 1
+      termId: B10

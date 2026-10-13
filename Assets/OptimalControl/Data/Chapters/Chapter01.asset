@@ -16,16 +16,30 @@ MonoBehaviour:
   schemaVersion: 1
   contentVersion: '1'
   title: Chapter 1 — Introduction to Optimal Control
-  description: Inizia da stato, input, output e tempo; le altre lesson saranno prodotte nelle fasi successive.
+  description: C1.L1 stato/input/output; C1.L2 traiettorie/equilibri/linearizzazione; C1.L3 costi/vincoli; C1.L4
+    riferimento/rollout manuale. Solver soltanto F28.
   lessons:
   - {fileID: 11400000, guid: aed57ac4dc235f278869d9240ee0c279, type: 2}
+  - {fileID: 11400000, guid: 0bb1d75005235336badbadca0913a042, type: 2}
+  - {fileID: 11400000, guid: 0ad843523c7650f2861e6d897e163b0b, type: 2}
+  - {fileID: 11400000, guid: 885314469ee757dcaf3f3690975298fa, type: 2}
+  - {fileID: 11400000, guid: 1110d870005954349529ba85d4fb618a, type: 2}
+  - {fileID: 11400000, guid: 9119d4b9a9d75c73bde029e0ae9d35df, type: 2}
   sources:
   - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
     firstPhysicalPage: 2
     lastPhysicalPage: 10
     firstSlide: 1
     lastSlide: 9
-    section: Motivazioni, stato/input/output, tempo e notazione
+    section: Introduzione, sistemi, stato-input-output e orizzonte
+    usage: 0
+    note: Fonti C1.L1 conservate; C1.L2 aggiunge le fonti successive.
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 10
+    lastPhysicalPage: 13
+    firstSlide: 9
+    lastSlide: 12
+    section: Traiettorie, equilibri e linearizzazione
     usage: 0
     note: ''
   - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
@@ -35,12 +49,12 @@ MonoBehaviour:
     lastSlide: 26
     section: Forward Euler
     usage: 1
-    note: 'Euler del drone applicato al pendolo: adattamento dichiarato.'
+    note: Adattamento del pendolo continuo alla discretizzazione già usata in F11.
   - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
     firstPhysicalPage: 33
-    lastPhysicalPage: 33
+    lastPhysicalPage: 34
     firstSlide: 32
-    lastSlide: 32
-    section: 'Pendolo: x₁=θ, x₂=ω, y=θ'
-    usage: 0
-    note: ''
+    lastSlide: 33
+    section: Pendolo ed equilibri
+    usage: 1
+    note: 'Errata I p.34: la prima condizione impone x₂,e=ω_e=0, non x₁,e=θ_e=0.'

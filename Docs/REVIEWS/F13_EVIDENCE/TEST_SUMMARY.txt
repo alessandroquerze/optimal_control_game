@@ -1,0 +1,27 @@
+F13 final verification - 2026-10-11
+Unity 6000.3.8f1
+EditMode: 388/388 PASS; preserved 356; new 32; zero failed/skipped.
+PlayMode: 97/97 PASS; preserved 89; new 8; zero failed/skipped.
+Compilation exit 0; zero C# errors/warnings. Full suites and final compile run without native helpers.
+All 356+89 historical test fullnames retained and passed. 32+8 new cases.
+Native production: PASS, saved Bootstrap/current production catalog, C1.L3 9 steps and C1.L4 7 steps, real UI callbacks.
+Native fresh process: PASS, exactly C1.L3/C1.L4 v1/schema1 completion restored, fresh lesson runtime.
+Native regression C1.L1/C1.L2 (12 steps/equilibrium/Jacobian/linearization), F08/pendulum/index-only/cost/A-B and F10/static: PASS.
+Native negatives: wrong/no-op, incomplete navigation, Previous/Restart, failed cost candidate and NonRepresentable; reset and reopen recover; zero Error/Exception/Assert.
+Live reference edit at t10 .5->.8: retained A unchanged, identical HUD/visual publication and source result, correct desired marker and cost. Terminal: reference at T, no u_T/next/stage.
+540 application files SHA256-identical to verified clone. 13 assemblies acyclic; Core/Simulation engine-independent. No packages/settings/history reports/old production assets changed.
+23 selected original Game View PNGs archived; representative top/live/terminal/constraints/desired captures visually inspected.
+Native interactions automated in real Editor; no human click session, player build, profiling or usability study claimed.
+No F14/F15 implementation. Full logs outside repo: C:\Users\querz\AppData\Local\Temp\OptCon-F13-ff6d63daf49d47408c2fcf992e894dfb
+
+adjust-final.log SHA256 f178d6b593a0ceb702ac7b32527de68b9b41de1ede7fde85cc72e8ec95f8e0d5
+production-final.log SHA256 46042be1595d0ea73fb60e97f7bf13ba2affa75d687e4ad24cad35d238f60119
+production-reload-final.log SHA256 bef25f8ad15121137f87429c4aba5f80a020f045139c4185874967e236f786f0
+regression-linearization-final.log SHA256 fbeb1505bba1dcb33b445134531a61c5cd1bed77fdf47034a35a08ea656653c4
+regression-pendulum-final.log SHA256 39086999f6cef03148a4fc54565c0c46eeefc844e52473d4fac1476a45c71c2c
+regression-static-final.log SHA256 a32dcf1a45760757b2e391bba5dec8a96e66453adfaa7dec45b717e3a53dcd0f
+EditMode-final.log SHA256 217f7a116663c07559f6e4e6f1e68c14ecc95f525539d69fd8a154e7115f64ce
+PlayMode-final.log SHA256 4b4602238d208a25ef54262b1489ece2a606d10e21ee25be9b51e2708ad3e70f
+compile-final.log SHA256 3260d284a916425d4e1d72145d4e30b3762e94bdb248498b7758b02a7b10300c
+production-live-final.log SHA256 e73e0b67cd8d1915120a94e6619c6a3bb2548bd95d971028be3fc0a958f15e30
+compile-post-captures.log SHA256 c07b8d822a027e8e86175f323357d94ee8bdb959faca288389e6ff4285826e9c

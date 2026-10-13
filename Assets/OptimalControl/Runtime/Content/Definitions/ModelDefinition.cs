@@ -40,9 +40,12 @@ namespace OptCon.Content
             var controls = new NumericVector[horizon];
             for (int t = 0; t < horizon; t++) controls[t] = input;
             var reference = experiment.DiscreteTime.CopyReferenceState();
-            return new SimulationConfiguration(experiment.Id, model, new NumericVector(experiment.DiscreteTime.CopyInitialState()),
-                controls, reference.Length == 0 ? null : new NumericVector(reference), experiment.Cost?.CreateConfiguration(experiment));
+            return ComposeConfiguration(experiment, model, new NumericVector(experiment.DiscreteTime.CopyInitialState()),
+                controls, reference.Length == 0 ? null : new NumericVector(reference));
         }
+        protected virtual SimulationConfiguration ComposeConfiguration(ExperimentDefinition experiment, ModelConfiguration model, NumericVector initialState,
+            IReadOnlyList<NumericVector> controls, NumericVector referenceState) => new SimulationConfiguration(experiment.Id, model, initialState,
+                controls, referenceState, experiment.Cost?.CreateConfiguration(experiment), experiment.Constraints?.Freeze());
 
         public SimulationSession CreateSession(ExperimentDefinition experiment) =>
             new SimulationSession(CreateConfiguration(experiment), experiment.Parameters.Select(Rule).ToArray());

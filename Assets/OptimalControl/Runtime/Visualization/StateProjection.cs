@@ -99,5 +99,12 @@ namespace OptCon.Presentation
                 throw new NonRepresentableDisplayException();
             return (float)value;
         }
+        /// <summary>Display displacement only: offsets and time/index axes contribute zero.</summary>
+        public Vector3 ProjectDisplacement(ModelDescriptor model, NumericVector displacement)
+        {
+            Validate(model); NumericValidation.RequireDimension(displacement, model.Dimensions.State, nameof(displacement));
+            float Read(ProjectionAxis axis) => axis.coordinate == ProjectionCoordinate.StateComponent ? ToFloat(axis.scale * displacement[axis.component]) : 0;
+            return new Vector3(Read(x), Read(y), Read(z));
+        }
     }
 }

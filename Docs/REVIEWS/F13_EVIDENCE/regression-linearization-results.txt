@@ -1,0 +1,9 @@
+PASS
+Unity 6000.3.8f1
+Saved Bootstrap -> optimal-control / C1 / C1.L1 completed through UI -> C1.L2 / c1.linearization.pendulum. No content injection. Only FileProgressStore path isolated.
+Advisory missing C1.L1 shown before completion; after C1.L1 complete, prerequisite satisfied. Incomplete C1.L2 exit/reopen, wrong answer, no-op and restart never saved C1.L2.
+All 12 C1.L2 steps completed using UI controls. Equilibrium zero and pi/2 with u=9.81 stationary. Frozen nominal, fixed initial delta x0=0/input perturbation, standard row Jacobians, independent perturbed initial.
+At t=1: epsilon .1 -> e_omega=.00003268365389231713; epsilon .8 -> .01621473496551364. Snapshot A retains .1 with its own nominal; B retains .8 with its own nominal. Within amplitude editing, the same nominal remains immutable. Previous rebuilds the activity without granting action credit. Seek retains comparison. HUD/visuals share publication. Semantic error highlight verified.
+Terminal t=T=100: 101 state/prediction/error samples, 100 input/Jacobian samples; delta u, next delta, A and B N/A; delta=.02s tau=2s. No invented u_T/next.
+Valid T100 cursor50 -> failed overflow request -> failed T1 -> perturbation edit rejected and disabled, same valid result/pair -> Reset recovery. Large finite perturbation NonRepresentable hides renderers, preserves HUD source, never completes; Reset recovery.
+Completion persisted exactly optimal-control / C1.L1 and C1.L2 / version1 / schema1. Return menu, fresh reopen, full PlayMode stop/start and FileProgressStore reload retain only persistent progress; fresh runtime at trajectory, t0 with no comparison. Zero Error/Exception/Assert.

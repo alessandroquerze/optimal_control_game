@@ -1,0 +1,5 @@
+PASS new-process reopen C1.L1: saved progress; fresh runtime; no baseline/comparison residue
+PASS new-process reopen C1.L2: saved progress; fresh runtime; no baseline/comparison residue
+PASS new-process reopen C1.L3: saved progress; fresh runtime; no baseline/comparison residue
+PASS new-process reopen C1.L4: saved progress; fresh runtime; no baseline/comparison residue
+PASS all 4 production lessons complete and persisted; saved Bootstrap/catalog, isolated profile only; no F14

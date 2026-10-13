@@ -1,0 +1,32 @@
+NEGATIVE PASS state NonRepresentable/exploration
+PASS failed request, editing guard, NonRepresentable, coherent publication, reset/restart
+NEGATIVE PASS state wrong answer with valid outcome
+PASS state · r7 · t=0 · x=[0;0;1;0;0;0] · cost=35.226525
+NEGATIVE PASS same-position wrong answer with valid outcome
+PASS same-position · r9 · t=0 · x=[0;0;1;0.5;0;0] · cost=46.394025000000013
+NEGATIVE PASS hover wrong answer with valid outcome
+PASS hover · r13 · t=0 · x=[0;0;1;0;0;0] · cost=35.226525
+NEGATIVE PASS collective decreased both forces
+NEGATIVE PASS collective wrong answer with valid outcome
+PASS collective · r18 · t=0 · x=[0;0;1;0;0;0] · cost=93.810459400000056
+NEGATIVE PASS collective Previous restored baseline
+PASS Previous and outcome recapture
+NEGATIVE PASS differential opposite moment
+NEGATIVE PASS differential wrong answer with valid outcome
+PASS differential · r28 · t=0 · x=[0;0;1;0;0;0] · cost=281.12588596839345
+NEGATIVE PASS tilt opposite tilt
+NEGATIVE PASS tilt wrong answer with valid outcome
+PASS tilt · r31 · t=0 · x=[0;0;1;0;0.2;0] · cost=121.16364779450139
+NEGATIVE PASS trajectory wrong answer with valid outcome
+PASS trajectory · r33 · t=10 · x=[-0.035081030431791914;-0.38978922701991009;0.9964801563152067;-0.039109374275484034;0.2;0] · cost=121.16364779450139
+NEGATIVE PASS reference wrong answer with valid outcome
+PASS reference · r35 · t=10 · x=[0;0;1;0;0;0] · cost=35.376525000000008
+NEGATIVE PASS cost wrong answer with valid outcome
+PASS cost · r38 · t=0 · x=[0;0;1;0.5;0;0] · cost=52.644025000000013
+NEGATIVE PASS input-limit wrong answer with valid outcome
+PASS input-limit · r40 · t=0 · x=[0;0;1;0;0;0] · cost=49.408270399803513
+NEGATIVE PASS altitude-limit wrong answer with valid outcome
+PASS altitude-limit · r42 · t=0 · x=[0;0;2.5;0;0;0] · cost=153.35152499999998
+NEGATIVE PASS terminal wrong answer with valid outcome
+PASS terminal · r43 · t=50 · x=[0;0;1;0;0;0] · cost=35.226525
+PASS saved Bootstrap, all 12 steps, menu/reopen, stable C1.L5 v1/schema1, persistent completion; F15 untouched

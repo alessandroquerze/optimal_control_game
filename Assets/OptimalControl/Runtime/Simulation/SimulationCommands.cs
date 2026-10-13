@@ -3,7 +3,7 @@ using OptCon.Core;
 namespace OptCon.Simulation
 {
     public interface ICommandSink { bool Execute(SimulationCommand command); }
-    public enum SimulationCommandKind { Play, Pause, StepForward, StepBackward, Seek, Reset, SetInput, SetParameter, SetInitialState, SetPhysicalStep, SetPlaybackRate, SetHorizon, CaptureComparison, ClearComparison }
+    public enum SimulationCommandKind { Play, Pause, StepForward, StepBackward, Seek, Reset, SetInput, SetParameter, SetInitialState, SetPhysicalStep, SetPlaybackRate, SetHorizon, CaptureComparison, ClearComparison, SetInitialPerturbation, SetInputPerturbation }
 
     /// <summary>Pure commands shared by tests, diagnostics and future UI/input adapters.</summary>
     public sealed class SimulationCommand
@@ -32,5 +32,7 @@ namespace OptCon.Simulation
         public static SimulationCommand SetInitialState(NumericVector value) => new SimulationCommand(SimulationCommandKind.SetInitialState, vector: value);
         public static SimulationCommand SetPhysicalStep(double? seconds) => new SimulationCommand(SimulationCommandKind.SetPhysicalStep, step: seconds);
         public static SimulationCommand SetPlaybackRate(double samplesPerSecond) => new SimulationCommand(SimulationCommandKind.SetPlaybackRate, value: samplesPerSecond);
+        public static SimulationCommand SetInitialPerturbation(int component, double amplitude) => new SimulationCommand(SimulationCommandKind.SetInitialPerturbation, index: component, value: amplitude);
+        public static SimulationCommand SetInputPerturbation(int t, int component, double amplitude) => new SimulationCommand(SimulationCommandKind.SetInputPerturbation, index: t, target: component.ToString(System.Globalization.CultureInfo.InvariantCulture), value: amplitude);
     }
 }

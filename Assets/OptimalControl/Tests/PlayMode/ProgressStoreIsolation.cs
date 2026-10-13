@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
 using OptCon.Content;
+using UnityEngine.InputSystem;
 
 namespace OptCon.Tests
 {
@@ -14,8 +15,23 @@ namespace OptCon.Tests
     {
         // Historical suites explicitly exercise the prototype. Production tests use the saved Bootstrap.
         public static bool UseSavedCourse { get; set; }
-        [OneTimeSetUp] public void Install() => SceneManager.sceneLoaded += Configure;
-        [OneTimeTearDown] public void Remove() => SceneManager.sceneLoaded -= Configure;
+        private InputSettings originalInput, testInput;
+        [OneTimeSetUp] public void Install()
+        {
+            // A hidden batch Editor has no OS/Game View focus. Keep synthetic test devices enabled;
+            // application HUD focus guards still run normally. Never mutate the project settings asset.
+            originalInput = InputSystem.settings; testInput = Object.Instantiate(originalInput);
+            testInput.hideFlags = HideFlags.HideAndDontSave;
+            testInput.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
+            testInput.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            InputSystem.settings = testInput;
+            SceneManager.sceneLoaded += Configure;
+        }
+        [OneTimeTearDown] public void Remove()
+        {
+            SceneManager.sceneLoaded -= Configure;
+            InputSystem.settings = originalInput; Object.DestroyImmediate(testInput);
+        }
         private static void Configure(Scene scene, LoadSceneMode mode)
         {
             if (scene.path != "Assets/OptimalControl/Scenes/Bootstrap.unity") return;

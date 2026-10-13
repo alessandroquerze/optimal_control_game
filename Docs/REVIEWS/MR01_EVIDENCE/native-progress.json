@@ -1,0 +1,33 @@
+{
+    "schemaVersion": 1,
+    "completions": [
+        {
+            "courseId": "optimal-control",
+            "courseVersion": "1",
+            "lessonId": "C1.L1",
+            "lessonVersion": "2",
+            "lessonSchemaVersion": 1
+        },
+        {
+            "courseId": "optimal-control",
+            "courseVersion": "1",
+            "lessonId": "C1.L2",
+            "lessonVersion": "2",
+            "lessonSchemaVersion": 1
+        },
+        {
+            "courseId": "optimal-control",
+            "courseVersion": "1",
+            "lessonId": "C1.L3",
+            "lessonVersion": "2",
+            "lessonSchemaVersion": 1
+        },
+        {
+            "courseId": "optimal-control",
+            "courseVersion": "1",
+            "lessonId": "C1.L4",
+            "lessonVersion": "1",
+            "lessonSchemaVersion": 1
+        }
+    ]
+}

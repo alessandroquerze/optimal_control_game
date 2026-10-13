@@ -1,0 +1,7 @@
+PASS Unity 6000.3.8f1
+Real catalog UI -> common composition/Ready -> ObjectiveSession -> immutable snapshot -> shared resolver/Formula HUD -> semantic point/ordinate.
+Known oracle 9 -> z1=2 -> 12 -> w1=6 -> 20. Retained A remains 9. No sample, time, input, trajectory or iteration.
+Structured objective/sum/fraction/scripts, 2x2 matrix (layout only), continuous integral and K compact vector inspected in native Game View.
+Valid completion saves only fixture.f10.static, not prototype.pendulum; menu, close/reopen and application Play restart restore independent progress and fresh session.
+Failed mathematical request retains last result; reset recovers. Navigation during publication is deferred and old lifetime closes.
+Zero Error/Exception/Assert. Captures retained.

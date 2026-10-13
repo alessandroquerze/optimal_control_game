@@ -13,6 +13,8 @@ namespace OptCon.Simulation
         private SimulationConfiguration requested;
         private SimulationResult result;
         private ComparisonSnapshot comparison;
+        private LinearizationComparison linearization;
+        private string linearizationDiagnostic;
         private int cursor;
         private long attempt;
         private bool playing, dispatching, closed;
@@ -22,7 +24,9 @@ namespace OptCon.Simulation
         public event Action<SessionState> Changed;
         public IExperimentSnapshot Current => State;
         public ExperimentCapabilities Capabilities => State.Capabilities;
-        public bool Supports(SimulationCommandKind command) => Enum.IsDefined(typeof(SimulationCommandKind), command);
+        public bool Supports(SimulationCommandKind command) => Enum.IsDefined(typeof(SimulationCommandKind), command) &&
+            ((command != SimulationCommandKind.SetInitialPerturbation && command != SimulationCommandKind.SetInputPerturbation) ||
+                (Capabilities & ExperimentCapabilities.Linearization) != 0);
         public IDisposable Subscribe(Action<IExperimentSnapshot> observer)
         {
             if (observer == null) throw new ArgumentNullException(nameof(observer));
@@ -45,12 +49,28 @@ namespace OptCon.Simulation
             }
             requested = preset;
             result = Calculate(preset, 0);
+            RefreshLinearization();
             Refresh();
         }
 
         public bool Execute(SimulationCommand command)
         {
             if (closed || dispatching || command == null) return false;
+            if (command.Kind == SimulationCommandKind.SetInitialPerturbation || command.Kind == SimulationCommandKind.SetInputPerturbation)
+            {
+                if (error != null || linearization == null) return false;
+                int component = command.Index;
+                if (command.Kind == SimulationCommandKind.SetInputPerturbation &&
+                    (!State.TryGetEditableInput(command.Index, out _) || !int.TryParse(command.Target, out component))) return false;
+                SimulationConfiguration candidate;
+                try { candidate = linearization.WithPerturbation(command.Kind == SimulationCommandKind.SetInitialPerturbation, command.Index, component, command.Value); }
+                catch (ArgumentException) { return false; }
+                catch (ArithmeticException) { return false; }
+                if (command.Kind == SimulationCommandKind.SetInitialPerturbation
+                    ? candidate.InitialState.SequenceEqual(result.Configuration.InitialState)
+                    : candidate.Controls[command.Index].SequenceEqual(result.Configuration.Controls[command.Index])) return true;
+                return Revise(() => candidate);
+            }
             switch (command.Kind)
             {
                 case SimulationCommandKind.Reset: return Revise(() => preset, true);
@@ -61,6 +81,8 @@ namespace OptCon.Simulation
                 case SimulationCommandKind.SetParameter: return Revise(() =>
                 {
                     if (rules.TryGetValue(command.Target ?? string.Empty, out var rule)) rule.Validate(command.Value);
+                    if (requested.Constraints != null && requested.Constraints.Parameters.Any(p => p.Target == command.Target))
+                        return requested.WithConstraints(requested.Constraints.WithParameter(command.Target, command.Value));
                     return requested.Cost != null && requested.Cost.Parameters.Any(p => p.Target == command.Target)
                         ? requested.WithCost(requested.Cost.WithParameter(command.Target, command.Value))
                         : requested.WithModel(requested.Model.WithParameter(command.Target, command.Value));
@@ -72,8 +94,8 @@ namespace OptCon.Simulation
             {
                 switch (command.Kind)
                 {
-                    case SimulationCommandKind.CaptureComparison: comparison = new ComparisonSnapshot(result); break;
-                    case SimulationCommandKind.ClearComparison: comparison = null; break;
+                    case SimulationCommandKind.CaptureComparison: comparison = new ComparisonSnapshot(result); RefreshLinearization(); break;
+                    case SimulationCommandKind.ClearComparison: comparison = null; RefreshLinearization(); break;
                     case SimulationCommandKind.Play: playing = cursor < result.History.Horizon && error == null; break;
                     case SimulationCommandKind.Pause: playing = false; accumulator = 0; break;
                     case SimulationCommandKind.StepForward: Select(Math.Min(cursor + 1, result.History.Horizon)); break;
@@ -100,6 +122,7 @@ namespace OptCon.Simulation
                 requested = candidate();
                 var complete = CalculateCandidate(requested, attempt);
                 result = complete; error = null;
+                RefreshLinearization();
                 cursor = reset ? 0 : Math.Min(cursor, result.History.Horizon);
                 success = true;
             }
@@ -150,7 +173,16 @@ namespace OptCon.Simulation
             Publish();
         }
 
-        private void Refresh() => State = new SessionState(result, requested, cursor, attempt, error, playing, rate, closed, comparison);
+        private void RefreshLinearization()
+        {
+            linearization = null; linearizationDiagnostic = null;
+            if (comparison == null) { linearizationDiagnostic = "Capture a valid nominal trajectory first."; return; }
+            if (result.DifferentiableDynamics == null) { linearizationDiagnostic = "Differentiable dynamics unavailable."; return; }
+            try { linearization = new LinearizationComparison(comparison.Result, result); }
+            catch (Exception exception) when (exception is ArgumentException || exception is ArithmeticException || exception is InvalidOperationException)
+            { linearizationDiagnostic = exception.Message; }
+        }
+        private void Refresh() => State = new SessionState(result, requested, cursor, attempt, error, playing, rate, closed, comparison, linearization, linearizationDiagnostic);
         private void Publish()
         {
             using (Notifications.Enter())
@@ -184,7 +216,7 @@ namespace OptCon.Simulation
         public void Dispose()
         {
             if (closed) return;
-            comparison = null; closed = true; playing = false; accumulator = 0; Changed = null; Refresh();
+            comparison = null; linearization = null; closed = true; playing = false; accumulator = 0; Changed = null; Refresh();
         }
     }
 }

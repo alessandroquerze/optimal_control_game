@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62bf42861beb52b99cb66c2dc67ab982, type: 3}
+  m_Name: PendulumTransfer
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.PendulumTransferModelDefinition
+  id: model.pendulum.transfer.continuous
+  schemaVersion: 1
+  contentVersion: '1'
+  title: 'Pendolo: problema continuo campionato'
+  description: Riferimento fisico tra due equilibri, H fisso e griglie Euler indipendenti.
+  durationSeconds: 2
+  firstAngle: 0
+  secondAngle: 0.5
+  stepChoices:
+  - 0.1
+  - 0.05
+  - 0.02

@@ -1,0 +1,59 @@
+PASS C1.L1/context; CanAdvance=True
+PASS C1.L1/purpose; CanAdvance=True
+NEGATIVE PASS C1.L1/state: only theta changed; CanAdvance=false; no progress
+NEGATIVE PASS C1.L1/state: theta and omega changed; CanAdvance=false; no progress
+NEGATIVE PASS C1.L1/state: no change; CanAdvance=false; no progress
+POSITIVE PASS C1.L1/state: CanAdvance=true; result revision=7
+PASS C1.L1/state; CanAdvance=True
+PASS C1.L1/output; CanAdvance=True
+PASS C1.L1/continuous; CanAdvance=True
+PASS C1.L1/predict; CanAdvance=True
+PASS C1.L1/intervene; CanAdvance=True
+PASS C1.L1/transition; CanAdvance=True
+PASS C1.L1/time; CanAdvance=True
+PASS C1.L1/spaces; CanAdvance=True
+PASS C1.L1/horizon; CanAdvance=True
+PASS C1.L2/trajectory; CanAdvance=True
+PASS C1.L2/equilibrium; CanAdvance=True
+PASS C1.L2/balance; CanAdvance=True
+PASS C1.L2/nominal; CanAdvance=True
+PASS C1.L2/differences; CanAdvance=True
+PASS C1.L2/jacobians; CanAdvance=True
+PASS C1.L2/linear-model; CanAdvance=True
+PASS C1.L2/compare-input; CanAdvance=True
+PASS C1.L2/initial-perturbed; CanAdvance=True
+L2 saved error baseline=3,2683653892313924E-05; reduced=4,0869890929121078E-06
+NEGATIVE PASS C1.L2/amplitude: smaller nonzero error; CanAdvance=false; no progress
+NEGATIVE PASS C1.L2/amplitude: wrong sample; CanAdvance=false; no progress
+POSITIVE PASS C1.L2/amplitude: CanAdvance=true; result revision=28
+PASS C1.L2/amplitude; CanAdvance=True
+PASS C1.L2/error-meaning; CanAdvance=True
+PASS C1.L2/terminal; CanAdvance=True
+PASS request failure, last-valid retention, editing guard, NonRepresentable, shared publication, Reset/Restart, no progress
+PASS C1.L3/decisions; CanAdvance=True
+PASS C1.L3/tracking; CanAdvance=True
+NEGATIVE PASS C1.L3/weight: Q edit and undo; CanAdvance=false; no progress
+NEGATIVE PASS C1.L3/weight: wrong final Q; CanAdvance=false; no progress
+POSITIVE PASS C1.L3/weight: CanAdvance=true; result revision=14
+PASS C1.L3/weight; CanAdvance=True
+PASS C1.L3/effort; CanAdvance=True
+PASS C1.L3/terminal-weight; CanAdvance=True
+PASS C1.L3/path-limit; CanAdvance=True
+PASS C1.L3/endpoint; CanAdvance=True
+L3 fixed problem baseline J=5,2941209434669663; negative J=10,691159780282874; g=1,5
+NEGATIVE PASS C1.L3/cost-not-feasibility: higher J with g violated; CanAdvance=false; no progress
+NEGATIVE PASS C1.L3/cost-not-feasibility: lower J without input violation; CanAdvance=false; no progress
+NEGATIVE PASS C1.L3/cost-not-feasibility: input edit and undo; CanAdvance=false; no progress
+NEGATIVE PASS C1.L3/cost-not-feasibility: original review counterexample Q4 with g violated; CanAdvance=false; no progress
+POSITIVE PASS C1.L3/cost-not-feasibility: CanAdvance=true; result revision=34
+J_A=5,2941209434669663; J_B=4,655611848439829; g=0,25; model/cost/reference/constraints identities unchanged
+PASS C1.L3/cost-not-feasibility; CanAdvance=True
+PASS C1.L3/terminal; CanAdvance=True
+PASS C1.L4/desired; CanAdvance=True
+PASS C1.L4/jump; CanAdvance=True
+PASS C1.L4/manual; CanAdvance=True
+PASS C1.L4/tracking; CanAdvance=True
+PASS C1.L4/change-reference; CanAdvance=True
+PASS C1.L4/reference-not-constraint; CanAdvance=True
+PASS C1.L4/terminal; CanAdvance=True
+PASS all 4 production lessons complete and persisted; saved Bootstrap/catalog, isolated profile only; no F14

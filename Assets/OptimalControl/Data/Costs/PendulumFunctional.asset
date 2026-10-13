@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bec5c608c394514fbb0bbf00938de42a, type: 3}
+  m_Name: PendulumFunctional
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.ContinuousTrackingCostDefinition
+  id: c1.transfer.cost-functional
+  schemaVersion: 1
+  contentVersion: '1'
+  title: Funzionale continuo del pendolo
+  description: L per secondo, rettangolo sinistro, Φ una volta; nessun ½ come I p.36. Distinto dai costi discreti
+    legacy.
+  stateWeights:
+  - 1
+  - 0.2
+  inputWeights:
+  - 0.05
+  terminalWeights:
+  - 4
+  - 1
+  totalSymbol: J^δ
+  stateWeightUnits:
+  - 1/(rad)²/s
+  - 1/(rad/s)²/s
+  inputWeightUnits:
+  - 1/(N·m)²/s
+  terminalWeightUnits:
+  - 1/(rad)²
+  - 1/(rad/s)²

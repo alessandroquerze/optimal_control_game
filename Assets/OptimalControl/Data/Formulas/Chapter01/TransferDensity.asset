@@ -1,0 +1,206 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e039087c2f4e1ab6f8639bc051389d, type: 3}
+  m_Name: TransferDensity
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.FormulaDefinition
+  id: c1.transfer.density
+  schemaVersion: 1
+  contentVersion: '1'
+  title: Densità e area della cella
+  description: I p.36 senza ½. Q/R running hanno unità inverse quadrate per secondo; QT no. Un solo δ nella quadratura
+    centrale; Φ escluso.
+  expression: 'L_t=q₁(θ_t−θ_t^des)²+q₂ω_t²+r(u_t−u_t^des)²
+
+    contributo_t=δ L_t
+
+    L [1/s] × δ [s] → contributo [1]'
+  sourceTranscription: 'L_t=q₁(θ_t−θ_t^des)²+q₂ω_t²+r(u_t−u_t^des)²
+
+    contributo_t=δ L_t
+
+    L [1/s] × δ [s] → contributo [1]'
+  assumptions: I p.36 senza ½. Q/R running hanno unità inverse quadrate per secondo; QT no. Un solo δ nella quadratura
+    centrale; Φ escluso.
+  terms:
+  - id: density
+    symbol: L_t
+    label: Densità running
+    meaning: L(x_t,u_t,τ_t) [1/s], NON il contributo integrato. Solo t<N.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - 1/s
+    value:
+      metricId: continuous.density
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: cost.density
+      scope: 0
+  - id: cell
+    symbol: δL_t
+    label: Contributo della cella
+    meaning: Valore già integrato dal layer matematico, adimensionale. N/A a N.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: continuous.contribution
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: cost.stage
+      scope: 0
+  - id: q0
+    symbol: q₁
+    label: Peso running angolo
+    meaning: 'Unità inverse quadrate PER SECONDO: L×δ è adimensionale.'
+    rows: 1
+    columns: 1
+    componentUnits:
+    - 1/(rad)²/s
+    value:
+      metricId: parameter.cost.q.0
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: time.step
+    symbol: δ
+    label: Passo fisico
+    meaning: 'Passo fisico Euler e larghezza delle celle. H fisso: cambiare δ ricampiona N, input e riferimento.
+      Non playback.'
+    rows: 1
+    columns: 1
+    componentUnits:
+    - s
+    value:
+      metricId: time.step
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: time.physical
+    symbol: τ_t
+    label: Tempo fisico
+    meaning: Tempo del campione salvato. Nel pendolo τ_t=tδ; in una dinamica index-only è N/A.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - s
+    value:
+      metricId: time.physical
+      kind: 0
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: reference.state
+    symbol: x_t^des
+    label: Stato desiderato
+    meaning: θ_e¹ prima di H/2, θ_e² da H/2 INCLUSO; ω_des=0. Ogni griglia campiona la stessa legge in secondi.
+    rows: 2
+    columns: 1
+    componentUnits:
+    - rad
+    - rad/s
+    value:
+      metricId: reference.state
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: reference.state
+      scope: 0
+  - id: reference.input
+    symbol: u_t^des
+    label: Coppia desiderata
+    meaning: mgl sinθ_e derivata dal modello autorevole; congelata all’apertura. Nessun u_N desiderato.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - N·m
+    value:
+      metricId: reference.input
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: terminal
+    symbol: Φ
+    label: Costo terminale
+    meaning: Valutazione di x_N rispetto al reference finale; una sola volta, senza δ e senza u_N.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: continuous.terminal
+      kind: 0
+      scope: 2
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: cost.terminal
+      scope: 2
+  - id: total
+    symbol: J^δ
+    label: Approssimazione del funzionale
+    meaning: C_N+Φ; quadratura e rollout Euler sono approssimazioni. Non costo minimo certificato.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - '1'
+    value:
+      metricId: continuous.total
+      kind: 0
+      scope: 4
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 4
+  sources:
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 31
+    lastPhysicalPage: 36
+    firstSlide: 30
+    lastSlide: 35
+    section: Problema continuo, pendolo, equilibri, desiderato e funzionale
+    usage: 1
+    note: 'H indica la durata T della fonte; N indica T discreto. Correzione p.34: velocità di equilibrio nulla.
+      Costo p.36 SENZA ½. Quadratura rettangolo sinistro: scelta numerica F15, non formula esatta della fonte.'
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 27
+    lastPhysicalPage: 27
+    firstSlide: 26
+    lastSlide: 26
+    section: Forward Euler
+    usage: 1
+    note: Regola applicata al pendolo p.33; tutte le righe usano lo stato vecchio.

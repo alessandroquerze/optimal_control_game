@@ -5,7 +5,7 @@ using OptCon.Core;
 namespace OptCon.Simulation
 {
     [Flags]
-    public enum ExperimentCapabilities { None = 0, Parameters = 1, Trajectory = 2, Objective = 4 }
+    public enum ExperimentCapabilities { None = 0, Parameters = 1, Trajectory = 2, Objective = 4, Linearization = 8 }
 
     /// <summary>Pure frozen inputs. Domain-specific configuration stays on its concrete capability.</summary>
     public interface IExperimentConfiguration

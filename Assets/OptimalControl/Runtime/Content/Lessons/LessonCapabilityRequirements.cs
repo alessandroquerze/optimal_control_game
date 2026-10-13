@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using OptCon.Simulation;
 
 namespace OptCon.Content
@@ -8,6 +9,8 @@ namespace OptCon.Content
     {
         public static void Validate(LessonStepPlan step, IExperimentSession session)
         {
+            if ((step.EnabledControls.Contains(LessonControls.InitialPerturbation) || step.EnabledControls.Contains(LessonControls.InputPerturbation)) &&
+                (session.Capabilities & ExperimentCapabilities.Linearization) == 0) throw new ArgumentException("Perturbation controls require differentiable dynamics.");
             foreach (var command in step.EntryCommands)
                 if (!session.Supports(command.Kind)) throw new ArgumentException("Step entry requires unsupported capability: " + command.Kind);
             if ((session.Capabilities & ExperimentCapabilities.Trajectory) != 0) return;

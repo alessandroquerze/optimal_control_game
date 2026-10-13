@@ -1,0 +1,1109 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2447a3f1440a48128f99dcbb8f745af5, type: 3}
+  m_Name: C1_L6
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.LessonDefinition
+  id: C1.L6
+  schemaVersion: 1
+  contentVersion: '1'
+  title: Continuo e trasferimento del pendolo
+  description: F15; I pp.31–36. Problema continuo, Euler, quadratura distinta e confronto a durata comune; nessun
+    solver.
+  objective: Distinguere t/τ/δ/N/H, densità/cella/cumulativo/terminale; campionare reference tra equilibri e confrontare
+    griglie dello stesso problema fisico.
+  prerequisiteLessonIds:
+  - C1.L5
+  workspace:
+    assetPath: Assets/OptimalControl/Scenes/LessonWorkspace.unity
+  experiment: {fileID: 11400000, guid: e0d63f9c3c9e55c2afd9d041fe17d4d6, type: 2}
+  formulas:
+  - {fileID: 11400000, guid: e591980bd294585380f61073185dcc86, type: 2}
+  - {fileID: 11400000, guid: f60f663dbb2b550daed42bd0fb9a4b95, type: 2}
+  - {fileID: 11400000, guid: 2d13dfde83ea57c5bf84e4d83d63436e, type: 2}
+  - {fileID: 11400000, guid: 7d735b27167f55f9bba36fca9f7854e4, type: 2}
+  - {fileID: 11400000, guid: 9e61781a9c37536b9e7d13e6d3c8e6a8, type: 2}
+  - {fileID: 11400000, guid: 1a6cf3d0ef4555b99db25cd31bba63a0, type: 2}
+  - {fileID: 11400000, guid: 8c62f08136975485b5adc07399994556, type: 2}
+  - {fileID: 11400000, guid: 9a726492b90c55d58ce64a2978ec0e6e, type: 2}
+  - {fileID: 11400000, guid: 653d3766de9b5ded844dbb1554a7db02, type: 2}
+  sources:
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 31
+    lastPhysicalPage: 36
+    firstSlide: 30
+    lastSlide: 35
+    section: Problema continuo, pendolo, equilibri, desiderato e funzionale
+    usage: 1
+    note: 'H indica la durata T della fonte; N indica T discreto. Correzione p.34: velocità di equilibrio nulla.
+      Costo p.36 SENZA ½. Quadratura rettangolo sinistro: scelta numerica F15, non formula esatta della fonte.'
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 27
+    lastPhysicalPage: 27
+    firstSlide: 26
+    lastSlide: 26
+    section: Forward Euler
+    usage: 1
+    note: Regola applicata al pendolo p.33; tutte le righe usano lo stato vecchio.
+  steps:
+  - id: continuous
+    title: Un funzionale sulle curve
+    objective: Un funzionale sulle curve
+    instruction: 'La decisione continua è una coppia di funzioni x(·),u(·). Il funzionale restituisce un numero:
+      integrale della densità più esito finale. Qui H=2 s è la durata; il totale live J^δ è soltanto un’approssimazione.
+      Seleziona H e Φ.'
+    help: La formula è mostrata prima della domanda. Scorri fino ai termini per selezionarli; le condizioni controllano
+      anche gli esiti numerici, non soltanto la risposta.
+    formulaFocus: {fileID: 11400000, guid: e591980bd294585380f61073185dcc86, type: 2}
+    selectedTermId: duration
+    visibleTermIds:
+    - duration
+    - terminal
+    - total
+    - density
+    enabledControlIds: []
+    editableParameterTargets: []
+    visibleInitialStateComponents: []
+    visibleInputComponents: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - next
+    - input
+    - desired
+    - cost
+    - functional
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 13
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale interpretazione è coerente con formula e osservazione?
+    answers:
+    - id: continuous-ok
+      text: Il funzionale valuta una curva; il laboratorio mostra J^δ.
+      feedback: Corretto. Verifica anche i dati live e le condizioni richieste.
+    - id: wrong
+      text: J^δ è già il minimo continuo esatto.
+      feedback: Rileggi formula, unità e dominio; questa interpretazione non segue i dati.
+    conditions:
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: continuous-ok
+    - evaluatorId: term
+      targetId: duration
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: terminal
+      expectedAnswerId: ''
+  - id: dynamics
+    title: Dal tasso ai campioni
+    objective: Dal tasso ai campioni
+    instruction: Leggi derivata del pendolo ed Euler. Seleziona t, τ e δ. Qui δ=.1 s, N=20 e H=2 s; a t=1 il tempo
+      è .1 s. Playback regola solo osservazione, non matematica. Avanza e torna a t=0 se vuoi.
+    help: La formula è mostrata prima della domanda. Scorri fino ai termini per selezionarli; le condizioni controllano
+      anche gli esiti numerici, non soltanto la risposta.
+    formulaFocus: {fileID: 11400000, guid: f60f663dbb2b550daed42bd0fb9a4b95, type: 2}
+    selectedTermId: time.index
+    visibleTermIds:
+    - time.index
+    - time.physical
+    - time.step
+    - duration
+    - transitions
+    - state.current
+    - state.next
+    enabledControlIds:
+    - seek
+    - step
+    - play
+    - playback-rate
+    editableParameterTargets: []
+    visibleInitialStateComponents: []
+    visibleInputComponents: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - next
+    - input
+    - desired
+    - cost
+    - functional
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 13
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale interpretazione è coerente con formula e osservazione?
+    answers:
+    - id: wrong
+      text: t, τ e playback sono la stessa quantità.
+      feedback: Rileggi formula, unità e dominio; questa interpretazione non segue i dati.
+    - id: dynamics-ok
+      text: t è indice; τ è tempo; H=Nδ.
+      feedback: Corretto. Verifica anche i dati live e le condizioni richieste.
+    conditions:
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: dynamics-ok
+    - evaluatorId: term
+      targetId: time.index
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: time.physical
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: time.step
+      expectedAnswerId: ''
+  - id: equilibria
+    title: Derivare due equilibri
+    objective: Derivare due equilibri
+    instruction: 'A t=0 leggi reference [0,0], input 0. Porta t a 10: τ=H/2=1 s, reference [.5,0], input mgl sin(.5)≈4.70316
+      N·m. Seleziona entrambi i reference. Sono coppie d’equilibrio del modello; il salto fra loro non lo è.'
+    help: La formula è mostrata prima della domanda. Scorri fino ai termini per selezionarli; le condizioni controllano
+      anche gli esiti numerici, non soltanto la risposta.
+    formulaFocus: {fileID: 11400000, guid: 2d13dfde83ea57c5bf84e4d83d63436e, type: 2}
+    selectedTermId: reference.state
+    visibleTermIds:
+    - reference.state
+    - reference.input
+    - duration
+    - time.physical
+    enabledControlIds:
+    - seek
+    editableParameterTargets: []
+    visibleInitialStateComponents: []
+    visibleInputComponents: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - next
+    - input
+    - desired
+    - cost
+    - functional
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 13
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 4
+      index: 10
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale interpretazione è coerente con formula e osservazione?
+    answers:
+    - id: equilibria-ok
+      text: Velocità nulla e coppia che bilancia la gravità.
+      feedback: Corretto. Verifica anche i dati live e le condizioni richieste.
+    - id: wrong
+      text: L’angolo deve essere zero in ogni equilibrio.
+      feedback: Rileggi formula, unità e dominio; questa interpretazione non segue i dati.
+    conditions:
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: equilibria-ok
+    - evaluatorId: term
+      targetId: reference.state
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: reference.input
+      expectedAnswerId: ''
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: reference.state
+        component: 0
+        scope: 0
+        sampleIndex: 10
+        unit: rad
+        comparison: 2
+        expectedValue: 0.5
+        tolerance: 1.0e-09
+        requireSameNominal: 0
+        requireSameProblem: 0
+        requireSamePhysicalProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: time.physical
+        component: -1
+        scope: 0
+        sampleIndex: 10
+        unit: s
+        comparison: 2
+        expectedValue: 1
+        tolerance: 1.0e-09
+        requireSameNominal: 0
+        requireSameProblem: 0
+        requireSamePhysicalProblem: 0
+  - id: desired
+    title: Il salto vive nel tempo fisico
+    objective: Il salto vive nel tempo fisico
+    instruction: 'Entriamo a t=9, τ=.9 s. Seleziona h_des: [-.5,0]. A t10, τ=1 s, vale già il secondo equilibrio.
+      Il reference è tratteggiato e il rollout manuale è continuo fra campioni come guida grafica, non soluzione
+      esatta.'
+    help: La formula è mostrata prima della domanda. Scorri fino ai termini per selezionarli; le condizioni controllano
+      anche gli esiti numerici, non soltanto la risposta.
+    formulaFocus: {fileID: 11400000, guid: 7d735b27167f55f9bba36fca9f7854e4, type: 2}
+    selectedTermId: desired-h
+    visibleTermIds:
+    - desired-h
+    - reference.state
+    - reference.input
+    - time.physical
+    - duration
+    - time.step
+    enabledControlIds:
+    - seek
+    editableParameterTargets: []
+    visibleInitialStateComponents: []
+    visibleInputComponents: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - next
+    - input
+    - desired
+    - cost
+    - functional
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 13
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 4
+      index: 9
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale interpretazione è coerente con formula e osservazione?
+    answers:
+    - id: wrong
+      text: Il reference è automaticamente una traiettoria realizzabile.
+      feedback: Rileggi formula, unità e dominio; questa interpretazione non segue i dati.
+    - id: desired-ok
+      text: Le due parti sono equilibri, ma il salto non soddisfa la dinamica.
+      feedback: Corretto. Verifica anche i dati live e le condizioni richieste.
+    conditions:
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: desired-ok
+    - evaluatorId: term
+      targetId: desired-h
+      expectedAnswerId: ''
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: constraint.desired-h
+        component: 0
+        scope: 0
+        sampleIndex: 9
+        unit: rad
+        comparison: 2
+        expectedValue: -0.5
+        tolerance: 1.0e-09
+        requireSameNominal: 0
+        requireSameProblem: 0
+        requireSamePhysicalProblem: 0
+  - id: density
+    title: Densità diversa da contributo
+    objective: Densità diversa da contributo
+    instruction: 'Entriamo a t10. Il rollout reale è ancora zero, mentre il desiderato è [.5,0]. Seleziona L_t e
+      δL_t: unità 1/s e 1. Le altezze dei rettangoli mostrano densità; l’area numerica viene dal risultato, non
+      dal grafico.'
+    help: La formula è mostrata prima della domanda. Scorri fino ai termini per selezionarli; le condizioni controllano
+      anche gli esiti numerici, non soltanto la risposta.
+    formulaFocus: {fileID: 11400000, guid: 9e61781a9c37536b9e7d13e6d3c8e6a8, type: 2}
+    selectedTermId: density
+    visibleTermIds:
+    - density
+    - cell
+    - time.step
+    - reference.state
+    - reference.input
+    - terminal
+    - total
+    enabledControlIds: []
+    editableParameterTargets: []
+    visibleInitialStateComponents: []
+    visibleInputComponents: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - next
+    - input
+    - desired
+    - cost
+    - functional
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 13
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 4
+      index: 10
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale interpretazione è coerente con formula e osservazione?
+    answers:
+    - id: density-ok
+      text: δ converte la densità in contributo dell’intervallo.
+      feedback: Corretto. Verifica anche i dati live e le condizioni richieste.
+    - id: wrong
+      text: L_t è già l’intero integrale e va sommato senza δ.
+      feedback: Rileggi formula, unità e dominio; questa interpretazione non segue i dati.
+    conditions:
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: density-ok
+    - evaluatorId: term
+      targetId: density
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: cell
+      expectedAnswerId: ''
+  - id: weights
+    title: Il peso running include il tempo
+    objective: Il peso running include il tempo
+    instruction: 'A t10 cambia q₁ da 1 a 2 nel pannello costo. La densità aumenta, il passo resta .1 s e il terminale
+      resta uguale: q₁ ha unità 1/(rad)²/s, mentre q_T1 non contiene /s. La formula p.36 non ha ½.'
+    help: La formula è mostrata prima della domanda. Scorri fino ai termini per selezionarli; le condizioni controllano
+      anche gli esiti numerici, non soltanto la risposta.
+    formulaFocus: {fileID: 11400000, guid: 9e61781a9c37536b9e7d13e6d3c8e6a8, type: 2}
+    selectedTermId: q0
+    visibleTermIds:
+    - q0
+    - density
+    - cell
+    - time.step
+    - terminal
+    - total
+    enabledControlIds:
+    - parameter
+    editableParameterTargets:
+    - cost.q.0
+    visibleInitialStateComponents: []
+    visibleInputComponents: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - next
+    - input
+    - desired
+    - cost
+    - functional
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 13
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 4
+      index: 10
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale interpretazione è coerente con formula e osservazione?
+    answers:
+    - id: wrong
+      text: Il peso running e quello terminale hanno sempre la stessa unità.
+      feedback: Rileggi formula, unità e dominio; questa interpretazione non segue i dati.
+    - id: weights-ok
+      text: Cambia la densità; Φ ha i propri pesi senza fattore tempo.
+      feedback: Corretto. Verifica anche i dati live e le condizioni richieste.
+    conditions:
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: weights-ok
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: parameter.cost.q.0
+        component: -1
+        scope: 0
+        sampleIndex: 10
+        unit: 1/(rad)²/s
+        comparison: 2
+        expectedValue: 2
+        tolerance: 1.0e-09
+        requireSameNominal: 0
+        requireSameProblem: 0
+        requireSamePhysicalProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: continuous.density
+        component: -1
+        scope: 0
+        sampleIndex: 10
+        unit: 1/s
+        comparison: 5
+        expectedValue: 0
+        tolerance: 1.0e-09
+        requireSameNominal: 0
+        requireSameProblem: 0
+        requireSamePhysicalProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: continuous.terminal-value
+        component: -1
+        scope: 4
+        sampleIndex: 10
+        unit: '1'
+        comparison: 0
+        expectedValue: 0
+        tolerance: 1.0e-09
+        requireSameNominal: 0
+        requireSameProblem: 0
+        requireSamePhysicalProblem: 0
+  - id: cumulative
+    title: Le celle prima del cursore
+    objective: Le celle prima del cursore
+    instruction: Porta il cursore a N20 e seleziona C_t e Φ. C0=0; C_N accumula le N celle running e non contiene
+      Φ. J^δ=C_N+Φ; non moltiplichiamo il terminale per δ.
+    help: La formula è mostrata prima della domanda. Scorri fino ai termini per selezionarli; le condizioni controllano
+      anche gli esiti numerici, non soltanto la risposta.
+    formulaFocus: {fileID: 11400000, guid: 1a6cf3d0ef4555b99db25cd31bba63a0, type: 2}
+    selectedTermId: cumulative
+    visibleTermIds:
+    - cumulative
+    - terminal
+    - total
+    - density
+    - cell
+    - duration
+    - transitions
+    enabledControlIds:
+    - seek
+    editableParameterTargets: []
+    visibleInitialStateComponents: []
+    visibleInputComponents: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - next
+    - input
+    - desired
+    - cost
+    - functional
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 13
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale interpretazione è coerente con formula e osservazione?
+    answers:
+    - id: cumulative-ok
+      text: C_N esclude Φ; il totale lo aggiunge una volta.
+      feedback: Corretto. Verifica anche i dati live e le condizioni richieste.
+    - id: wrong
+      text: Φ viene integrato in ogni cella.
+      feedback: Rileggi formula, unità e dominio; questa interpretazione non segue i dati.
+    conditions:
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: cumulative-ok
+    - evaluatorId: terminal
+      targetId: ''
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: cumulative
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: terminal
+      expectedAnswerId: ''
+  - id: manual
+    title: Un input manuale produce un rollout
+    objective: Un input manuale produce un rollout
+    instruction: Ripartiamo da x0=[0,0]. Imposta u[0]=1 N·m con ambito Coda da t. Il next ω aumenta; cambia il costo.
+      Questo è un candidato dinamicamente valido, non un controllo ottimo e non il salto desiderato.
+    help: La formula è mostrata prima della domanda. Scorri fino ai termini per selezionarli; le condizioni controllano
+      anche gli esiti numerici, non soltanto la risposta.
+    formulaFocus: {fileID: 11400000, guid: f60f663dbb2b550daed42bd0fb9a4b95, type: 2}
+    selectedTermId: input.applied
+    visibleTermIds:
+    - input.applied
+    - state.next
+    - state.current
+    - time.step
+    - duration
+    - transitions
+    enabledControlIds:
+    - input
+    - step
+    - seek
+    editableParameterTargets: []
+    visibleInitialStateComponents: []
+    visibleInputComponents: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - next
+    - input
+    - desired
+    - cost
+    - functional
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 13
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale interpretazione è coerente con formula e osservazione?
+    answers:
+    - id: wrong
+      text: Digitare un input significa risolvere automaticamente il minimo.
+      feedback: Rileggi formula, unità e dominio; questa interpretazione non segue i dati.
+    - id: manual-ok
+      text: Il core genera la traiettoria dall’input scelto; il desiderato resta distinto.
+      feedback: Corretto. Verifica anche i dati live e le condizioni richieste.
+    conditions:
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: manual-ok
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: input.applied
+        component: 0
+        scope: 0
+        sampleIndex: 0
+        unit: N·m
+        comparison: 2
+        expectedValue: 1
+        tolerance: 1.0e-09
+        requireSameNominal: 0
+        requireSameProblem: 0
+        requireSamePhysicalProblem: 0
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: state.next
+        component: 1
+        scope: 1
+        sampleIndex: 0
+        unit: rad/s
+        comparison: 5
+        expectedValue: 0
+        tolerance: 1.0e-09
+        requireSameNominal: 0
+        requireSameProblem: 0
+        requireSamePhysicalProblem: 0
+    - evaluatorId: term
+      targetId: state.next
+      expectedAnswerId: ''
+  - id: refinement
+    title: Raffinare mantenendo H
+    objective: Raffinare mantenendo H
+    instruction: 'A salvata: δ=.1, N20, H2, input costante 1. Usa Griglia δ o il campo fisico per δ=.05: B deve
+      avere N40 e H2, con stesse leggi/parametri/pesi. Seleziona la differenza J_B−J_A. Il rollout e la somma cambiano;
+      la differenza NON è l’errore contro una soluzione esatta.'
+    help: La formula è mostrata prima della domanda. Scorri fino ai termini per selezionarli; le condizioni controllano
+      anche gli esiti numerici, non soltanto la risposta.
+    formulaFocus: {fileID: 11400000, guid: 1a6cf3d0ef4555b99db25cd31bba63a0, type: 2}
+    selectedTermId: duration
+    visibleTermIds:
+    - duration
+    - transitions
+    - time.step
+    - density
+    - cell
+    - total
+    - same-problem
+    - cost-difference
+    enabledControlIds:
+    - physical-step
+    editableParameterTargets: []
+    visibleInitialStateComponents: []
+    visibleInputComponents: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - next
+    - input
+    - desired
+    - cost
+    - functional
+    - comparison
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 13
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 6
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 1
+      scope: 1
+    - kind: 12
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale interpretazione è coerente con formula e osservazione?
+    answers:
+    - id: refinement-ok
+      text: Stessa durata e stesso problema, due approssimazioni differenti.
+      feedback: Corretto. Verifica anche i dati live e le condizioni richieste.
+    - id: wrong
+      text: Più campioni significano necessariamente più secondi o costo ottimo minore.
+      feedback: Rileggi formula, unità e dominio; questa interpretazione non segue i dati.
+    conditions:
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: refinement-ok
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: continuous.duration
+        component: -1
+        scope: 4
+        sampleIndex: 0
+        unit: s
+        comparison: 0
+        expectedValue: 0
+        tolerance: 1.0e-09
+        requireSameNominal: 0
+        requireSameProblem: 0
+        requireSamePhysicalProblem: 1
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: continuous.transitions
+        component: -1
+        scope: 4
+        sampleIndex: 0
+        unit: '1'
+        comparison: 5
+        expectedValue: 0
+        tolerance: 1.0e-09
+        requireSameNominal: 0
+        requireSameProblem: 0
+        requireSamePhysicalProblem: 1
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: time.step
+        component: -1
+        scope: 0
+        sampleIndex: 0
+        unit: s
+        comparison: 4
+        expectedValue: 0
+        tolerance: 1.0e-09
+        requireSameNominal: 0
+        requireSameProblem: 0
+        requireSamePhysicalProblem: 1
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: continuous.total
+        component: -1
+        scope: 4
+        sampleIndex: 0
+        unit: '1'
+        comparison: 1
+        expectedValue: 0
+        tolerance: 1.0e-09
+        requireSameNominal: 0
+        requireSameProblem: 0
+        requireSamePhysicalProblem: 1
+    - evaluatorId: term
+      targetId: cost-difference
+      expectedAnswerId: ''
+  - id: accuracy
+    title: Quando possiamo misurare davvero l’errore
+    objective: Quando possiamo misurare davvero l’errore
+    instruction: 'Caso analitico distinto: g=0, m=l=1, u=1 costante, H2, x0=0. La formula indipendente dà θ(H)=2
+      rad. A con δ.1 ha errore −.1; riduci a .05 e leggi −.05, N40/H2. Qui il modulo si dimezza. Non estendere questa
+      conclusione monotona al pendolo nonlineare. Il reference del trasferimento resta congelato e non è dichiarato
+      equilibrio del modello modificato.'
+    help: La formula è mostrata prima della domanda. Scorri fino ai termini per selezionarli; le condizioni controllano
+      anche gli esiti numerici, non soltanto la risposta.
+    formulaFocus: {fileID: 11400000, guid: 8c62f08136975485b5adc07399994556, type: 2}
+    selectedTermId: oracle-error
+    visibleTermIds:
+    - oracle-error
+    - duration
+    - transitions
+    - time.step
+    - total
+    - same-problem
+    enabledControlIds:
+    - physical-step
+    editableParameterTargets: []
+    visibleInitialStateComponents: []
+    visibleInputComponents: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - next
+    - input
+    - desired
+    - cost
+    - functional
+    - comparison
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 13
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 7
+      index: 0
+      target: model.gravity
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 6
+      index: 0
+      target: ''
+      value: 0
+      vector:
+      - 1
+      scope: 1
+    - kind: 12
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale interpretazione è coerente con formula e osservazione?
+    answers:
+    - id: wrong
+      text: La griglia più fine è sempre il moto continuo esatto.
+      feedback: Rileggi formula, unità e dominio; questa interpretazione non segue i dati.
+    - id: accuracy-ok
+      text: Questo caso ha un oracolo analitico; il raffinamento ne riduce l’errore osservato.
+      feedback: Corretto. Verifica anche i dati live e le condizioni richieste.
+    conditions:
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: accuracy-ok
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: continuous.duration
+        component: -1
+        scope: 4
+        sampleIndex: 0
+        unit: s
+        comparison: 0
+        expectedValue: 0
+        tolerance: 1.0e-09
+        requireSameNominal: 0
+        requireSameProblem: 0
+        requireSamePhysicalProblem: 1
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: continuous.transitions
+        component: -1
+        scope: 4
+        sampleIndex: 0
+        unit: '1'
+        comparison: 5
+        expectedValue: 0
+        tolerance: 1.0e-09
+        requireSameNominal: 0
+        requireSameProblem: 0
+        requireSamePhysicalProblem: 1
+    - evaluatorId: metric.evidence
+      targetId: ''
+      expectedAnswerId: ''
+      evidence:
+        metricId: continuous.accuracy-angle-error
+        component: -1
+        scope: 4
+        sampleIndex: 0
+        unit: rad
+        comparison: 2
+        expectedValue: -0.05
+        tolerance: 1.0e-09
+        requireSameNominal: 0
+        requireSameProblem: 0
+        requireSamePhysicalProblem: 1
+    - evaluatorId: term
+      targetId: oracle-error
+      expectedAnswerId: ''
+  - id: definitions
+    title: Somma discreta e integrale sono problemi diversi
+    objective: Somma discreta e integrale sono problemi diversi
+    instruction: 'Per L=2 [1/s] e H2, la quadratura running vale 4 con N20/δ.1 e N40/δ.05. Sommare soltanto i numeri
+      2 dà 40/80: è un’altra definizione, non un errore del costo discreto precedente. Seleziona δL_t. C1.L3–L5
+      mantengono la loro somma discreta senza δ.'
+    help: La formula è mostrata prima della domanda. Scorri fino ai termini per selezionarli; le condizioni controllano
+      anche gli esiti numerici, non soltanto la risposta.
+    formulaFocus: {fileID: 11400000, guid: 9a726492b90c55d58ce64a2978ec0e6e, type: 2}
+    selectedTermId: density
+    visibleTermIds:
+    - density
+    - cell
+    - cumulative
+    - terminal
+    - total
+    - duration
+    - transitions
+    - time.step
+    enabledControlIds: []
+    editableParameterTargets: []
+    visibleInitialStateComponents: []
+    visibleInputComponents: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - next
+    - input
+    - desired
+    - cost
+    - functional
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 13
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale interpretazione è coerente con formula e osservazione?
+    answers:
+    - id: definitions-ok
+      text: Il fattore δ appartiene alla quadratura del funzionale continuo.
+      feedback: Corretto. Verifica anche i dati live e le condizioni richieste.
+    - id: wrong
+      text: F15 corregge tutti i vecchi costi aggiungendo loro δ.
+      feedback: Rileggi formula, unità e dominio; questa interpretazione non segue i dati.
+    conditions:
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: definitions-ok
+    - evaluatorId: term
+      targetId: cell
+      expectedAnswerId: ''
+  - id: terminal
+    title: Che cosa esiste a N?
+    objective: Che cosa esiste a N?
+    instruction: 'Porta t=N20, τ=H2. Seleziona u_t, L_t e δL_t: N/A. Restano x_N, reference finale, C_N, Φ e J^δ.
+      Nessuna cella oltre H, nessun u_N. Il trasferimento ottimizzato e il confronto con un solver sono rinviati
+      a F28.'
+    help: La formula è mostrata prima della domanda. Scorri fino ai termini per selezionarli; le condizioni controllano
+      anche gli esiti numerici, non soltanto la risposta.
+    formulaFocus: {fileID: 11400000, guid: 653d3766de9b5ded844dbb1554a7db02, type: 2}
+    selectedTermId: input.applied
+    visibleTermIds:
+    - input.applied
+    - density
+    - cell
+    - state.current
+    - state.next
+    - reference.state
+    - cumulative
+    - terminal
+    - total
+    - duration
+    - transitions
+    - time.physical
+    enabledControlIds:
+    - seek
+    - step
+    editableParameterTargets: []
+    visibleInitialStateComponents: []
+    visibleInputComponents: []
+    visibleLayerIds:
+    - PhysicalBody
+    - PhasePlane
+    - StateTime
+    - trajectory
+    - next
+    - input
+    - desired
+    - cost
+    - functional
+    showCosts: 1
+    entryActions:
+    - kind: 5
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    - kind: 13
+      index: 0
+      target: ''
+      value: 0
+      vector: []
+      scope: 0
+    question: Quale interpretazione è coerente con formula e osservazione?
+    answers:
+    - id: wrong
+      text: Serve inventare un input zero e una cella terminale.
+      feedback: Rileggi formula, unità e dominio; questa interpretazione non segue i dati.
+    - id: terminal-ok
+      text: Il terminale è un esito singolo; input/running/next non esistono.
+      feedback: Corretto. Verifica anche i dati live e le condizioni richieste.
+    conditions:
+    - evaluatorId: answer
+      targetId: ''
+      expectedAnswerId: terminal-ok
+    - evaluatorId: terminal
+      targetId: ''
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: input.applied
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: density
+      expectedAnswerId: ''
+    - evaluatorId: term
+      targetId: cell
+      expectedAnswerId: ''
+  completionCriteria: Tutte le attività e outcome sullo stesso problema fisico, terminale e receipt validi. Credito
+    solo C1.L6 v1/schema1. Trasferimento ottimizzato resta F28.

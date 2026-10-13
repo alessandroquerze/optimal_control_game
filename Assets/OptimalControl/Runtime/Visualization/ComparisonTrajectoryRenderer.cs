@@ -31,6 +31,13 @@ namespace OptCon.Presentation
             savedA.Render(a.History, projection, endA); currentB.Render(b.History, projection, endB);
             label.text = "A viola spessa / B blu sottile · fase\nA r" + a.RevisionId + " T=" + a.History.Horizon + " · B r" + b.RevisionId + " T=" + b.History.Horizon
                 + "\nCampioni comuni: A 0…" + endA + " / B 0…" + endB;
+            if (state.DiscretizationComparison != null)
+            {
+                var gridA = ((OptCon.Core.ContinuousTrackingCost)a.Configuration.Cost).Grid;
+                var gridB = ((OptCon.Core.ContinuousTrackingCost)b.Configuration.Cost).Grid;
+                label.text = "A viola / B blu · guide Euler\nA: δ=" + gridA.StepSeconds + " s, N=" + endA + ", H=" + gridA.DurationSeconds +
+                    " s\nB: δ=" + gridB.StepSeconds + " s, N=" + endB + ", H=" + gridB.DurationSeconds + " s";
+            }
         }
         private void Clear() { savedA.GetComponent<LineRenderer>().positionCount = 0; currentB.GetComponent<LineRenderer>().positionCount = 0; }
     }

@@ -119,14 +119,27 @@ namespace OptCon.Editor
                     {
                         if (session.Capabilities != experiment.Provider.Capabilities) throw new ArgumentException("Session/provider capability mismatch.");
                         BindingValidator.Validate(lesson, session.Current, services.Metrics, result);
-                        if (session.Current is OptCon.Simulation.SessionState trajectory) ValidateEntryDomains(lesson, trajectory.Result.Configuration, result);
+                        if (session.Current is OptCon.Simulation.SessionState trajectory)
+                        {
+                            ValidateEntryDomains(lesson, trajectory.Result.Configuration, result);
+                            if (experiment.ScenarioPrefab != null)
+                                foreach (var plot in experiment.ScenarioPrefab.GetComponentsInChildren<StateTrajectoryView>(true))
+                                {
+                                    if (plot.Projection == null) throw new ArgumentException("Trajectory view requires an explicit projection.");
+                                    plot.Projection.Validate(trajectory.Result.History.Model);
+                                }
+                        }
                         else ValidateParameterEntryDomains(lesson, session.Current.Result.Configuration.Parameters, result);
                         var targets = session.Current.Result.Configuration.Parameters.Select(p => p.Target).ToArray();
                         var plan = new LessonPlan(lesson);
                         foreach (var step in plan.Steps)
                         {
                             LessonCapabilityRequirements.Validate(step, session);
-                            foreach (var condition in step.Conditions) services.Conditions.Resolve(condition.EvaluatorId, session.Capabilities);
+                            foreach (var condition in step.Conditions)
+                            {
+                                services.Conditions.Resolve(condition.EvaluatorId, session.Capabilities);
+                                services.Conditions.ValidateBinding(condition, session.Current);
+                            }
                         }
                         var layers = experiment.ScenarioPrefab == null ? Array.Empty<string>() : experiment.ScenarioPrefab.GetComponent<LayerController>()?.Ids ?? Array.Empty<string>();
                         foreach (var step in lesson.Steps.Where(s => s != null))
@@ -178,6 +191,7 @@ namespace OptCon.Editor
                             var declared = lesson.Experiment.Parameters.FirstOrDefault(p => p.ModelTarget == command.Target);
                             if (declared != null) new ParameterRule(command.Target, declared.Minimum, declared.Maximum, declared.ValueKind != ParameterValueKind.Real).Validate(command.Value);
                             if (preset.Cost != null && preset.Cost.Parameters.Any(p => p.Target == command.Target)) preset.Cost.WithParameter(command.Target, command.Value);
+                            else if (preset.Constraints != null && preset.Constraints.Parameters.Any(p => p.Target == command.Target)) preset.Constraints.WithParameter(command.Target, command.Value);
                             else preset.Model.WithParameter(command.Target, command.Value);
                             break;
                     }
@@ -369,6 +383,10 @@ namespace OptCon.Editor
                 Units(experiment, "outputUnits", experiment.OutputUnits, experiment.OutputDimension);
                 if (experiment.Provider != null) Visit(experiment.Provider);
                 if (experiment.Cost != null) Visit(experiment.Cost);
+                if (experiment.Cost is QuadraticTrackingCostDefinition quadratic && quadratic.SampledReference != null) Visit(quadratic.SampledReference);
+                if (experiment.Constraints != null) Visit(experiment.Constraints);
+                if (!experiment.UsesDiscreteTime && experiment.Constraints != null)
+                    Error(experiment, "TrajectoryContract", "constraints", "These constraint definitions require a discrete trajectory provider.");
                 if (experiment.UsesDiscreteTime)
                 {
                     var preset = experiment.DiscreteTime;

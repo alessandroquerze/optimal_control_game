@@ -84,7 +84,37 @@ namespace OptCon.Content
             else if (id == RuntimeMetricIds.Horizon || id == RuntimeMetricIds.StateCount || id == RuntimeMetricIds.InputCount)
                 metric = RuntimeMetric.Number(id, id == RuntimeMetricIds.StateCount ? result.History.States.Count : result.History.Controls.Count,
                     "1", null, scope: FormulaScope.Snapshot);
-            else if (id == RuntimeMetricIds.ReferenceState) metric = RuntimeMetric.FromVector(id, result.Configuration.ReferenceState, result.History.Model.StateUnits, sample.Timestep, FormulaScope.CurrentTimestep);
+            else if (id == RuntimeMetricIds.ReferenceState || id == "reference.state") metric = RuntimeMetric.FromVector(id, result.Configuration.StateReferenceAt(sample.Timestep), result.History.Model.StateUnits, sample.Timestep, FormulaScope.CurrentTimestep);
+            else if (id == "reference.input") metric = RuntimeMetric.FromVector(id, sample.IsTerminal ? null : result.Reference?.Reference.Inputs[sample.Timestep] ?? (result.Configuration.Cost as QuadraticTrackingCost)?.ReferenceInput,
+                result.History.Model.ControlUnits, sample.Timestep, FormulaScope.CurrentTimestep, "Nessun riferimento input a T, o riferimento non configurato.");
+            else if (id == "reference.output") metric = RuntimeMetric.FromVector(id, result.Reference?.Outputs[sample.Timestep], result.History.Model.OutputUnits, sample.Timestep, FormulaScope.CurrentTimestep, "Output desiderato non disponibile; non equivale automaticamente allo stato.");
+            else if (id == "reference.state-error") metric = RuntimeMetric.FromVector(id, result.Reference?.StateErrors[sample.Timestep], result.History.Model.StateUnits, sample.Timestep, FormulaScope.CurrentTimestep, "Riferimento campionato non configurato.");
+            else if (id == "constraint.h" || id == "constraint.desired-h") metric = RuntimeMetric.FromVector(id, sample.IsTerminal ? null : id == "constraint.h" ? result.Constraints?.DynamicsResiduals[sample.Timestep] : result.Constraints?.DesiredDynamicsResiduals?[sample.Timestep],
+                result.History.Model.StateUnits, sample.Timestep, FormulaScope.CurrentTimestep, "Nessuna transizione a T o diagnostica non configurata.");
+            else if (id == "constraint.feasible" || id == "constraint.desired-dynamics-valid") metric = RuntimeMetric.Number(id, result.Constraints == null ? (double?)null : (id == "constraint.feasible" ? result.Constraints.IsFeasible : result.Constraints.DesiredSatisfiesDynamics) ? 1 : 0,
+                "1", null, "Diagnostica non configurata.", FormulaScope.Snapshot);
+            else if (id.StartsWith("constraint.g.", StringComparison.Ordinal))
+            {
+                var data = result.Constraints; string key = id.Substring(13);
+                int i = data == null ? -1 : data.Configuration.Path.ToList().FindIndex(b => b.Id == key);
+                if (i >= 0) metric = RuntimeMetric.Number(id, sample.IsTerminal ? (double?)null : data.PathResiduals[sample.Timestep][i], data.Configuration.Path[i].Unit, sample.Timestep, "g_t è definito solo per t<T.");
+            }
+            else if (id.StartsWith("constraint.r.", StringComparison.Ordinal))
+            {
+                var data = result.Constraints; string key = id.Substring(13);
+                int i = data == null ? -1 : data.Configuration.Endpoints.ToList().FindIndex(e => e.Id == key);
+                if (i >= 0) metric = RuntimeMetric.Number(id, data.EndpointResiduals[i], data.Configuration.Endpoints[i].Unit, result.History.Horizon, scope: FormulaScope.Terminal);
+            }
+            else if (id.StartsWith("cost.contribution.", StringComparison.Ordinal) || id.StartsWith("cost.terminal-contribution.", StringComparison.Ordinal))
+            {
+                bool terminal = id.StartsWith("cost.terminal-contribution.", StringComparison.Ordinal);
+                var terms = terminal ? result.Costs?.Terminal : result.Costs?.StageAt(sample.Timestep);
+                string key = id.Substring(terminal ? 27 : 18); var term = terms?.Find(key);
+                var known = result.Costs?.Stages.SelectMany(c => c.Terms).Concat(result.Costs.Terminal.Terms).FirstOrDefault(c => c.Id == key);
+                if (result.Costs != null && known == null) return false; // Unknown binding is Invalid, not a fabricated unavailable term.
+                metric = RuntimeMetric.Number(id, term?.Value, known?.Unit ?? result.Costs?.Configuration.CostUnit ?? "1", terminal ? result.History.Horizon : sample.Timestep,
+                    "Contributo assente o stage non disponibile a T.", terminal ? FormulaScope.Terminal : FormulaScope.CurrentTimestep);
+            }
             else if (id == RuntimeMetricIds.StageCost || id == RuntimeMetricIds.TrackingCost || id == RuntimeMetricIds.EffortCost
                 || id == RuntimeMetricIds.TerminalCost || id == RuntimeMetricIds.TotalCost || id == RuntimeMetricIds.CumulativeCost)
             {
@@ -95,8 +125,8 @@ namespace OptCon.Content
                 {
                     var stage = costs.StageAt(sample.Timestep);
                     if (id == RuntimeMetricIds.StageCost) value = stage?.Total;
-                    else if (id == RuntimeMetricIds.TrackingCost) value = stage?.Tracking;
-                    else if (id == RuntimeMetricIds.EffortCost) value = stage?.Effort;
+                    else if (id == RuntimeMetricIds.TrackingCost) value = stage?.Find("tracking")?.Value;
+                    else if (id == RuntimeMetricIds.EffortCost) value = stage?.Find("effort")?.Value;
                     else if (id == RuntimeMetricIds.CumulativeCost) value = costs.Cumulative[sample.Timestep];
                     else if (id == RuntimeMetricIds.TotalCost) { value = costs.Total; index = null; }
                     else { value = costs.Terminal.Total; index = result.History.Horizon; }
@@ -107,7 +137,7 @@ namespace OptCon.Content
             else if (id.StartsWith(RuntimeMetricIds.ParameterPrefix, StringComparison.Ordinal))
             {
                 string target = id.Substring(RuntimeMetricIds.ParameterPrefix.Length);
-                var parameter = result.Configuration.Model.Parameters.Concat(result.Configuration.Cost?.Parameters ?? Array.Empty<ModelParameterValue>()).FirstOrDefault(p => p.Target == target);
+                var parameter = result.Configuration.Parameters.FirstOrDefault(p => p.Target == target);
                 if (parameter != null) metric = RuntimeMetric.Number(id, parameter.Value, parameter.Unit, sample.Timestep);
             }
             return metric != null;
@@ -135,7 +165,7 @@ namespace OptCon.Content
         public RuntimeMetricResolver(IRuntimeMetricSource source = null, IEnumerable<IExperimentMetricSource> experimentSources = null)
         {
             this.source = source ?? new SessionMetricSource();
-            this.experimentSources = Array.AsReadOnly((experimentSources ?? new IExperimentMetricSource[] { new ObjectiveMetricSource() }).ToArray());
+            this.experimentSources = Array.AsReadOnly((experimentSources ?? new IExperimentMetricSource[] { new ObjectiveMetricSource(), new LinearizationMetricSource(), new ContinuousMetricSource() }).ToArray());
             if (this.experimentSources.Any(s => s == null)) throw new ArgumentException("Missing metric source.");
         }
         public MetricResolution Resolve(FormulaTermDefinition term, SimulationResult result, int cursor)
@@ -180,6 +210,7 @@ namespace OptCon.Content
             {
                 var sample = scope == FormulaScope.Terminal ? trajectory.Result.History.GetSnapshot(trajectory.Result.History.Horizon) : trajectory.Sample;
                 source.TryGet(trajectory.Result, sample, id, out metric);
+                if (scope == FormulaScope.Terminal) snapshot = trajectory.Select(sample.Timestep);
             }
             if (metric == null) foreach (var provider in experimentSources) if (provider.TryGet(snapshot, id, out metric)) break;
             if (metric == null) return Invalid("Metrica sconosciuta: " + id);

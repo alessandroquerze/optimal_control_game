@@ -1,0 +1,161 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e039087c2f4e1ab6f8639bc051389d, type: 3}
+  m_Name: TrajectoryPerturbation
+  m_EditorClassIdentifier: OptCon.Content::OptCon.Content.FormulaDefinition
+  id: c1.trajectory-perturbation
+  schemaVersion: 1
+  contentVersion: '1'
+  title: Perturbazioni rispetto alla nominale
+  description: La nominale è una traiettoria valida salvata; cambiarne il modello/orizzonte richiede un nuovo salvataggio.
+    Qui gli slider esprimono valori assoluti rispetto alla nominale, senza sommare ripetutamente.
+  expression: 'Δx_t=x_t−x̄_t; Δu_t=u_t−ū_t
+
+    x₀ fissato ⇒ Δx₀=0'
+  sourceTranscription: 'Δx_t=x_t−x̄_t; Δu_t=u_t−ū_t
+
+    x₀ fissato ⇒ Δx₀=0'
+  assumptions: La nominale è una traiettoria valida salvata; cambiarne il modello/orizzonte richiede un nuovo salvataggio.
+    Qui gli slider esprimono valori assoluti rispetto alla nominale, senza sommare ripetutamente.
+  terms:
+  - id: nominal.state
+    symbol: x̄_t
+    label: Stato nominale
+    meaning: Campione della traiettoria valida salvata. La barra indica il punto di sviluppo, non un target desiderato.
+    rows: 2
+    columns: 1
+    componentUnits:
+    - rad
+    - rad/s
+    value:
+      metricId: linearization.nominal-state
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: linearization.nominal
+      scope: 0
+  - id: nominal.input
+    symbol: ū_t
+    label: Input nominale
+    meaning: Controllo salvato con la nominale; serve a definire Δu. Non esiste ū_T.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - N·m
+    value:
+      metricId: linearization.nominal-input
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 0
+  - id: state.current
+    symbol: x_t
+    label: Stato del rollout vero
+    meaning: Campione nonlineare salvato; blu. La curva di fase non è il percorso fisico del corpo.
+    rows: 2
+    columns: 1
+    componentUnits:
+    - rad
+    - rad/s
+    value:
+      metricId: state.current
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: state.current
+      scope: 0
+  - id: delta.true
+    symbol: Δx_t
+    label: Perturbazione reale
+    meaning: Differenza fra stato del rollout nonlineare e stato nominale, componente per componente. Nessuna norma
+      di unità miste.
+    rows: 2
+    columns: 1
+    componentUnits:
+    - rad
+    - rad/s
+    value:
+      metricId: linearization.delta-true
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: linearization.delta
+      scope: 0
+  - id: delta.input
+    symbol: Δu_t
+    label: Perturbazione input
+    meaning: u_t−ū_t. Vettore 1×1; il simbolo curvo indica una differenza di coppia, non una forza.
+    rows: 1
+    columns: 1
+    componentUnits:
+    - N·m
+    value:
+      metricId: linearization.delta-input
+      kind: 1
+      scope: 0
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: linearization.input
+      scope: 0
+  - id: delta.initial
+    symbol: Δx₀
+    label: Perturbazione iniziale
+    meaning: Zero nel caso x₀ fissato. Alterare x₀ è un esperimento separato, dichiarato esplicitamente.
+    rows: 2
+    columns: 1
+    componentUnits:
+    - rad
+    - rad/s
+    value:
+      metricId: linearization.delta-initial
+      kind: 1
+      scope: 4
+      component: -1
+      numericFormat: G6
+    highlight:
+      semanticRole: ''
+      scope: 4
+  sources:
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 10
+    lastPhysicalPage: 13
+    firstSlide: 9
+    lastSlide: 12
+    section: Traiettorie, equilibri e linearizzazione
+    usage: 0
+    note: ''
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 27
+    lastPhysicalPage: 27
+    firstSlide: 26
+    lastSlide: 26
+    section: Forward Euler
+    usage: 1
+    note: Adattamento del pendolo continuo alla discretizzazione già usata in F11.
+  - document: {fileID: 11400000, guid: 8caf86dcfb234a9a9dae0d453862bc08, type: 2}
+    firstPhysicalPage: 33
+    lastPhysicalPage: 34
+    firstSlide: 32
+    lastSlide: 33
+    section: Pendolo ed equilibri
+    usage: 1
+    note: 'Errata I p.34: la prima condizione impone x₂,e=ω_e=0, non x₁,e=θ_e=0.'
